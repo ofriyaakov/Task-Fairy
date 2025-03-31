@@ -20,16 +20,11 @@ export const updateUserById = (
   id,
   {
     name,
-    gender,
-    height,
-    weight,
-    fitLevel,
-    image,
   }: Omit<IUser, "password" | "email" | "tokens">
 ) =>
   userModel.findByIdAndUpdate(
     id,
-    { name, gender, fitLevel, weight, height, image },
+    { name },
     { new: true }
   );
 
