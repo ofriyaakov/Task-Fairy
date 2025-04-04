@@ -1,12 +1,14 @@
 import jwt from "jsonwebtoken";
 import { getUserById, updateUserTokenById } from "../controllers/user";
-import { tUser } from "../models/user";
+import { User, tUser } from "../models/user";
 import { UnauthorizedError } from "../errors/UnauthorizedError ";
 
-export const updateRefreshToken = async (user, refreshToken: string) => {
-  if (refreshToken) user.tokens.push(refreshToken);
+export const updateRefreshToken = async (user: User, refreshToken: string| null) => {
+  if (refreshToken) {
+      user.tokens = [refreshToken];
+  }
   const updatedTokens = !!refreshToken ? user.tokens : [];
-  return await updateUserTokenById(user.id, updatedTokens);
+  return await updateUserTokenById(user.user_id, updatedTokens);
 };
 
 export const generateAccessToken = (userId) =>
@@ -31,7 +33,7 @@ export const generateRefreshToken = (userId) =>
   });
 
 export const verifyRefreshToken = (refreshToken: string) => {
-  return new Promise<tUser>((resolve, reject) => {
+  return new Promise<User>((resolve, reject) => {
     jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_SECRET,

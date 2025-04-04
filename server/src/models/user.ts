@@ -1,7 +1,25 @@
 import mongoose, { Document, Types } from "mongoose";
 const Schema = mongoose.Schema;
 
+export enum UserLevel {
+  Employee = 1,
+  Manager = 2,
+  Admin = 3,
+}
+
+export type User = {
+  user_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  password: string;
+  username: string;
+  user_level: UserLevel;
+  tokens: string[];
+}
+
 export interface IUser {
+  id: string;
   email: string;
   name: string;
   password: string;

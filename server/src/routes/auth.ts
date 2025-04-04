@@ -1,12 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 const router = express.Router();
 import {
-  googleLogin,
+  // googleLogin,
   login,
   logout,
   refresh,
   register,
 } from "../controllers/auth";
+import { BadRequestError } from "../errors/BadRequestError";
 
 /**
  * @swagger
@@ -163,17 +164,17 @@ router.post(
  *           400:
  *              description: Bad request
  */
-router.post("/google", async (req, res) => {
-  try {
-    const { credential } = req.body;
-    if (!credential) {
-      throw new Error("Google credential is required");
-    }
-    res.status(200).send(await googleLogin(credential));
-  } catch (error: any) {
-    res.status(401).json({ error: error.message });
-  }
-});
+// router.post("/google", async (req, res) => {
+//   try {
+//     const { credential } = req.body;
+//     if (!credential) {
+//       throw new Error("Google credential is required");
+//     }
+//     res.status(200).send(await googleLogin(credential));
+//   } catch (error: any) {
+//     res.status(401).json({ error: error.message });
+//   }
+// });
 
 /**
  * @swagger
@@ -195,6 +196,8 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers["authorization"];
     const refreshToken = authHeader && authHeader.split(" ")[1]; // פורמט: "Bearer <token>"
+
+    if (!refreshToken) throw new BadRequestError("Missing Authorization header");
 
     try {
       res.status(200).send(await logout(refreshToken));
@@ -228,6 +231,9 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers["authorization"];
     const refreshToken = authHeader && authHeader.split(" ")[1]; // פורמט: "Bearer <token>"
+
+    if (!refreshToken) throw new BadRequestError("Missing Authorization header");
+
     try {
       res.status(200).send(await refresh(refreshToken));
     } catch (err) {
