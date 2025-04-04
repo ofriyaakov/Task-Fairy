@@ -56,7 +56,6 @@ dist/
 
 # Gatsby files
 .cache/
-public/
 
 # VuePress build output
 .vuepress/dist/
@@ -64,14 +63,8 @@ public/
 # vuepress v2.x temp and cache directory
 .temp/
 
-# Hexo build output
-public/
-
 # Jekyll build output
 _site/
-
-# Hugo build output
-/public/
 
 # Comment to ignore prettier format settings
 # .prettierignore
