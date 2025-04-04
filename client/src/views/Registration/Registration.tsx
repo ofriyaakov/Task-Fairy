@@ -32,7 +32,7 @@ export const Registration: React.FC = () => {
         align='center'
         color='primary.main'
         fontWeight='medium'
-        sx={{ mt: 8 }}>
+        sx={{ mt: 4 }}>
         Turning To-Dos into Ta-Das!
       </Typography>
     </div>
