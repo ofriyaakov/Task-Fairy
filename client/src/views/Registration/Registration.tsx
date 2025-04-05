@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import RegistrationForm from "./RegistrationForm";
 import { useNavigate } from "react-router-dom";
 import { RegistrationData } from "./types";
@@ -21,9 +21,20 @@ export const Registration: React.FC = () => {
   return (
     <div>
       <RegistrationForm onSubmit={handleRegister} />
-      <Button onClick={() => navigate("/login")} sx={{ mt: 2 }}>
-        already have an account? Login
-      </Button>
+
+      <Typography variant='body2' color='text.secondary'>
+        Already have a user?
+        <Button onClick={() => navigate("/login")}>Login</Button>
+      </Typography>
+      <Typography
+        variant='h5'
+        component='h2'
+        align='center'
+        color='primary.main'
+        fontWeight='medium'
+        sx={{ mt: 4 }}>
+        Turning To-Dos into Ta-Das!
+      </Typography>
     </div>
   );
 };
