@@ -3,18 +3,18 @@ import { getUserById, updateUserTokenById } from "../controllers/user";
 import { User, tUser } from "../models/user";
 import { UnauthorizedError } from "../errors/UnauthorizedError ";
 
-export const updateRefreshToken = async (user: User, refreshToken: string| null) => {
+export const updateRefreshToken = async (user: User, refreshToken: string | null) => {
   if (refreshToken) {
-      user.tokens = [refreshToken];
+    user.tokens = [refreshToken];
   }
   const updatedTokens = !!refreshToken ? user.tokens : [];
   return await updateUserTokenById(user.user_id, updatedTokens);
 };
 
 export const generateAccessToken = (userId) =>
-  jwt.sign({ _id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  jwt.sign({ _id: userId }, process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
 
 export const verifyAccessToken = (token: string) =>
   new Promise((resolve, reject) => {
@@ -28,9 +28,9 @@ export const verifyAccessToken = (token: string) =>
   });
 
 export const generateRefreshToken = (userId) =>
-  jwt.sign({ _id: userId }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-  });
+  jwt.sign({ _id: userId }, process.env.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  );
 
 export const verifyRefreshToken = (refreshToken: string) => {
   return new Promise<User>((resolve, reject) => {
