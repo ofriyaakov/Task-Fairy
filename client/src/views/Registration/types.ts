@@ -1,8 +1,9 @@
 export interface RegistrationData {
-  fullName: string;
-  phoneNumber: string;
-  companyName: string;
-  companyRole: string;
+  username: string;
+  // phoneNumber: string;
+  // companyName: string;
+  user_level: string;
   password: string;
   email: string;
+  user_id: string;
 }

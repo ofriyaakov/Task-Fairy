@@ -5,7 +5,7 @@ export const getAllUsers = async () => {
   try {
     const result = await db.query('SELECT * FROM users');
     const users: User[] = result.rows;
-    console.log("get all user success:",users);
+    console.log("get all user success:", users);
     return users;
   } catch (err) {
     console.error(err);
@@ -19,7 +19,7 @@ export const getUserById = async (id) => {
       throw new Error("User not found");
     }
     const user: User = result.rows[0];
-    console.log("get user by id success:",user);
+    console.log("get user by id success:", user);
     return user;
   } catch (err) {
     console.error(err);
@@ -34,7 +34,7 @@ export const getUserByEmail = async (email: IUser["email"]) => {
       throw new Error("User not found");
     }
     const user: User = result.rows[0];
-    console.log("get user by email success:",user);
+    console.log("get user by email success:", user);
     return user;
   } catch (err) {
     console.error(err);
@@ -50,8 +50,8 @@ export const getUserByEmail = async (email: IUser["email"]) => {
 export const addNewUser = async (user: User) => {
   try {
     const result = await db.query(
-      `INSERT INTO users (user_id, email, first_name, last_name, password, username, user_level) VALUES ($1, $2) RETURNING *`,
-      [user.user_id, user.email, user.first_name, user.last_name, user.password, user.username, user.user_level]
+      `INSERT INTO users (user_id, email, first_name, last_name, password, username, user_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [user.user_id, user.email, user.username.split(' ')[0], user.username.split(' ')[1], user.password, user.username, user.user_level]
     );
 
     console.log("New user added:", result.rows[0]);
@@ -68,7 +68,7 @@ export const updateUserById = (
     name,
   }: Omit<IUser, "password" | "email" | "tokens">
 ) => {
-    userModel.findByIdAndUpdate(
+  userModel.findByIdAndUpdate(
     id,
     { name },
     { new: true }
