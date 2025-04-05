@@ -32,7 +32,7 @@ export const Login: React.FC = () => {
       {/* Tagline */}
       <Typography
         variant='h6'
-        component='div's
+        component='div'
         sx={{
           color: "#6B8CC8",
           mt: 3,
