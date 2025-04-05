@@ -41,13 +41,14 @@ app.use("/auth", authRoutes);
 app.use(errorHandler);
 app.use(express.static("front"));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join("front", "index.html"));
-});
+// אין תיקיה כזו
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join("front", "index.html"));
+// });
 
 const initApp = () => {
   return new Promise<Express>(async (resolve, reject) => {
-      resolve(app);
+    resolve(app);
   });
 };
 

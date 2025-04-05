@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 const testDB = async () => {
   try {
     const result = await db.query('SELECT * FROM user_levels');
-    console.log("All user levels:",result.rows);
+    console.log("All user levels:", result.rows);
   } catch (err) {
     console.error(err);
   }
