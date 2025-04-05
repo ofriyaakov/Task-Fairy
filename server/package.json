@@ -5,11 +5,12 @@
   "main": "app.js",
   "scripts": {
     "prod": "NODE_ENV='production' && cp .env_prod .env && tsc -p tsconfig_prod.json && node ./dist/app.js",
-    "dev": "cp .env_dev .env && nodemon ./src/app.ts",
+    "dev": "cp .env_dev .env && nodemon ./app.ts",
     "start": "cp .env_dev .env && tsc && node ./dist/app.js",
     "test": "cp .env_dev .env && jest --detectOpenHandles --forceExit --runInBand --coverage",
     "test1": "jest --detectOpenHandles --forceExit --runInBand --coverage",
-    "start1": "tsc && node ./dist/app.js"  },
+    "start1": "tsc && node ./dist/app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ofriyaakov/Task-Fairy.git"
@@ -27,21 +28,26 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "google-auth-library": "^9.15.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
     "multer": "^1.4.5-lts.1",
+    "pg": "^8.14.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.1",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.12",
+    "@types/pg": "^8.11.11",
+    "@types/supertest": "^6.0.2",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.7",
     "i": "^0.3.7",
@@ -49,11 +55,8 @@
     "nodemon": "^3.1.7",
     "npm": "^11.0.0",
     "supertest": "^7.0.0",
-    "typescript": "^5.7.2",
-    "@jest/globals": "^29.7.0",
-    "@types/bcrypt": "^5.0.2",
-    "@types/supertest": "^6.0.2",
     "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }

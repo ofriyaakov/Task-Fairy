@@ -183,18 +183,18 @@ router.get(
  *              description: Not Found
  */
 
-router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  const user = req.body;
+// router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
+//   const { id } = req.params;
+//   const user = req.body;
 
-  try {
-    const updatedUser = await updateUserById(id, user);
+//   try {
+//     const updatedUser = await updateUserById(id, user);
 
-    if (!updatedUser) res.status(404).json({ message: "User not found" });
-    else res.status(200).send(updatedUser);
-  } catch (err) {
-    next(err);
-  }
-});
+//     if (!updatedUser) res.status(404).json({ message: "User not found" });
+//     else res.status(200).send(updatedUser);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 export default router;
