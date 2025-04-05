@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import {
-  Card,
-  CardContent,
-  Typography,
+  Box,
   TextField,
   Button,
+  Typography,
+  InputAdornment,
+  Container,
+  Link,
   Alert,
-  Box,
 } from "@mui/material";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 interface LoginFormProps {
-  onSubmit: (email: string, password: string) => void;
+  onSubmit: (username: string, password: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,58 +28,86 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     setLoading(true);
 
     try {
-      await onSubmit(email, password);
+      await onSubmit(username, password);
     } catch (err) {
-      setError("Invalid email or password");
+      setError("Invalid username or password");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
-      <CardContent>
-        <Typography variant='h5' component='h1' gutterBottom align='center'>
-          Login
-        </Typography>
-        <Box component='form' onSubmit={handleSubmit} sx={{ mt: 2 }}>
-          <TextField
-            fullWidth
-            margin='normal'
-            label='Email'
-            type='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete='email'
-          />
-          <TextField
-            fullWidth
-            margin='normal'
-            label='Password'
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            inputProps={{ minLength: 6 }}
-            autoComplete='current-password'
-          />
-          {error && (
-            <Alert severity='error' sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            disabled={loading}
-            sx={{ mt: 3 }}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </Box>
-      </CardContent>
-    </Card>
+    <Container maxWidth='xs' sx={{ pt: 4, textAlign: "center" }}>
+      <img src='/logo.jpg' alt='Logo' />
+
+      <Box component='form' onSubmit={handleSubmit}>
+        {error && (
+          <Alert severity='error' sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {/* Username Field */}
+        <TextField
+          fullWidth
+          placeholder='USERNAME'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          variant='outlined'
+          sx={{
+            mb: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "4px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <PersonOutlineIcon sx={{ color: "#6B8CC8" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {/* Password Field */}
+        <TextField
+          fullWidth
+          placeholder='PASSWORD'
+          type='password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          variant='outlined'
+          sx={{ mb: 2 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <LockOutlinedIcon sx={{ color: "#6B8CC8" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {/* Login Button */}
+        <Button
+          type='submit'
+          fullWidth
+          variant='contained'
+          disabled={loading}
+          sx={{
+            mt: 1,
+            mb: 2,
+            bgcolor: "#6B8CC8",
+            color: "white",
+            "&:hover": {
+              bgcolor: "#5A78B0",
+            },
+          }}>
+          LOGIN
+        </Button>
+      </Box>
+    </Container>
   );
 };
 
