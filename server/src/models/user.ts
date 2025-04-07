@@ -10,8 +10,8 @@ export enum UserLevel {
 export type User = {
   user_id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  first_name?: string;
+  last_name?: string;
   password: string;
   username: string;
   user_level: UserLevel;

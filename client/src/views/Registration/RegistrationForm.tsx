@@ -8,12 +8,13 @@ interface RegistrationFormProps {
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<RegistrationData>({
-    fullName: "",
-    phoneNumber: "",
-    companyName: "",
-    companyRole: "",
+    username: "",
+    // phoneNumber: "",
+    // companyName: "",
+    user_level: "",
     password: "",
     email: "",
+    user_id: ""
   });
   const [loading, setLoading] = useState(false);
 
@@ -53,12 +54,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
           }}>
-          {/* Full Name */}
+          {/* User Name */}
           <TextField
             fullWidth
-            name='fullName'
-            placeholder='FULL NAME'
-            value={formData.fullName}
+            name='username'
+            placeholder='USER NAME'
+            value={formData.username}
             onChange={handleChange}
             required
             variant='outlined'
@@ -85,12 +86,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             }}
           />
 
-          {/* Phone Number */}
+          {/* user id */}
           <TextField
             fullWidth
-            name='phoneNumber'
-            placeholder='PHONE NUMBER'
-            value={formData.phoneNumber}
+            name='user_id'
+            placeholder='ID'
+            value={formData.user_id}
             onChange={handleChange}
             required
             variant='outlined'
@@ -120,8 +121,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             fullWidth
             name='companyName'
             placeholder='COMPANY NAME'
-            value={formData.companyName}
-            onChange={handleChange}
+            // value={formData.companyName}
+            // onChange={handleChange}
             variant='outlined'
             size='small'
             InputProps={{
@@ -148,9 +149,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Company Role */}
           <TextField
             fullWidth
-            name='companyRole'
+            name='user_level'
             placeholder='COMPANY ROLE'
-            value={formData.companyRole}
+            value={formData.user_level}
             onChange={handleChange}
             variant='outlined'
             size='small'
