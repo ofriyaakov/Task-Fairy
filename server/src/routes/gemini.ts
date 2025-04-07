@@ -11,10 +11,8 @@ const router = express.Router();
  */
 
 router.post("/prompt/", async (req, res) => {
-  const question = req.body.prompt;
-
   try {
-    const aiAnswer = await geminiController.sendPrompt(question);
+    const aiAnswer = await geminiController.sendPrompt();
 
     if (!aiAnswer) res.status(404).json({ message: "Error from Gemini" });
     else res.status(200).send(aiAnswer);
@@ -25,32 +23,15 @@ router.post("/prompt/", async (req, res) => {
 
 /**
  * @swagger
- * /ai/prompt:
+ * /gemini/prompt:
  *   post:
- *     summary: Send a prompt to the AI
- *     tags:
- *       - AI
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               prompt:
- *                 type: string
- *                 description: The prompt of the request
- *             required:
- *               - prompt
+ *     summary: Get a prompt from Gemini
+ *     tags: [Gemini]
  *     responses:
  *       200:
- *         description: The AI response
- *         content:
- *           application/json
+ *         description: The prompt from Gemini
  *       400:
- *         description: Invalid input
- *       500:
- *         description: Server error
- */
+ *         description: Error from Gemini
+ **/
 
 export default router;
