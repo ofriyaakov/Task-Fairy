@@ -21,17 +21,4 @@ router.post("/prompt/", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /gemini/prompt:
- *   post:
- *     summary: Get a prompt from Gemini
- *     tags: [Gemini]
- *     responses:
- *       200:
- *         description: The prompt from Gemini
- *       400:
- *         description: Error from Gemini
- **/
-
 export default router;
