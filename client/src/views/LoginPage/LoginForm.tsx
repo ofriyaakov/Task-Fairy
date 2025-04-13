@@ -13,11 +13,11 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
+  onSubmit: (email: string, password: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,9 +28,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     setLoading(true);
 
     try {
-      await onSubmit(username, password);
+      await onSubmit(email, password);
     } catch (err) {
-      setError("Invalid username or password");
+      setError("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -43,16 +43,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       src="/Logo.png"
       alt="Logo"
       sx={{
-        // Use different widths for various breakpoints
         width: {
-          xs: "100%",  // Extra-small screens: Take up full container width
-          sm: "80%",   // Small screens: 80% of container
-          md: "60%",   // Medium screens: 60% of container
-          lg: "400px", // Large screens: fixed width of 400px
-          xl: "400px", // Extra-large screens: fixed width of 500px
+          xs: "100%",
+          sm: "80%",
+          md: "60%",
+          lg: "400px",
+          xl: "400px",
         },
-        height: "auto",  // Maintain aspect ratio
-        mx: "auto",      // Center the image horizontally if the container is wider
+        height: "auto",
+        mx: "auto",
       }}
     />
 
@@ -63,11 +62,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           </Alert>
         )}
 
-        {/* Username Field */}
+        {/* Email Field */}
         <TextField
-          placeholder='USERNAME'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder='EMAIL'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
           variant='outlined'
           sx={{
