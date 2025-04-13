@@ -1,4 +1,5 @@
 import React, { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -25,23 +26,30 @@ interface MenuItem {
 }
 
 const mainMenuItems: MenuItem[] = [
-    { text: "Dashboard", icon: <BarChartIcon /> },
-    { text: "Calendar", icon: <CalendarMonthIcon /> },
-    { text: "Tasks", icon: <TaskIcon /> },
-    { text: "Employees", icon: <GroupIcon /> },
-    { text: "Swaps", icon: <SwapHorizIcon /> },
+    { text: "Dashboard", icon: <BarChartIcon />, path: "/dashboard" },
+    { text: "Calendar", icon: <CalendarMonthIcon />, path: "/calendar" },
+    { text: "Tasks", icon: <TaskIcon />, path: "/tasks" },
+    { text: "Employees", icon: <GroupIcon />, path: "/employees" },
+    { text: "Swaps", icon: <SwapHorizIcon />, path: "/manager-swaps" },
 ];
 
 const bottomMenuItems: MenuItem[] = [
-    // { text: "Settings", icon: <SettingsIcon /> },
-    { text: "Logout", icon: <LogoutIcon /> },
+    { text: "Logout", icon: <LogoutIcon />, path: "/login", onClick: () => console.log("Logout clicked") },
 ];
 
 export const Navbar: FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const navigate = useNavigate();
 
-    const handleListItemClick = (index: number) => {
+    const handleListItemClick = (index: number, path?: string, onClick?: Function) => {
         setSelectedIndex(index);
+        if (path) {
+            navigate(path);
+        }
+
+        if (onClick) {
+            onClick();
+        }
     };
 
     return (
@@ -75,7 +83,7 @@ export const Navbar: FC = () => {
                 {mainMenuItems.map((item, index) => (
                     <ListItem key={item.text} disablePadding>
                         <ListItemButton
-                            onClick={() => handleListItemClick(index)}
+                            onClick={() => handleListItemClick(index, item.path)}
                             selected={selectedIndex === index}
                             sx={{
                                 py: 0,
@@ -129,7 +137,7 @@ export const Navbar: FC = () => {
                         return (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton
-                                    onClick={() => handleListItemClick(bottomIndex)}
+                                    onClick={() => handleListItemClick(bottomIndex, item.path, item.onClick)}
                                     selected={selectedIndex === bottomIndex}
                                     sx={{
                                         borderRadius: 2,

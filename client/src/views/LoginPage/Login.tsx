@@ -3,7 +3,7 @@ import LoginForm from "./LoginForm";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../queries/auth";
 
-export const Login: React.FC = () => {
+const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
@@ -44,3 +44,5 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+
+export default Login;
