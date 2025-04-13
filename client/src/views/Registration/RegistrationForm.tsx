@@ -6,7 +6,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
-import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
@@ -52,7 +52,22 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   return (
     <Box sx={{ maxWidth: 550, mx: "auto", pb: 2, px: 2 }}>
       {/* Logo and Title */}
-      <img src="/Logo.png" alt="Logo" width={370} height={270} />
+      <Box
+        component="img"
+        src="/Logo.png"
+        alt="Logo"
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "400px",
+            xl: "400px",
+          },
+          height: "auto",
+          mx: "auto",
+        }}
+      />
 
       {/* Form */}
       <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -310,7 +325,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             bgcolor: "#5F70C8",
             "&:hover": { bgcolor: "primary.dark" },
             fontFamily: '"Montserrat", sans-serif',
-            width: "60%"
+            width: "60%",
           }}
         >
           {loading ? "REGISTERING..." : "REGISTER"}

@@ -3,6 +3,7 @@ import RegistrationForm from "./RegistrationForm";
 import { useNavigate } from "react-router-dom";
 import { RegistrationData } from "./types";
 import { register } from "../../queries/auth";
+import "./Registration.css";
 
 export const Registration: React.FC = () => {
   const navigate = useNavigate();
@@ -19,10 +20,10 @@ export const Registration: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="register-container">
       <RegistrationForm onSubmit={handleRegister} />
 
-      <Typography variant='body2' color='text.secondary' sx={{ fontFamily: '"Montserrat", sans-serif', color: "#5F70C8" }}>
+      <Typography variant='body2' color='text.secondary' sx={{ fontFamily: '"Montserrat", sans-serif' }}>
         Already have a user?
         <Button sx={{ fontFamily: '"Montserrat", sans-serif', py: 0 }} onClick={() => navigate("/login")}>Login</Button>
       </Typography>
@@ -33,7 +34,7 @@ export const Registration: React.FC = () => {
         color='primary.main'
         fontWeight='bold'
         fontSize={"2rem"}
-        sx={{ mt: 2, fontFamily: '"Montserrat", sans-serif', color: "#5F70C8" }}>
+        sx={{ mt: 1, fontFamily: '"Montserrat", sans-serif', color: "#5F70C8" }}>
         Turning To-Dos into Ta-Das!
       </Typography>
     </div>
