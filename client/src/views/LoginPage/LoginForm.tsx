@@ -37,10 +37,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Container maxWidth='xs' sx={{ pt: 4, textAlign: "center" }}>
-      <img src='/Logo.png' alt='Logo' width={370} height={270} />
+    <Container maxWidth='sm' sx={{ textAlign: "center" }}>
+      <Box
+      component="img"
+      src="/Logo.png"
+      alt="Logo"
+      sx={{
+        // Use different widths for various breakpoints
+        width: {
+          xs: "100%",  // Extra-small screens: Take up full container width
+          sm: "80%",   // Small screens: 80% of container
+          md: "60%",   // Medium screens: 60% of container
+          lg: "400px", // Large screens: fixed width of 400px
+          xl: "400px", // Extra-large screens: fixed width of 500px
+        },
+        height: "auto",  // Maintain aspect ratio
+        mx: "auto",      // Center the image horizontally if the container is wider
+      }}
+    />
 
-      <Box component='form' onSubmit={handleSubmit}>
+      <Box component='form' onSubmit={handleSubmit} sx={{ fontFamily: '"Montserrat", sans-serif' }}>
         {error && (
           <Alert severity='error' sx={{ mb: 2 }}>
             {error}
@@ -49,7 +65,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
         {/* Username Field */}
         <TextField
-          fullWidth
           placeholder='USERNAME'
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -59,12 +74,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             mb: 2,
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
+              fontFamily: '"Montserrat", sans-serif',
+              color: "#102cc2",
+            }, 
+            "& fieldset": {
+              borderColor: "#5F70C8", // default border color
             },
+            width: "70%"
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <PersonOutlineIcon sx={{ color: "#6B8CC8" }} />
+                <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
               </InputAdornment>
             ),
           }}
@@ -79,11 +100,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
           variant='outlined'
-          sx={{ mb: 2 }}
+          sx={{ 
+            mb: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "4px",
+              fontFamily: '"Montserrat", sans-serif',
+              color: "#102cc2"
+            }, 
+            "& fieldset": {
+              borderColor: "#5F70C8", // default border color
+            }, 
+            width: "70%"
+           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <LockOutlinedIcon sx={{ color: "#6B8CC8" }} />
+                <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
               </InputAdornment>
             ),
           }}
@@ -98,11 +130,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           sx={{
             mt: 1,
             mb: 2,
-            bgcolor: "#6B8CC8",
+            bgcolor: "#5F70C8",
             color: "white",
             "&:hover": {
               bgcolor: "#5A78B0",
             },
+            fontFamily: '"Montserrat", sans-serif',
+            width: "70%"
           }}>
           LOGIN
         </Button>

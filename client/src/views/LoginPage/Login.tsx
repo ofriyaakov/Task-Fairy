@@ -2,6 +2,7 @@ import { Button, Typography } from "@mui/material";
 import LoginForm from "./LoginForm";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../queries/auth";
+import './Login.css';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <LoginForm onSubmit={handleLogin} />
       {/* Forgot Password Link */}
       <Typography
@@ -25,7 +26,7 @@ export const Login: React.FC = () => {
         variant='body2'
         align='center'
         color='textSecondary'
-        sx={{ mb: 4, textDecorationLine: "underline", cursor: "pointer" }}>
+        sx={{ mb: 4, textDecorationLine: "underline", cursor: "pointer", fontFamily: '"Montserrat", sans-serif' }}>
         Need an account? Register
       </Typography>
 
@@ -34,10 +35,11 @@ export const Login: React.FC = () => {
         variant='h6'
         component='div'
         sx={{
-          color: "#6B8CC8",
-          mt: 3,
-          fontWeight: "normal",
-          fontSize: "1.2rem",
+          color: "#5F70C8",
+          mt: 1,
+          fontWeight: "bolder",
+          fontSize: "2.3rem",
+          fontFamily: '"Montserrat", sans-serif'
         }}>
         Turning To-Dos into Ta-Das!
       </Typography>
