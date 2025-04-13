@@ -38,7 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
   return (
     <Container maxWidth='xs' sx={{ pt: 4, textAlign: "center" }}>
-      <img src='/logo.jpg' alt='Logo' />
+      <img src='/Logo.png' alt='Logo' width={370} height={270} />
 
       <Box component='form' onSubmit={handleSubmit}>
         {error && (
