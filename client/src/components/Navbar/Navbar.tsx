@@ -16,7 +16,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const drawerWidth = 218;
+const drawerWidth = 17;
 
 interface MenuItem {
     text: string;
@@ -57,10 +57,10 @@ export const Navbar: FC = () => {
             variant="permanent"
             anchor="left"
             sx={{
-                width: drawerWidth,
+                width: `${drawerWidth}%`,
                 flexShrink: 0,
                 "& .MuiDrawer-paper": {
-                    width: drawerWidth,
+                    width: `${drawerWidth}%`,
                     boxSizing: "border-box",
                     borderRight: "1px solid #E5E7EB",
                     backgroundColor: "#FFFFFF",
