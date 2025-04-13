@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, InputAdornment, SvgIcon } from "@mui/material";
 import { RegistrationData } from "./types";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
@@ -8,13 +14,15 @@ interface RegistrationFormProps {
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<RegistrationData>({
-    username: "",
-    // phoneNumber: "",
-    // companyName: "",
+    first_name: "",
+    last_name: "",
+    repeat_password: "",
+    phone_number: "",
+    company_name: "",
     user_level: "",
     password: "",
     email: "",
-    user_id: ""
+    user_id: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -42,45 +50,71 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", pt: 4, pb: 2, px: 2 }}>
+    <Box sx={{ maxWidth: 550, mx: "auto", pb: 2, px: 2 }}>
       {/* Logo and Title */}
-      <img src='/Logo.png' alt='Logo' width={370} height={270} />
+      <img src="/Logo.png" alt="Logo" width={370} height={270} />
 
       {/* Form */}
-      <Box component='form' onSubmit={handleSubmit} sx={{ width: "100%" }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
-          }}>
+          }}
+        >
           {/* User Name */}
           <TextField
-            fullWidth
-            name='username'
-            placeholder='USER NAME'
-            value={formData.username}
+            name="first name"
+            placeholder="FIRST NAME *"
+            value={formData.first_name}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+              width: "100%",
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <circle
-                      cx='12'
-                      cy='8'
-                      r='4'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <TextField
+            fullWidth
+            name="last name"
+            placeholder="LAST NAME *"
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
                 </InputAdornment>
               ),
             }}
@@ -89,28 +123,56 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* user id */}
           <TextField
             fullWidth
-            name='user_id'
-            placeholder='ID'
+            name="user_id"
+            placeholder="ID *"
             value={formData.user_id}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <path
-                      d='M6 4H10C11.1046 4 12 4.89543 12 6V18C12 19.1046 11.1046 20 10 20H6C4.89543 20 4 19.1046 4 18V6C4 4.89543 4.89543 4 6 4Z'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M12 8H16C17.1046 8 18 8.89543 18 10V14C18 15.1046 17.1046 16 16 16H12'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <BadgeOutlinedIcon sx={{ color: "#5F70C8" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Phone Number */}
+          <TextField
+            fullWidth
+            name="phone_number"
+            placeholder="PHONE NUMBER *"
+            value={formData.phone_number}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PhoneOutlinedIcon sx={{ color: "#5F70C8" }} />
                 </InputAdornment>
               ),
             }}
@@ -119,94 +181,26 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Company Name */}
           <TextField
             fullWidth
-            name='companyName'
-            placeholder='COMPANY NAME'
-            // value={formData.companyName}
-            // onChange={handleChange}
-            variant='outlined'
-            size='small'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='6'
-                      width='16'
-                      height='12'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M8 12H16' stroke='currentColor' />
-                    <path d='M8 16H16' stroke='currentColor' />
-                  </SvgIcon>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Company Role */}
-          <TextField
-            fullWidth
-            name='user_level'
-            placeholder='COMPANY ROLE'
-            value={formData.user_level}
+            name="companyName"
+            placeholder="COMPANY NAME *"
+            value={formData.company_name}
             onChange={handleChange}
-            variant='outlined'
-            size='small'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='6'
-                      y='4'
-                      width='12'
-                      height='16'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M10 10H14' stroke='currentColor' />
-                    <path d='M10 14H14' stroke='currentColor' />
-                    <path d='M11 6H13' stroke='currentColor' />
-                  </SvgIcon>
-                </InputAdornment>
-              ),
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
             }}
-          />
-
-          {/* Password */}
-          <TextField
-            fullWidth
-            name='password'
-            placeholder='PASSWORD'
-            type='password'
-            value={formData.password}
-            onChange={handleChange}
-            required
-            variant='outlined'
-            size='small'
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='9'
-                      width='16'
-                      height='11'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M7 9V7C7 5.34315 8.34315 4 10 4H14C15.6569 4 17 5.34315 17 7V9'
-                      stroke='currentColor'
-                    />
-                    <circle cx='12' cy='15' r='1.5' fill='currentColor' />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <WorkOutlineOutlinedIcon sx={{ color: "#5F70C8" }} />
                 </InputAdornment>
               ),
             }}
@@ -215,29 +209,88 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Email */}
           <TextField
             fullWidth
-            name='email'
-            placeholder='EMAIL'
-            type='email'
+            name="email"
+            placeholder="EMAIL *"
+            type="email"
             value={formData.email}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='6'
-                      width='16'
-                      height='12'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M4 9L12 15L20 9' stroke='currentColor' />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <EmailOutlinedIcon sx={{ color: "#5F70C8" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Password */}
+          <TextField
+            fullWidth
+            name="password"
+            placeholder="PASSWORD *"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Repeat password */}
+          <TextField
+            fullWidth
+            name="repeat password"
+            placeholder="REPEAT PASSWORD *"
+            type="password"
+            value={formData.repeat_password}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": {
+                borderColor: "#5F70C8", // default border color
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
                 </InputAdornment>
               ),
             }}
@@ -246,18 +299,20 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
         {/* Register Button */}
         <Button
-          type='submit'
-          fullWidth
-          variant='contained'
+          type="submit"
+          variant="contained"
           disabled={loading}
           sx={{
             mt: 3,
-            py: 1.5,
+            py: 1,
             borderRadius: 1,
             textTransform: "uppercase",
-            bgcolor: "primary.main",
+            bgcolor: "#5F70C8",
             "&:hover": { bgcolor: "primary.dark" },
-          }}>
+            fontFamily: '"Montserrat", sans-serif',
+            width: "60%"
+          }}
+        >
           {loading ? "REGISTERING..." : "REGISTER"}
         </Button>
 
