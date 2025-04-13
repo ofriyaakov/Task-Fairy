@@ -50,8 +50,8 @@ export const getUserByEmail = async (email: IUser["email"]) => {
 export const addNewUser = async (user: User) => {
   try {
     const result = await db.query(
-      `INSERT INTO users (user_id, email, first_name, last_name, password, username, user_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [user.user_id, user.email, user.username.split(' ')[0], user.username.split(' ')[1], user.password, user.username, user.user_level]
+      `INSERT INTO users (user_id, email, first_name, last_name, password, username, user_level, phone_number, company_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [user.user_id, user.email, user.username.split(' ')[0], user.username.split(' ')[1], user.password, user.username, user.user_level, user.phone_number, user.company_id]
     );
 
     console.log("New user added:", result.rows[0]);

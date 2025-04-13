@@ -13,6 +13,7 @@ import {
   getUserByEmail,
   addNewUser,
 } from "./user";
+import { addNewCompany } from "./company";
 
 export const login = async (
   email: IUser["email"],
@@ -90,19 +91,25 @@ export const refresh = async (refreshToken: string) => {
 };
 
 export const register = async (newUser: User) => {
-  const user = await addNewUser(newUser);
-  if (!user) throw new Error("user not created");
+  const company = await addNewCompany(newUser.company_name);
+  if (!company) {
+    throw new Error("company not created");
+  } else {
+    newUser.company_id = company.id;
+    const user = await addNewUser(newUser);
+    if (!user) throw new Error("user not created");
 
-  const accessToken = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
-  updateRefreshToken(user, refreshToken);
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+    updateRefreshToken(user, refreshToken);
 
-  return {
-    accessToken,
-    refreshToken,
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    tokens: user.tokens,
-  };
+    return {
+      accessToken,
+      refreshToken,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      tokens: user.tokens,
+    };
+  }
 };

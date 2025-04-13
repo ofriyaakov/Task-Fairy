@@ -16,6 +16,9 @@ export type User = {
   username: string;
   user_level: UserLevel;
   tokens: string[];
+  phone_number?: string;
+  company_id?: BigInteger;
+  company_name?: string;
 }
 
 export interface IUser {
