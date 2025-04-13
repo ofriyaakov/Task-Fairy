@@ -22,6 +22,7 @@ import { Star, Group } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
+import Headline from "./Headline";
 
 interface TaskFormData {
   name: string;
@@ -79,12 +80,7 @@ const NewTaskForm: React.FC = () => {
         bgcolor: "#f8fbff",
         borderRadius: 2,
       }}>
-      <Typography
-        variant='h5'
-        align='center'
-        sx={{ mb: 2, fontWeight: "medium" }}>
-        Create New Task
-      </Typography>
+      <Headline color={"#e3f2fd"} title={"Create New Task"} />
 
       <form onSubmit={handleSubmit}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
