@@ -60,6 +60,9 @@ const NewTaskForm: React.FC = () => {
     other: "",
   });
 
+  const formattedDayjs = (format: string, date: Dayjs) =>
+    dayjs(date).format(format);
+
   const handleChange = (field: keyof TaskFormData, value: any) => {
     console.log(value);
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -67,7 +70,15 @@ const NewTaskForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Task created:", formData);
+
+    const payload = {
+      ...formData,
+      date: formattedDayjs("YYYY-MM-DD", formData.date),
+      startTime: formattedDayjs("HH:mm", formData.startTime),
+      endTime: formattedDayjs("HH:mm", formData.endTime),
+    };
+
+    console.log("Task created:", payload);
   };
 
   return (
