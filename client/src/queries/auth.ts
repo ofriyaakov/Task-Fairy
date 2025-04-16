@@ -8,11 +8,9 @@ interface LoginPayload {
 
 interface AuthResponse {
   token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
+  id: string;
+  name: string;
+  email: string;
 }
 
 const AUTH_ROUTE = "/auth";
