@@ -23,6 +23,7 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
+import { createTask, TaskPayload } from "../queries/task";
 
 interface TaskFormData {
   name: string;
@@ -68,17 +69,23 @@ const NewTaskForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
+    const payload: TaskPayload = {
       ...formData,
       date: formattedDayjs("YYYY-MM-DD", formData.date),
       startTime: formattedDayjs("HH:mm", formData.startTime),
       endTime: formattedDayjs("HH:mm", formData.endTime),
+      creatorId: "1",
     };
 
-    console.log("Task created:", payload);
+    try {
+      const response = await createTask(payload);
+      console.log("Task created:", response);
+    } catch (err: any) {
+      console.error(err.message);
+    }
   };
 
   return (
