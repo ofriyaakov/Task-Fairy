@@ -44,7 +44,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", pt: 4, pb: 2, px: 2 }}>
       {/* Logo and Title */}
-      <img src='/logo.jpg' alt='Logo' />
+      <img src='/Logo.png' alt='Logo' width={350} height={270} />
 
       {/* Form */}
       <Box component='form' onSubmit={handleSubmit} sx={{ width: "100%" }}>
