@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -25,6 +25,38 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     //   employees, 
     onSave
 }) => {
+    const [approvedEmployees, setApprovedEmployees] = useState<employeeDatailsCard[]>([])
+
+    const employeesSuggestions: employeeDatailsCard[] = [
+        {
+            firstName: "Ofri",
+            lastName: "Yaakov",
+            employeeId: "1111111111",
+            companyName: "sigma",
+            city: "Afula",
+            balancePoints: 10,
+            gender: "female"
+        },
+        {
+            firstName: "Ofri2",
+            lastName: "2",
+            employeeId: "22222222",
+            companyName: "sigma",
+            city: "Afula",
+            balancePoints: 10,
+            gender: "female"
+        },
+        {
+            firstName: "Ofri3",
+            lastName: "3",
+            employeeId: "333333333",
+            companyName: "sigma",
+            city: "Afula",
+            balancePoints: 10,
+            gender: "female"
+        }
+    ]
+
     const handleSave = () => {
         onSave();
         onClose();
@@ -34,35 +66,21 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         onClose();
     };
 
-    const employeesSuggestions: employeeDatailsCard[] = [
-        {
-            firstName: "Ofri",
-            lastName: "Yaakov",
-            employeeId: "212",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        },
-        {
-            firstName: "Ofri",
-            lastName: "Yaakov",
-            employeeId: "212",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        },
-        {
-            firstName: "Ofri",
-            lastName: "Yaakov",
-            employeeId: "212",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        }
-    ]
+    const handleApproveEmployee = (employee: employeeDatailsCard) => {
+        setApprovedEmployees([...approvedEmployees, employee])
+    }
+
+    const handleRemoveEmployee = (deletedEmployee: employeeDatailsCard) => {
+        const removeEmployee = approvedEmployees?.filter(employee => employee.employeeId !== deletedEmployee.employeeId)
+        setApprovedEmployees(removeEmployee)
+
+    }
+
+    useEffect(() => {
+        console.log('approvedEmployees --------- ', approvedEmployees)
+    }, [approvedEmployees])
+
+
 
 
     return (
@@ -102,7 +120,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                 <Grid container spacing={2}>
                     {employeesSuggestions.map((employee: employeeDatailsCard, index) => (
                         <Grid item xs={12} md={6} key={index}>
-                            <EmployeeDetailsCard employee={employee} isStatusButtons />
+                            <EmployeeDetailsCard
+                                employee={employee}
+                                handleApproveEmployee={handleApproveEmployee}
+                                handleRemoveEmployee={handleRemoveEmployee}
+                            />
                         </Grid>
                     ))}
                 </Grid>
