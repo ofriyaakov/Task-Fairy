@@ -17,7 +17,7 @@ interface EmployeeDetailsCardProps {
 
 const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({ employee, isStatusButtons }) => {
     return (
-        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px" }}>
+        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: "white" }}>
             <Grid container direction="column" alignItems="center" >
                 <Grid item xs={6} md={6}>
                     <Box display={"flex"}>
@@ -59,14 +59,14 @@ const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({ employee, isStatusBut
                             </Grid>
                         </Grid>
                         <Grid alignContent={"center"}>
-                            <Grid item xs={3}>
+                            <Grid item xs={3} style={{ cursor: 'pointer' }}>
                                 <Box display="flex" alignItems="center">
-                                    <CheckIcon sx={{ fontSize: 32, color: 'rgb(97 196 83)' }} />
+                                    <CheckIcon sx={{ fontSize: 35, color: 'rgb(97 196 83)' }} />
                                 </Box>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={3} style={{ cursor: 'pointer' }}>
                                 <Box display="flex" alignItems="center">
-                                    <CloseIcon sx={{ fontSize: 32, color: 'rgb(226 86 24)' }} />
+                                    <CloseIcon sx={{ fontSize: 35, color: 'rgb(226 86 24)' }} />
                                 </Box>
                             </Grid>
                         </Grid>
