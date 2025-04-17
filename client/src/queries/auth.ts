@@ -18,6 +18,9 @@ const AUTH_ROUTE = "/auth";
 export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post(`${AUTH_ROUTE}/login`, payload);
+    localStorage.setItem("loggedUserId", response.data.id);
+    localStorage.setItem("accessToken", response.data.accessToken);
+
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Login failed");

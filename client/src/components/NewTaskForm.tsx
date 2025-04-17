@@ -24,6 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
 import { createTask, TaskPayload } from "../queries/task";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 interface TaskFormData {
   name: string;
@@ -47,6 +48,8 @@ const locations = [
 ];
 
 const NewTaskForm: React.FC = () => {
+  const { connectedUser } = useGlobalContext();
+
   const [formData, setFormData] = useState<TaskFormData>({
     name: "",
     description: "",
@@ -77,7 +80,7 @@ const NewTaskForm: React.FC = () => {
       date: formattedDayjs("YYYY-MM-DD", formData.date),
       startTime: formattedDayjs("HH:mm", formData.startTime),
       endTime: formattedDayjs("HH:mm", formData.endTime),
-      creatorId: "1",
+      creatorId: connectedUser?.id || "",
     };
 
     try {
@@ -97,6 +100,8 @@ const NewTaskForm: React.FC = () => {
         mx: "auto",
         bgcolor: "#f8fbff",
         borderRadius: 2,
+        transform: "scale(0.85)", // or whatever scale you prefer
+        transformOrigin: "top center",
       }}>
       <Headline color={"#e3f2fd"} title={"Create New Task"} />
 
@@ -128,6 +133,14 @@ const NewTaskForm: React.FC = () => {
                     actionBar: () => null,
                     toolbar: () => null,
                   }}
+                  //   slotProps={{
+                  //     layout: {
+                  //       sx: {
+                  //         transform: "scale(0.8)", // reduce size to 80%
+                  //         transformOrigin: "top center", // keep it aligned nicely
+                  //       },
+                  //     },
+                  //   }}
                   sx={{
                     maxHeight: "300px",
                     bgcolor: "white",

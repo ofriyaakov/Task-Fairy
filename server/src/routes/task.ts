@@ -201,8 +201,10 @@ router.post("/", async (req: Request, res: Response) => {
   const task = req.body;
 
   try {
-    res.status(200).send(await createTask(task));
+    const newTask = await createTask(task);
+    res.status(200).send(newTask);
   } catch (err) {
+    console.error(err);
     res.status(400).send(err);
   }
 });
