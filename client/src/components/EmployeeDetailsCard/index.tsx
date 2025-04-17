@@ -12,10 +12,24 @@ import { employeeDatailsCard } from '../../types/employee';
 
 interface EmployeeDetailsCardProps {
     employee: employeeDatailsCard;
-    isStatusButtons: boolean;
+    handleApproveEmployee: (employee: employeeDatailsCard) => void
+    handleRemoveEmployee: (employee: employeeDatailsCard) => void
 }
 
-const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({ employee, isStatusButtons }) => {
+const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
+    employee,
+    handleApproveEmployee, handleRemoveEmployee
+}) => {
+
+    const approveEmployee = () => {
+        handleApproveEmployee(employee)
+    }
+
+    const removeEmployee = () => {
+        handleRemoveEmployee(employee)
+    }
+
+
     return (
         <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: "white" }}>
             <Grid container direction="column" alignItems="center" >
@@ -59,12 +73,12 @@ const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({ employee, isStatusBut
                             </Grid>
                         </Grid>
                         <Grid alignContent={"center"}>
-                            <Grid item xs={3} style={{ cursor: 'pointer' }}>
-                                <Box display="flex" alignItems="center">
+                            <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={approveEmployee}>
+                                <Box display="flex" alignItems="center" >
                                     <CheckIcon sx={{ fontSize: 35, color: 'rgb(97 196 83)' }} />
                                 </Box>
                             </Grid>
-                            <Grid item xs={3} style={{ cursor: 'pointer' }}>
+                            <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={removeEmployee} >
                                 <Box display="flex" alignItems="center">
                                     <CloseIcon sx={{ fontSize: 35, color: 'rgb(226 86 24)' }} />
                                 </Box>
