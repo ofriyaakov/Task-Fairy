@@ -14,7 +14,7 @@ const PageLayout: FC<PageLayoutProps> = ({ children }) => {
     <Box>
       <Navbar />
       <TopBar />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, ml: `${drawerWidth}%` }}>
+      <Box component="main" sx={{ flexGrow: 1, px: 3,py:1, ml: `${drawerWidth}%` }}>
         {children}
       </Box>
     </Box>

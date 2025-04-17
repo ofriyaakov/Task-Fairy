@@ -68,7 +68,6 @@ const NewTaskForm: React.FC = () => {
     dayjs(date).format(format);
 
   const handleChange = (field: keyof TaskFormData, value: any) => {
-    console.log(value);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -95,36 +94,42 @@ const NewTaskForm: React.FC = () => {
     <Paper
       elevation={0}
       sx={{
-        p: 3,
-        maxWidth: 800,
+        p: 1,
         mx: "auto",
-        bgcolor: "#f8fbff",
         borderRadius: 2,
-        transform: "scale(0.85)", // or whatever scale you prefer
-        transformOrigin: "top center",
       }}>
       <Headline color={"#e3f2fd"} title={"Create New Task"} />
+      <Box
+        sx={{
+          p: 2,
+          mx: "auto",
+          bgcolor: "#f8fbff",
+          borderRadius: 2,
+        }}>
+        <form onSubmit={handleSubmit}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                gap: 3,
+              }}>
+              {/* Left Column */}
+              <Box>
+                <TextField
+                  fullWidth
+                  label='Name'
+                  variant='outlined'
+                  value={formData.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  sx={{
+                    bgcolor: "white",
+                    borderRadius: 1,
+                    transform: "scale(0.9)",
+                    transformOrigin: "top center",
+                  }}
+                />
 
-      <form onSubmit={handleSubmit}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 3,
-            }}>
-            {/* Left Column */}
-            <Box>
-              <TextField
-                fullWidth
-                label='Name'
-                variant='outlined'
-                value={formData.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                sx={{ mb: 2, bgcolor: "white", borderRadius: 1 }}
-              />
-
-              <Box sx={{ mb: 3 }}>
                 <StaticDatePicker
                   orientation='portrait'
                   value={formData.date}
@@ -133,182 +138,244 @@ const NewTaskForm: React.FC = () => {
                     actionBar: () => null,
                     toolbar: () => null,
                   }}
-                  //   slotProps={{
-                  //     layout: {
-                  //       sx: {
-                  //         transform: "scale(0.8)", // reduce size to 80%
-                  //         transformOrigin: "top center", // keep it aligned nicely
-                  //       },
-                  //     },
-                  //   }}
                   sx={{
-                    maxHeight: "300px",
                     bgcolor: "white",
                     borderRadius: 1,
+                    transform: "scale(0.9)",
+                    transformOrigin: "top center",
                   }}
                 />
               </Box>
+
+              {/* Right Column */}
+              <Box>
+                <TextField
+                  fullWidth
+                  label='Description'
+                  variant='outlined'
+                  multiline
+                  rows={2}
+                  value={formData.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  sx={{
+                    bgcolor: "white",
+                    borderRadius: 1,
+                    transform: "scale(0.9)",
+                    transformOrigin: "top center",
+                  }}
+                />
+
+                <Box>
+                  <FormLabel
+                    component='legend'
+                    sx={{
+                      display: "flex",
+                      transform: "scale(0.7)",
+                      transformOrigin: "bottom left",
+                    }}>
+                    Time range
+                  </FormLabel>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      bgcolor: "white",
+                      borderRadius: 1,
+                      padding: 1,
+                    }}>
+                    <Box
+                      sx={{
+                        flex: 1,
+                        transform: "scale(0.9)",
+                        transformOrigin: "top center",
+                      }}>
+                      <TimePicker
+                        label='Start Time'
+                        value={formData.startTime}
+                        onChange={(newValue) =>
+                          handleChange("startTime", newValue)
+                        }
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        flex: 1,
+                        transform: "scale(0.9)",
+                        transformOrigin: "top center",
+                      }}>
+                      <TimePicker
+                        label='End Time'
+                        value={formData.endTime}
+                        onChange={(newValue) =>
+                          handleChange("endTime", newValue)
+                        }
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box>
+                  <FormControl fullWidth component='fieldset'>
+                    <FormLabel
+                      component='legend'
+                      sx={{
+                        display: "flex",
+                        transform: "scale(0.7)",
+                        transformOrigin: "bottom left",
+                        width: "100%",
+                      }}>
+                      Required gender
+                    </FormLabel>
+
+                    <RadioGroup
+                      row
+                      value={formData.gender}
+                      onChange={(e) => handleChange("gender", e.target.value)}
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        bgcolor: "white",
+                        borderRadius: 1,
+                        padding: 1,
+                        transform: "scale(0.9)",
+                        transformOrigin: "top center",
+                      }}>
+                      <FormControlLabel
+                        value='Male'
+                        control={<Radio size='small' />}
+                        label='Male'
+                      />
+                      <FormControlLabel
+                        value='Female'
+                        control={<Radio size='small' />}
+                        label='Female'
+                      />
+                      <FormControlLabel
+                        value='Both'
+                        control={<Radio size='small' />}
+                        label='Both'
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Box>
+
+                <FormControl fullWidth>
+                  <FormLabel
+                    component='legend'
+                    sx={{
+                      display: "flex",
+                      transform: "scale(0.7)",
+                      transformOrigin: "bottom left",
+                      width: "100%",
+                    }}>
+                    Location
+                  </FormLabel>
+                  <Select
+                    value={formData.location}
+                    onChange={(e) => handleChange("location", e.target.value)}
+                    displayEmpty
+                    sx={{
+                      bgcolor: "white",
+                      borderRadius: 1,
+                      transform: "scale(0.9)",
+                      transformOrigin: "top center",
+                    }}>
+                    {locations.map((location) => (
+                      <MenuItem key={location} value={location}>
+                        {location}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
 
-            {/* Right Column */}
-            <Box>
-              <TextField
-                fullWidth
-                label='Description'
-                variant='outlined'
-                multiline
-                rows={2}
-                value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-                sx={{ mb: 2, bgcolor: "white", borderRadius: 1 }}
-              />
-
-              <Typography variant='subtitle2'>Time range</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}>
               <Box
                 sx={{
-                  display: "flex",
-                  gap: 2,
-                  mb: 2,
-                  bgcolor: "white",
-                  borderRadius: 1,
-                  padding: 1,
+                  transform: "scale(0.9)",
+                  transformOrigin: "top center",
                 }}>
-                <Box sx={{ flex: 1 }}>
-                  <TimePicker
-                    label='Start Time'
-                    value={formData.startTime}
-                    onChange={(newValue) => handleChange("startTime", newValue)}
+                <FormControl fullWidth>
+                  <TextField
+                    label='Balance points'
+                    type='number'
+                    value={formData.balancePoints}
+                    onChange={(e) =>
+                      handleChange(
+                        "balancePoints",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <Star />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <TimePicker
-                    label='End Time'
-                    value={formData.endTime}
-                    onChange={(newValue) => handleChange("endTime", newValue)}
-                  />
-                </Box>
+                </FormControl>
               </Box>
-
-              <FormControl fullWidth component='fieldset'>
-                <FormLabel component='legend'>Required gender</FormLabel>
-                <RadioGroup
-                  row
-                  value={formData.gender}
-                  onChange={(e) => handleChange("gender", e.target.value)}
-                  sx={{
-                    display: "flex",
-                    gap: 7,
-                    mb: 1,
-                    bgcolor: "white",
-                    borderRadius: 1,
-                    padding: 1,
-                  }}>
-                  <FormControlLabel
-                    value='Male'
-                    control={<Radio size='small' />}
-                    label='Male'
+              <Box
+                sx={{
+                  transform: "scale(0.9)",
+                  transformOrigin: "top center",
+                }}>
+                <FormControl fullWidth>
+                  <TextField
+                    label='Employees amount'
+                    type='number'
+                    value={formData.employeesAmount}
+                    onChange={(e) =>
+                      handleChange(
+                        "employeesAmount",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <Group />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
-                  <FormControlLabel
-                    value='Female'
-                    control={<Radio size='small' />}
-                    label='Female'
+                </FormControl>
+              </Box>
+              <Box
+                sx={{
+                  transform: "scale(0.9)",
+                  transformOrigin: "top center",
+                }}>
+                <FormControl fullWidth>
+                  <TextField
+                    label='Other'
+                    type='text'
+                    value={formData.other}
+                    onChange={(e) => handleChange("other", e.target.value)}
+                    sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
-                  <FormControlLabel
-                    value='Both'
-                    control={<Radio size='small' />}
-                    label='Both'
-                  />
-                </RadioGroup>
-              </FormControl>
-
-              <FormControl fullWidth>
-                <FormLabel>Location</FormLabel>
-                <Select
-                  value={formData.location}
-                  onChange={(e) => handleChange("location", e.target.value)}
-                  displayEmpty
-                  sx={{ bgcolor: "white", borderRadius: 1 }}>
-                  {locations.map((location) => (
-                    <MenuItem key={location} value={location}>
-                      {location}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                </FormControl>
+              </Box>
             </Box>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mt: 2,
-            }}>
-            <Box sx={{ mb: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  label='Balance points'
-                  type='number'
-                  value={formData.balancePoints}
-                  onChange={(e) =>
-                    handleChange("balancePoints", parseInt(e.target.value) || 0)
-                  }
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <Star />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ bgcolor: "white", borderRadius: 1 }}
-                />
-              </FormControl>
-            </Box>
-            <Box sx={{ mb: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  label='Employees amount'
-                  type='number'
-                  value={formData.employeesAmount}
-                  onChange={(e) =>
-                    handleChange(
-                      "employeesAmount",
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <Group />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ bgcolor: "white", borderRadius: 1 }}
-                />
-              </FormControl>
-            </Box>
-            <Box sx={{ mb: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  label='Other'
-                  type='text'
-                  value={formData.other}
-                  onChange={(e) => handleChange("other", e.target.value)}
-                  sx={{ bgcolor: "white", borderRadius: 1 }}
-                />
-              </FormControl>
-            </Box>
-          </Box>
-          <Button
-            type='submit'
-            variant='contained'
-            color='primary'
-            sx={{ minWidth: 150 }}>
-            Create
-          </Button>
-        </LocalizationProvider>
-      </form>
+            <Button
+              type='submit'
+              variant='contained'
+              color='primary'
+              sx={{ minWidth: 300, mt: 3 }}>
+              Create
+            </Button>
+          </LocalizationProvider>
+        </form>
+      </Box>
     </Paper>
   );
 };
