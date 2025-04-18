@@ -11,27 +11,29 @@ import {
 } from '@mui/material';
 import { employeeDatailsCard } from './../../types/employee'
 import EmployeeDetailsCard from './../EmployeeDetailsCard'
+import { assignEmployees } from './../../queries/task'
 
 interface SuggestionsDialogProps {
     open: boolean;
     onClose: () => void;
-    //   employees: employeeDatailsCard[];
-    onSave: () => void;
+    // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
+    // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     open,
     onClose,
-    //   employees, 
-    onSave
+    // employeesSuggestions, 
+    // taskId
 }) => {
-    const [approvedEmployees, setApprovedEmployees] = useState<employeeDatailsCard[]>([])
+    const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
 
+    // TO REPLACE AFTER WE HAVE THE ALGORITHM
     const employeesSuggestions: employeeDatailsCard[] = [
         {
             firstName: "Ofri",
             lastName: "Yaakov",
-            employeeId: "1111111111",
+            employeeId: "21260",
             companyName: "sigma",
             city: "Afula",
             balancePoints: 10,
@@ -40,7 +42,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         {
             firstName: "Ofri2",
             lastName: "2",
-            employeeId: "22222222",
+            employeeId: "2126",
             companyName: "sigma",
             city: "Afula",
             balancePoints: 10,
@@ -49,7 +51,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         {
             firstName: "Ofri3",
             lastName: "3",
-            employeeId: "333333333",
+            employeeId: "212",
             companyName: "sigma",
             city: "Afula",
             balancePoints: 10,
@@ -57,28 +59,35 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         }
     ]
 
-    const handleSave = () => {
-        onSave();
-        onClose();
+    // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
+    const taskId = '9dac927f-0680-4929-8271-46706581081e'
+
+    const handleSave = async () => {
+        try {
+            await assignEmployees(taskId, approvedEmployeeIds)
+            setApprovedEmployeeIds([])
+        } catch (err: any) {
+            console.error(err.message);
+        }
     };
 
     const handleCancel = () => {
-        onClose();
+        setApprovedEmployeeIds([])
     };
 
-    const handleApproveEmployee = (employee: employeeDatailsCard) => {
-        setApprovedEmployees([...approvedEmployees, employee])
+    const handleApproveEmployee = (employeeId: string) => {
+        setApprovedEmployeeIds([...approvedEmployeeIds, employeeId])
     }
 
-    const handleRemoveEmployee = (deletedEmployee: employeeDatailsCard) => {
-        const removeEmployee = approvedEmployees?.filter(employee => employee.employeeId !== deletedEmployee.employeeId)
-        setApprovedEmployees(removeEmployee)
+    const handleRemoveEmployee = (deletedEmployeeId: string) => {
+        const removeEmployee = approvedEmployeeIds?.filter(employeeId => employeeId !== deletedEmployeeId)
+        setApprovedEmployeeIds(removeEmployee)
 
     }
 
     useEffect(() => {
-        console.log('approvedEmployees --------- ', approvedEmployees)
-    }, [approvedEmployees])
+        console.log('approvedEmployees --------- ', approvedEmployeeIds)
+    }, [approvedEmployeeIds])
 
 
 

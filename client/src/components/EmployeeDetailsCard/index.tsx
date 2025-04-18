@@ -12,8 +12,8 @@ import { employeeDatailsCard } from '../../types/employee';
 
 interface EmployeeDetailsCardProps {
     employee: employeeDatailsCard;
-    handleApproveEmployee: (employee: employeeDatailsCard) => void
-    handleRemoveEmployee: (employee: employeeDatailsCard) => void
+    handleApproveEmployee: (employeeId: string) => void
+    handleRemoveEmployee: (employeeId: string) => void
 }
 
 const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
@@ -24,12 +24,12 @@ const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
     const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('white')
 
     const approveEmployee = () => {
-        handleApproveEmployee(employee)
+        handleApproveEmployee(employee.employeeId)
         setCardBackgroundColor('rgb(225 247 239)')
     }
 
     const removeEmployee = () => {
-        handleRemoveEmployee(employee)
+        handleRemoveEmployee(employee.employeeId)
         setCardBackgroundColor('rgb(247 224 224)')
     }
 
