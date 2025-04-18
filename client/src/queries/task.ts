@@ -1,22 +1,5 @@
 import axiosInstance from "../axiosInstance";
-
-export type Gender = "Male" | "Female" | "Both";
-
-export interface TaskPayload {
-  name: string;
-  description: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  gender: Gender;
-  location: string;
-  balancePoints: number;
-  employeesAmount: number;
-  saveToTasks: boolean;
-  other: string;
-  id?: string;
-  companyId: string;
-}
+import { TaskPayload } from './../types/Task';
 
 const TASK_ROUTE = "/task";
 export const createTask = async (payload: TaskPayload) => {
