@@ -46,3 +46,18 @@ export const createTask = async (task: Task) => {
     console.error(e);
   }
 };
+
+export const getAllSavedTasks = async () => {
+  try {
+    const result = await db.query(`
+      SELECT * FROM public.tasks 
+      WHERE save_to_tasks`);
+
+    const savesTasks: Task[] = result.rows;
+
+    console.log("get all saved tasks success:", savesTasks);
+    return savesTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
