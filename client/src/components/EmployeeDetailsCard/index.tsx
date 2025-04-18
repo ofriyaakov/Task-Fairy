@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Box, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
@@ -21,17 +21,21 @@ const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
     handleApproveEmployee, handleRemoveEmployee
 }) => {
 
+    const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('white')
+
     const approveEmployee = () => {
         handleApproveEmployee(employee)
+        setCardBackgroundColor('rgb(225 247 239)')
     }
 
     const removeEmployee = () => {
         handleRemoveEmployee(employee)
+        setCardBackgroundColor('rgb(247 224 224)')
     }
 
 
     return (
-        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: "white" }}>
+        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: cardBackgroundColor }}>
             <Grid container direction="column" alignItems="center" >
                 <Grid item xs={6} md={6}>
                     <Box display={"flex"}>
