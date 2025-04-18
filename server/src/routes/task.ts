@@ -28,56 +28,6 @@ router.use(authenticateToken);
  * @swagger
  * components:
  *   schemas:
- *       User:
- *           type: object
- *           required:
- *               - email
- *               - password
- *           properties:
- *               email:
- *                   type: string
- *                   description: The user email
- *               password:
- *                   type: string
- *                   description: The user password
- *           example:
- *               email: 'user@test.com'
- *               password: '1234567'
- *       FullUser:
- *           type: object
- *           required:
- *               - email
- *               - password
- *               - name
- *           properties:
- *               email:
- *                   type: string
- *                   description: The user email
- *               password:
- *                   type: string
- *                   description: The user password
- *               name:
- *                   type: string
- *                   description: The user name
- *           example:
- *               email: 'bob@gmail.com'
- *               password: '123456'
- *               name: 'Bob'
- *       Tokens:
- *          type: object
- *          required:
- *              - accessToken
- *              - refreshToken
- *          properties:
- *              accessToken:
- *                  type: string
- *                  description: The JWT access token
- *              refreshToken:
- *                  type: string
- *                  description: The JWT refresh token
- *          example:
- *              accessToken: '123cd123x1xx1'
- *              refreshToken: '134r2134cr1x3c'
  *       Task:
  *          type: object
  *          required:
@@ -138,38 +88,7 @@ router.use(authenticateToken);
  *              other: 'Bring scanning equipment'
  */
 
-/**
- * @swagger
- * /user/:
- *   put:
- *       summary: Update a user by id
- *       tags: [Users]
- *       security:
- *           - bearerAuth: []
- *       parameters:
- *          - name: user_id
- *            in: path
- *            required: true
- *            schema:
- *              type: string
- *       requestBody:
- *           required: true
- *           content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/User'
- *       responses:
- *           200:
- *               description: Updated user
- *               content:
- *                   application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/User'
- *           400:
- *              description: Bad request
- *           404:
- *              description: Not Found
- */
+
 
 /**
  * @swagger
