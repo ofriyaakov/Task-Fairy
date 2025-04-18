@@ -25,6 +25,7 @@ import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
 import { createTask, TaskPayload } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
+import { dateFormate, timeFormate } from "../consts";
 
 interface TaskFormData {
   name: string;
@@ -76,9 +77,9 @@ const NewTaskForm: React.FC = () => {
 
     const payload: TaskPayload = {
       ...formData,
-      date: formattedDayjs("YYYY-MM-DD", formData.date),
-      startTime: formattedDayjs("HH:mm", formData.startTime),
-      endTime: formattedDayjs("HH:mm", formData.endTime),
+      date: formattedDayjs(dateFormate, formData.date),
+      startTime: formattedDayjs(timeFormate, formData.startTime),
+      endTime: formattedDayjs(timeFormate, formData.endTime),
       creatorId: connectedUser?.id || "",
     };
 

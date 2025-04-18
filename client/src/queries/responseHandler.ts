@@ -7,6 +7,7 @@ import {
 } from "axios";
 import { REFRESH_ROUTE, refreshToken } from "./tokenRefresher";
 import axiosInstance from "../axiosInstance";
+import { accessTokenKey, refreshTokenKey } from "../consts";
 
 export const getErrorInterceptor = () => {
   let tokenRefresher: Promise<void> | undefined = undefined;
@@ -38,8 +39,8 @@ export const getErrorInterceptor = () => {
           isAxiosError(e) &&
           e?.response?.status === HttpStatusCode.Unauthorized
         ) {
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("accessToken");
+          localStorage.removeItem(refreshTokenKey);
+          localStorage.removeItem(accessTokenKey);
 
           window.location.href = "/login";
         }

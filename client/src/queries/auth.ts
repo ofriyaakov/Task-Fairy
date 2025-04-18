@@ -1,4 +1,5 @@
 import axiosInstance from "../axiosInstance";
+import { accessTokenKey } from "../consts";
 import { RegistrationData } from "../views/Registration/types";
 
 interface LoginPayload {
@@ -19,7 +20,7 @@ export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post(`${AUTH_ROUTE}/login`, payload);
     localStorage.setItem("loggedUserId", response.data.id);
-    localStorage.setItem("accessToken", response.data.accessToken);
+    localStorage.setItem(accessTokenKey, response.data.accessToken);
 
     return response.data;
   } catch (error: any) {
