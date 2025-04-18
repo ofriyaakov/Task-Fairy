@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask } from "../controllers/task";
+import { createTask, assignEmployees } from "../controllers/task";
 
 const router = express.Router();
 
@@ -171,6 +171,41 @@ router.post("/", async (req: Request, res: Response) => {
     try {
         const newTask = await createTask(task);
         res.status(200).send(newTask);
+    } catch (err) {
+        console.error(err);
+        res.status(400).send(err);
+    }
+});
+
+
+/**
+ * @swagger
+ * /task/assignEmployees:
+ *   post:
+ *       summary: Assign employees to a task
+ *       tags: [Task, Users]
+ *       requestBody:
+ *           required: true
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/r_tasks_users'
+ *       responses:
+ *           200:
+ *               description: Assigned employees successfully
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/r_tasks_users'
+ *           400:
+ *              description: Bad request - invalid data
+ */
+router.post("/assignEmployees", async (req: Request, res: Response) => {
+    const { taskId, employeeIds } = req.body;
+
+    try {
+        const newAssiments = await assignEmployees(taskId, employeeIds);
+        res.status(200).send(newAssiments)
     } catch (err) {
         console.error(err);
         res.status(400).send(err);
