@@ -16,7 +16,7 @@ interface EmployeeDetailsCardProps {
     handleRemoveEmployee: (employeeId: string) => void
 }
 
-const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
+const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
     employee,
     handleApproveEmployee, handleRemoveEmployee
 }) => {
@@ -96,4 +96,4 @@ const DetailsCard: React.FC<EmployeeDetailsCardProps> = ({
 }
 
 
-export default DetailsCard;
+export default EmployeeDetailsCard;

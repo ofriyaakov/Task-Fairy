@@ -51,7 +51,7 @@ export const assignEmployees = async (taskId: string, employeeIds: string[]) => 
     try {
         const query = `
         INSERT INTO public.r_tasks_users(task_id, user_id)
-	    VALUES ($1, $2);
+	    VALUES ($1, $2)
         RETURNING *
       `;
 

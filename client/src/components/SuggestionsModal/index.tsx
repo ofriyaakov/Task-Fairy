@@ -15,14 +15,14 @@ import { assignEmployees } from './../../queries/task'
 
 interface SuggestionsDialogProps {
     open: boolean;
-    onClose: () => void;
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
     // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     open,
-    onClose,
+    setIsModalOpen
     // employeesSuggestions, 
     // taskId
 }) => {
@@ -66,6 +66,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         try {
             await assignEmployees(taskId, approvedEmployeeIds)
             setApprovedEmployeeIds([])
+            setIsModalOpen(false)
         } catch (err: any) {
             console.error(err.message);
         }
@@ -73,6 +74,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
     const handleCancel = () => {
         setApprovedEmployeeIds([])
+        setIsModalOpen(false)
     };
 
     const handleApproveEmployee = (employeeId: string) => {
@@ -86,16 +88,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     }
 
     useEffect(() => {
-        console.log('approvedEmployees --------- ', approvedEmployeeIds)
     }, [approvedEmployeeIds])
-
-
-
 
     return (
         <Dialog
             open={open}
-            onClose={onClose}
             maxWidth="lg"
             fullWidth
             PaperProps={{
