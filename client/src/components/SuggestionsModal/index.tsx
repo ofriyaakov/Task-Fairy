@@ -19,6 +19,7 @@ interface SuggestionsDialogProps {
     // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
     // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
     // employeesAmount: number; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
+    onClose: () => void;
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
@@ -80,7 +81,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     const handleCancel = () => {
         setApprovedEmployeeIds([])
         setIsEnoughEmployees(false)
-
         setIsModalOpen(false)
     };
 
