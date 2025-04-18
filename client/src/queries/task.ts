@@ -15,8 +15,7 @@ export interface TaskPayload {
   saveToTasks: boolean;
   other: string;
   id?: string;
-  creatorId: string;
-  createdAt?: Date;
+  companyId: string;
 }
 
 const TASK_ROUTE = "/task";

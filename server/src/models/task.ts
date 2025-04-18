@@ -1,9 +1,9 @@
-export type Gender = 'Male' | 'Female' | 'Both';
+export type Gender = "Male" | "Female" | "Both";
 
 export interface Task {
   name: string;
   description: string;
-  date:string;
+  date: string;
   startTime: string;
   endTime: string;
   gender: Gender;
@@ -13,6 +13,5 @@ export interface Task {
   saveToTasks: boolean;
   other: string;
   id: string;
-  creatorId: string; 
-  createdAt: Date;
+  companyId: string;
 }

@@ -16,7 +16,8 @@ export type User = {
   username: string;
   user_level: UserLevel;
   tokens: string[];
-}
+  company_id: string;
+};
 
 export interface IUser {
   id: string;

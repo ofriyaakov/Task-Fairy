@@ -15,13 +15,13 @@ export const createTask = async (task: Task) => {
       employeesAmount,
       saveToTasks,
       other,
-      creatorId,
+      companyId,
     }: Task = task;
 
     const query = `
-        INSERT INTO tasks (name, description, date, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, creator, created_at
+        INSERT INTO tasks (name, description, date, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, company_id
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING *
       `;
 
@@ -37,7 +37,7 @@ export const createTask = async (task: Task) => {
       employeesAmount,
       saveToTasks,
       other,
-      creatorId,
+      companyId,
     ];
     const { rows } = await db.query(query, values);
 

@@ -33,6 +33,7 @@ export const login = async (
     name: user.first_name + " " + user.last_name,
     email: user.email,
     tokens: user.tokens,
+    companyId: user.company_id,
   };
 };
 

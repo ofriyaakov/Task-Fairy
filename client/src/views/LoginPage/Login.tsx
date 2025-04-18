@@ -16,6 +16,7 @@ const Login: React.FC = () => {
         id: response.id,
         name: response.name,
         email: response.email,
+        companyId: response.companyId,
       });
 
       navigate("/dashboard");
@@ -30,25 +31,23 @@ const Login: React.FC = () => {
       {/* Forgot Password Link */}
       <Typography
         onClick={() => navigate("/register")}
-        variant="body2"
-        align="center"
-        color="textSecondary"
-        sx={{ mb: 4, textDecorationLine: "underline", cursor: "pointer" }}
-      >
+        variant='body2'
+        align='center'
+        color='textSecondary'
+        sx={{ mb: 4, textDecorationLine: "underline", cursor: "pointer" }}>
         Need an account? Register
       </Typography>
 
       {/* Tagline */}
       <Typography
-        variant="h6"
-        component="div"
+        variant='h6'
+        component='div'
         sx={{
           color: "#6B8CC8",
           mt: 3,
           fontWeight: "normal",
           fontSize: "1.2rem",
-        }}
-      >
+        }}>
         Turning To-Dos into Ta-Das!
       </Typography>
     </div>

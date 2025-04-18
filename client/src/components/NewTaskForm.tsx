@@ -80,7 +80,7 @@ const NewTaskForm: React.FC = () => {
       date: formattedDayjs(dateFormate, formData.date),
       startTime: formattedDayjs(timeFormate, formData.startTime),
       endTime: formattedDayjs(timeFormate, formData.endTime),
-      creatorId: connectedUser?.id || "",
+      companyId: connectedUser?.companyId || "",
     };
 
     try {
