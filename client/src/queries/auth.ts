@@ -1,4 +1,5 @@
 import axiosInstance from "../axiosInstance";
+import { accessTokenKey, loggedUserIdKey } from "../consts";
 import { RegistrationData } from "../views/Registration/types";
 
 interface LoginPayload {
@@ -11,6 +12,7 @@ interface AuthResponse {
   id: string;
   name: string;
   email: string;
+  companyId: string;
 }
 
 const AUTH_ROUTE = "/auth";
@@ -18,6 +20,9 @@ const AUTH_ROUTE = "/auth";
 export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post(`${AUTH_ROUTE}/login`, payload);
+    localStorage.setItem(loggedUserIdKey, response.data.id);
+    localStorage.setItem(accessTokenKey, response.data.accessToken);
+
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Login failed");

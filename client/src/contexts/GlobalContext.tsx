@@ -4,6 +4,7 @@ interface User {
   id: string;
   name: string;
   email?: string;
+  companyId: string;
 }
 
 interface GlobalContextType {
@@ -13,7 +14,9 @@ interface GlobalContextType {
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
-export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [connectedUser, setConnectedUser] = useState<User | null>(null);
 
   return (
@@ -26,7 +29,9 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ child
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (context === undefined) {
-    throw new Error("useGlobalContext must be used within a GlobalContextProvider");
+    throw new Error(
+      "useGlobalContext must be used within a GlobalContextProvider"
+    );
   }
   return context;
 };

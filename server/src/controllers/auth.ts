@@ -19,7 +19,6 @@ export const login = async (
   password: IUser["password"]
 ) => {
   const user: User = await getUserByEmail(email);
-  console.log("user", user);
   if (!user) throw new Error("User not found");
   if (password != user.password) throw new Error("Invalid credentials");
 
@@ -34,6 +33,7 @@ export const login = async (
     name: user.first_name + " " + user.last_name,
     email: user.email,
     tokens: user.tokens,
+    companyId: user.company_id,
   };
 };
 
