@@ -18,15 +18,18 @@ interface SuggestionsDialogProps {
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
     // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
+    // employeesAmount: number; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     open,
     setIsModalOpen
     // employeesSuggestions, 
-    // taskId
+    // taskId,
+    // employeesAmount
 }) => {
     const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
+    const [isEnoughEmployees, setIsEnoughEmployees] = useState<boolean>(false)
 
     // TO REPLACE AFTER WE HAVE THE ALGORITHM
     const employeesSuggestions: employeeDatailsCard[] = [
@@ -61,11 +64,13 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
     // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
     const taskId = '9dac927f-0680-4929-8271-46706581081e'
+    const employeesAmount = 2
 
     const handleSave = async () => {
         try {
             await assignEmployees(taskId, approvedEmployeeIds)
             setApprovedEmployeeIds([])
+            setIsEnoughEmployees(false)
             setIsModalOpen(false)
         } catch (err: any) {
             console.error(err.message);
@@ -74,6 +79,8 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
     const handleCancel = () => {
         setApprovedEmployeeIds([])
+        setIsEnoughEmployees(false)
+
         setIsModalOpen(false)
     };
 
@@ -88,6 +95,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     }
 
     useEffect(() => {
+        if (employeesAmount === approvedEmployeeIds.length) {
+            setIsEnoughEmployees(true)
+        } else {
+            setIsEnoughEmployees(false)
+        }
     }, [approvedEmployeeIds])
 
     return (
@@ -130,6 +142,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                                 employee={employee}
                                 handleApproveEmployee={handleApproveEmployee}
                                 handleRemoveEmployee={handleRemoveEmployee}
+                                isDisable={isEnoughEmployees}
                             />
                         </Grid>
                     ))}
@@ -149,6 +162,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                         height: "56.8px",
                         backgroundColor: "rgb(69 123 157)"
                     }}
+                    disabled={!isEnoughEmployees}
                 >
                     save
                 </Button>

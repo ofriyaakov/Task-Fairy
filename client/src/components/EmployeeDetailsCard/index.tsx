@@ -14,11 +14,14 @@ interface EmployeeDetailsCardProps {
     employee: employeeDatailsCard;
     handleApproveEmployee: (employeeId: string) => void
     handleRemoveEmployee: (employeeId: string) => void
+    isDisable: boolean;
 }
 
 const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
     employee,
-    handleApproveEmployee, handleRemoveEmployee
+    handleApproveEmployee,
+    handleRemoveEmployee,
+    isDisable
 }) => {
 
     const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('white')
@@ -77,11 +80,18 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
                             </Grid>
                         </Grid>
                         <Grid alignContent={"center"}>
-                            <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={approveEmployee}>
-                                <Box display="flex" alignItems="center" >
-                                    <CheckIcon sx={{ fontSize: 35, color: 'rgb(97 196 83)' }} />
-                                </Box>
-                            </Grid>
+                            {!isDisable ?
+                                <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={approveEmployee}>
+                                    <Box display="flex" alignItems="center" >
+                                        <CheckIcon sx={{ fontSize: 35, color: 'rgb(97 196 83)' }} />
+                                    </Box>
+                                </Grid> :
+                                <Grid item xs={3} style={{ cursor: 'pointer', pointerEvents: 'none', opacity: 0.5 }} onClick={approveEmployee}>
+                                    <Box display="flex" alignItems="center" >
+                                        <CheckIcon sx={{ fontSize: 35, color: 'grey' }} />
+                                    </Box>
+                                </Grid>
+                            }
                             <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={removeEmployee} >
                                 <Box display="flex" alignItems="center">
                                     <CloseIcon sx={{ fontSize: 35, color: 'rgb(226 86 24)' }} />
