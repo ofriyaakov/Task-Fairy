@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import cors from "cors";
 import { errorHandler } from "./src/middleware/errorHandler";
+import taskRoutes from "./src/routes/task";
 const path = require("path");
 
 const swaggerOptions = {
@@ -39,6 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
 app.use("/gemini", geminiRoues);
+app.use("/task", taskRoutes);
 
 app.use(errorHandler);
 app.use(express.static("front"));
