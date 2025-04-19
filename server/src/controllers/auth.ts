@@ -14,6 +14,8 @@ import {
   addNewUser,
 } from "./user";
 import { addNewCompany } from "./company";
+import { addNewGroup } from "./group";
+import db from "../config/db";
 
 export const login = async (
   email: IUser["email"],
@@ -34,7 +36,7 @@ export const login = async (
     name: user.first_name + " " + user.last_name,
     email: user.email,
     tokens: user.tokens,
-    companyId: user.company_id,
+    group_id: user.group_id,
   };
 };
 
@@ -91,25 +93,45 @@ export const refresh = async (refreshToken: string) => {
 };
 
 export const register = async (newUser: User) => {
-  const company = await addNewCompany(newUser.company_name);
-  if (!company) {
-    throw new Error("company not created");
-  } else {
-    newUser.company_id = company.id;
-    const user = await addNewUser(newUser);
+  // 1) grab a dedicated client
+  const client = await db.connect();
+
+  try {
+    // 2) start transaction
+    await client.query("BEGIN");
+
+    // 3) all your helper calls, passing `client` as executor
+    const company = await addNewCompany(newUser.company_name, client);
+    if (!company) throw new Error("company not created");
+
+    const group = await addNewGroup(newUser.group_name || "managers", company.company_id, client);
+    if (!group) throw new Error("group not created");
+
+    newUser.group_id = group.group_id;
+    const user = await addNewUser(newUser, client);
     if (!user) throw new Error("user not created");
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
-    updateRefreshToken(user, refreshToken);
+    // 4) commit if all succeeded
+    await client.query("COMMIT");
+
+    // 5) outside the transaction: issue tokens
+    const accessToken  = generateAccessToken(user.user_id);
+    const refreshToken = generateRefreshToken(user.user_id);
+    await updateRefreshToken(user, refreshToken);
 
     return {
       accessToken,
       refreshToken,
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      tokens: user.tokens,
+      id:     user.user_id,
+      name:   user.first_name + " " + user.last_name,
+      email:  user.email,
     };
+  } catch (err) {
+    // on any error: rollback everything
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    // always release the client
+    client.release();
   }
 };

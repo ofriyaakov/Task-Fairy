@@ -13,13 +13,14 @@ interface RegistrationFormProps {
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
+  const managerLevel = "2";
   const [formData, setFormData] = useState<RegistrationData>({
     first_name: "",
     last_name: "",
     repeat_password: "",
     phone_number: "",
     company_name: "",
-    user_level: "",
+    user_level: managerLevel,
     password: "",
     email: "",
     user_id: "",
@@ -80,7 +81,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
         >
           {/* User Name */}
           <TextField
-            name="first name"
+            name="first_name"
             placeholder="FIRST NAME *"
             value={formData.first_name}
             onChange={handleChange}
@@ -109,7 +110,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
           <TextField
             fullWidth
-            name="last name"
+            name="last_name"
             placeholder="LAST NAME *"
             value={formData.last_name}
             onChange={handleChange}
@@ -196,7 +197,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Company Name */}
           <TextField
             fullWidth
-            name="companyName"
+            name="company_name"
             placeholder="COMPANY NAME *"
             value={formData.company_name}
             onChange={handleChange}
@@ -284,7 +285,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Repeat password */}
           <TextField
             fullWidth
-            name="repeat password"
+            name="repeat_password"
             placeholder="REPEAT PASSWORD *"
             type="password"
             value={formData.repeat_password}

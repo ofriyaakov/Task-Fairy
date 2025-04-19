@@ -13,11 +13,11 @@ export type User = {
   first_name?: string;
   last_name?: string;
   password: string;
-  username: string;
   user_level: UserLevel;
-  tokens: string[];
+  tokens?: string[];
   phone_number?: string;
-  company_id?: BigInteger;
+  group_id?: number;
+  group_name?: string;
   company_name?: string;
 }
 

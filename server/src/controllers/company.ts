@@ -1,9 +1,10 @@
 import db from "../config/db";
+import type { QueryResult } from "pg";
 
-export const addNewCompany = async (companyName: string) => {
+export const addNewCompany = async (companyName: string, executor: { query: <T = any>(sql: string, params?: any[]) => Promise<QueryResult<T>> } = db) => {
   try {
-    const result = await db.query(
-      `INSERT INTO companier (company_name) VALUES ($1) RETURNING *`,
+    const result = await executor.query<{ company_id: number; company_name: string }>(
+      `INSERT INTO companies (company_name) VALUES ($1) RETURNING *`,
       [companyName]
     );
 

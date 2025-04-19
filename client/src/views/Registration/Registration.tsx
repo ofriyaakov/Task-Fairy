@@ -13,7 +13,7 @@ export const Registration: React.FC = () => {
     try {
       const response = await register(data);
       console.log("Registered:", response);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (err: any) {
       console.error(err.message);
     }
