@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -30,7 +30,14 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     // employeesAmount
 }) => {
     const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
-    const [isEnoughEmployees, setIsEnoughEmployees] = useState<boolean>(false)
+
+    // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
+    const taskId = '9dac927f-0680-4929-8271-46706581081e'
+    const employeesAmount = 2
+
+    const isEnoughEmployees = useMemo(() => {
+        return approvedEmployeeIds.length === employeesAmount;
+    }, [approvedEmployeeIds, employeesAmount]);
 
     // TO REPLACE AFTER WE HAVE THE ALGORITHM
     const employeesSuggestions: employeeDatailsCard[] = [
@@ -63,15 +70,10 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         }
     ]
 
-    // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
-    const taskId = '9dac927f-0680-4929-8271-46706581081e'
-    const employeesAmount = 2
-
     const handleSave = async () => {
         try {
             await assignEmployees(taskId, approvedEmployeeIds)
             setApprovedEmployeeIds([])
-            setIsEnoughEmployees(false)
             setIsModalOpen(false)
         } catch (err: any) {
             console.error(err.message);
@@ -80,7 +82,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
     const handleCancel = () => {
         setApprovedEmployeeIds([])
-        setIsEnoughEmployees(false)
         setIsModalOpen(false)
     };
 
@@ -93,14 +94,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
         setApprovedEmployeeIds(removeEmployee)
 
     }
-
-    useEffect(() => {
-        if (employeesAmount === approvedEmployeeIds.length) {
-            setIsEnoughEmployees(true)
-        } else {
-            setIsEnoughEmployees(false)
-        }
-    }, [approvedEmployeeIds])
 
     return (
         <Dialog
