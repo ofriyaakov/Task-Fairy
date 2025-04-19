@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     TextField,
@@ -9,38 +9,27 @@ import {
 import { TaskDetailsCard as TaskDetailsCardType } from '../../types/Task';
 import TaskDetailsCard from './../TaskDetailsCard';
 import Headline from './../Headline';
+import { getAllSavedTasks } from './../../queries/task';
 
 const SavedTasks: React.FC = () => {
+    const [savedTasks, setSavedTasks] = useState<TaskDetailsCardType[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const savedTasks: TaskDetailsCardType[] = [
-        {
-            name: "Contractors supervision",
-            location: "Shlishut Ramat Gan",
-            startTime: "7AM",
-            endTime: "17PM",
-            gender: "Both",
-            balancePoints: 2
-        },
-        {
-            name: "kader",
-            location: "Shlishut Ramat Gan",
-            startTime: "7AM",
-            endTime: "17PM",
-            gender: "Both",
-            balancePoints: 2
-        },
-        {
-            name: "Contractors",
-            location: "Shlishut Ramat Gan",
-            startTime: "7AM",
-            endTime: "17PM",
-            gender: "Both",
-            balancePoints: 2
+    const fetchSavedTasks = async () => {
+        try {
+            const fetchedSavedTasks: TaskDetailsCardType[] = await getAllSavedTasks()
+            setSavedTasks(fetchedSavedTasks)
+        } catch (err: any) {
+            console.error(err.message);
+            setSavedTasks([])
         }
-    ];
+    }
 
-    const filteredTasks = savedTasks.filter(task =>
+    useEffect(() => {
+        fetchSavedTasks();
+    }, []);
+
+    const filteredTasks = savedTasks.filter((task) =>
         task.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

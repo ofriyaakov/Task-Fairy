@@ -10,3 +10,12 @@ export const createTask = async (payload: TaskPayload) => {
     throw new Error(error.response?.data?.message || "creation task failed");
   }
 };
+
+export const getAllSavedTasks = async () => {
+  try {
+    const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
+    return savedTasks;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "fetch saved tasks failed");
+  }
+};
