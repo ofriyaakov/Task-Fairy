@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Box, Typography } from '@mui/material';
+import { Grid, Box, Typography, Paper } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WcIcon from '@mui/icons-material/Wc';
 import WorkIcon from '@mui/icons-material/Work';
@@ -14,51 +14,60 @@ interface TaskDetailsCardProps {
 const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task }) => {
 
     return (
-        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: 'white' }}>
-            <Grid container direction="column" alignItems="center" >
-                <Grid item xs={6} md={6}>
-                    <Box display={"flex"}>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Box display="flex" alignItems="center">
-                                    <WorkIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{task.name}</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <LocationOnIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{task.location}</Typography>
-                                </Box>
-                            </Grid>
-
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <AccessTimeIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{task.startTime} - {task.endTime}</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <WcIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{task.gender}</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <StarIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{task.balancePoints} balance points</Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
+        <Paper
+            elevation={0}
+            sx={{
+                p: 2,
+                borderRadius: 2,
+                mb: 2,
+                maxWidth: '340px',
+                border: '1px solid rgb(229 229 229)',
+                height: '130px'
+            }}
+        >
+            <Grid container >
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <WorkIcon sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                            {task.name}
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <LocationOnIcon sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                            {task.location}
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <AccessTimeIcon sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                            {task.startTime} - {task.endTime}
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <WcIcon sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                            Only males
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <StarIcon sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                            {task.balancePoints} Balance points
+                        </Typography>
                     </Box>
                 </Grid>
             </Grid>
-        </Box>
+        </Paper>
     );
 }
 
