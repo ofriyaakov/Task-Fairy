@@ -22,8 +22,8 @@ export const login = async (
   password: IUser["password"]
 ) => {
   const user: User = await getUserByEmail(email);
-  if (!user) throw new Error("User not found");
-  if (password != user.password) throw new Error("Invalid credentials");
+  if (!user) throw new Error("Invalid email or password");
+  if (password != user.password) throw new Error("Invalid email or password");
 
   const accessToken = generateAccessToken(user.user_id);
   const refreshToken = generateRefreshToken(user.user_id);

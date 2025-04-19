@@ -15,6 +15,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useGlobalContext } from "../../contexts/GlobalContext";
 
 const drawerWidth = 17;
 
@@ -25,21 +26,22 @@ interface MenuItem {
     onClick?(): void;
 }
 
-const mainMenuItems: MenuItem[] = [
-    { text: "Dashboard", icon: <BarChartIcon />, path: "/dashboard" },
-    { text: "Calendar", icon: <CalendarMonthIcon />, path: "/calendar" },
-    { text: "Tasks", icon: <TaskIcon />, path: "/tasks" },
-    { text: "Employees", icon: <GroupIcon />, path: "/employees" },
-    { text: "Swaps", icon: <SwapHorizIcon />, path: "/manager-swaps" },
-];
-
-const bottomMenuItems: MenuItem[] = [
-    { text: "Logout", icon: <LogoutIcon />, path: "/login", onClick: () => console.log("Logout clicked") },
-];
-
 export const Navbar: FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const navigate = useNavigate();
+    const { setConnectedUser } = useGlobalContext() 
+
+    const mainMenuItems: MenuItem[] = [
+        { text: "Dashboard", icon: <BarChartIcon />, path: "/dashboard" },
+        { text: "Calendar", icon: <CalendarMonthIcon />, path: "/calendar" },
+        { text: "Tasks", icon: <TaskIcon />, path: "/tasks" },
+        { text: "Employees", icon: <GroupIcon />, path: "/employees" },
+        { text: "Swaps", icon: <SwapHorizIcon />, path: "/manager-swaps" },
+    ];
+    
+    const bottomMenuItems: MenuItem[] = [
+        { text: "Logout", icon: <LogoutIcon />, path: "/login", onClick: () => setConnectedUser(null) },
+    ];    
 
     const handleListItemClick = (index: number, path?: string, onClick?: Function) => {
         setSelectedIndex(index);

@@ -137,7 +137,9 @@ router.post(
     try {
       res.status(200).send(await login(email, password));
     } catch (err) {
-      next(err);
+      return res
+      .status(401)
+      .json({ message: err.message || "Invalid email or password" });
     }
   }
 );
@@ -270,7 +272,13 @@ router.post("/register", async (req: Request, res: Response) => {
   try {
     res.status(200).send(await register(user));
   } catch (err) {
-    res.status(400).send(err);
+    console.error("Registration error:", err);
+
+    if (err.code === "23505" && err.constraint === "unique_email") {
+      return res.status(400).json({ message: "User with this email already exists" });
+    }
+
+    res.status(400).json({ message: err.message || "Something went wrong" });
   }
 });
 

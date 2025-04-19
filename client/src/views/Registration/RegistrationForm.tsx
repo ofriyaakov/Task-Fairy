@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, InputAdornment, SvgIcon } from "@mui/material";
+import { TextField, Button, Box, InputAdornment } from "@mui/material";
 import { RegistrationData } from "./types";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -27,11 +27,31 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // ── VALIDATION RULES ────────────────────────────────────────────────────────
+  const isEmailValid = /\S+@\S+\.\S+/.test(formData.email);
+  const isPasswordValid = formData.password.length >= 6;
+  const isUserIdValid = /^\d{9}$/.test(formData.user_id);
+  const isPhoneNumberValid = /^\d{10}$/.test(formData.phone_number);
+  const doPasswordsMatch = formData.password === formData.repeat_password;
+  const areRequiredFilled =
+    formData.first_name.trim() &&
+    formData.last_name.trim() &&
+    formData.user_id.trim() &&
+    formData.phone_number.trim() &&
+    formData.company_name.trim() &&
+    formData.email.trim();
+  const isFormValid =
+    Boolean(areRequiredFilled) &&
+    isEmailValid &&
+    isPasswordValid &&
+    doPasswordsMatch;
+  // ────────────────────────────────────────────────────────────────────────────
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name as string]: value,
     }));
@@ -39,8 +59,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid) return;
     setLoading(true);
-
     try {
       await onSubmit(formData);
     } catch (err) {
@@ -52,7 +72,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
   return (
     <Box sx={{ maxWidth: 550, mx: "auto", pb: 2, px: 2 }}>
-      {/* Logo and Title */}
+      {/* Logo */}
       <Box
         component="img"
         src="/Logo.png"
@@ -79,13 +99,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             gap: 2,
           }}
         >
-          {/* User Name */}
+          {/* First Name */}
           <TextField
             name="first_name"
             placeholder="FIRST NAME *"
             value={formData.first_name}
             onChange={handleChange}
             required
+            error={formData.first_name !== "" && !formData.first_name.trim()}
             variant="outlined"
             size="small"
             sx={{
@@ -94,9 +115,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
               width: "100%",
             }}
             InputProps={{
@@ -108,6 +127,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             }}
           />
 
+          {/* Last Name */}
           <TextField
             fullWidth
             name="last_name"
@@ -115,6 +135,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.last_name}
             onChange={handleChange}
             required
+            error={formData.last_name !== "" && !formData.last_name.trim()}
             variant="outlined"
             size="small"
             sx={{
@@ -123,9 +144,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -136,7 +155,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             }}
           />
 
-          {/* user id */}
+          {/* User ID */}
           <TextField
             fullWidth
             name="user_id"
@@ -144,6 +163,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.user_id}
             onChange={handleChange}
             required
+            error={formData.user_id !== "" && !isUserIdValid}
             variant="outlined"
             size="small"
             sx={{
@@ -152,9 +172,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -173,6 +191,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.phone_number}
             onChange={handleChange}
             required
+            error={formData.phone_number !== "" && !isPhoneNumberValid}
             variant="outlined"
             size="small"
             sx={{
@@ -181,9 +200,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -201,6 +218,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             placeholder="COMPANY NAME *"
             value={formData.company_name}
             onChange={handleChange}
+            required
+            error={formData.company_name !== "" && !formData.company_name.trim()}
             variant="outlined"
             size="small"
             sx={{
@@ -209,9 +228,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -231,6 +248,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.email}
             onChange={handleChange}
             required
+            error={formData.email !== "" && !isEmailValid}
             variant="outlined"
             size="small"
             sx={{
@@ -239,9 +257,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -261,6 +277,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.password}
             onChange={handleChange}
             required
+            error={formData.password !== "" && !isPasswordValid}
             variant="outlined"
             size="small"
             sx={{
@@ -269,9 +286,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -282,7 +297,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             }}
           />
 
-          {/* Repeat password */}
+          {/* Repeat Password */}
           <TextField
             fullWidth
             name="repeat_password"
@@ -291,6 +306,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.repeat_password}
             onChange={handleChange}
             required
+            error={
+              formData.repeat_password !== "" && !doPasswordsMatch
+            }
             variant="outlined"
             size="small"
             sx={{
@@ -299,9 +317,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": {
-                borderColor: "#5F70C8", // default border color
-              },
+              "& fieldset": { borderColor: "#5F70C8" },
             }}
             InputProps={{
               startAdornment: (
@@ -317,7 +333,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
         <Button
           type="submit"
           variant="contained"
-          disabled={loading}
+          disabled={loading || !isFormValid}
           sx={{
             mt: 3,
             py: 1,
@@ -331,10 +347,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
         >
           {loading ? "REGISTERING..." : "REGISTER"}
         </Button>
-
-        {/* Login Link */}
       </Box>
-      {/* Tagline */}
     </Box>
   );
 };
