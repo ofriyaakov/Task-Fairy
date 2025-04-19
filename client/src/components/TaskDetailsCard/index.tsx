@@ -54,7 +54,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <WcIcon sx={{ mr: 1, fontSize: 20 }} />
                         <Typography variant="body2">
-                            Only males
+                            {task.gender}
                         </Typography>
                     </Box>
                 </Grid>
