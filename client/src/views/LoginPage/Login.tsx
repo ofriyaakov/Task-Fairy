@@ -3,15 +3,24 @@ import LoginForm from "./LoginForm";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../queries/auth";
 import './Login.css';
+import { useGlobalContext } from "../../contexts/GlobalContext";
 
-export const Login: React.FC = () => {
+const Login: React.FC = () => {
+  const { setConnectedUser } = useGlobalContext();
   const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
     try {
       const response = await login({ email, password });
       console.log("Logged in:", response);
-      navigate("/home");
+      setConnectedUser({
+        id: response.id,
+        name: response.name,
+        email: response.email,
+        companyId: response.companyId,
+      });
+
+      navigate("/dashboard");
     } catch (err: any) {
       console.error(err.message);
     }
@@ -46,3 +55,5 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+
+export default Login;

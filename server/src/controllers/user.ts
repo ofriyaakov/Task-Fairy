@@ -3,7 +3,7 @@ import db from "../config/db";
 
 export const getAllUsers = async () => {
   try {
-    const result = await db.query('SELECT * FROM users');
+    const result = await db.query("SELECT * FROM users");
     const users: User[] = result.rows;
     console.log("get all user success:", users);
     return users;
@@ -14,7 +14,9 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE user_id = $1', [id]);
+    const result = await db.query("SELECT * FROM users WHERE user_id = $1", [
+      id,
+    ]);
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
@@ -29,7 +31,9 @@ export const getUserById = async (id) => {
 
 export const getUserByEmail = async (email: IUser["email"]) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
@@ -64,16 +68,10 @@ export const addNewUser = async (user: User) => {
 
 export const updateUserById = (
   id,
-  {
-    name,
-  }: Omit<IUser, "password" | "email" | "tokens">
+  { name }: Omit<IUser, "password" | "email" | "tokens">
 ) => {
-  userModel.findByIdAndUpdate(
-    id,
-    { name },
-    { new: true }
-  );
-}
+  userModel.findByIdAndUpdate(id, { name }, { new: true });
+};
 
 // export const updateUserTokenById = (id, newRefreshToken) =>
 //   userModel.findByIdAndUpdate(id, { tokens: newRefreshToken }, { new: true });
