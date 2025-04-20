@@ -16,7 +16,7 @@ export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
         fontSize: '1.8rem',
         borderRadius: '35px 35px 0px 0px',
         color: 'black',
-        fontFamily: 'Montserrat',
+        fontFamily: '"Montserrat", sans-serif',
         textTransform: 'uppercase'
       }}
     >

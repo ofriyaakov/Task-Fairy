@@ -13,7 +13,7 @@ export const CellDateHeader: React.FC<CellDateHeaderProps> = ({ label }) => {
           color: APP_COLOR.BLACK,
           top: '0.25rem',
           left: '0.25rem',
-          fontFamily: "Montserrat",
+          fontFamily: '"Montserrat", sans-serif',
           fontSize: '1.2rem',
           position: "relative",
             justifySelf: "left",

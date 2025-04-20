@@ -22,7 +22,7 @@ const CalendarPage: React.FC = () => {
   ]
 
     return <div className='App' style={{height: "60vh", width: "80%"}}>
-    <h1 style={{fontFamily: "Montserrat"}}>Calendar Page</h1>
+    <h1 style={{fontFamily: '"Montserrat", sans-serif'}}>Calendar Page</h1>
     <MyCalendar events={events} taskSummary={taskSummary} ></MyCalendar>
     </div>;
   };
