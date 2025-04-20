@@ -11,17 +11,17 @@ export const CellDateHeader: React.FC<CellDateHeaderProps> = ({ label }) => {
         style={{
           fontWeight: 'bold',
           color: APP_COLOR.BLACK,
-          top: 4,
-          left: 4,
+          top: '0.25rem',
+          left: '0.25rem',
           fontFamily: "Montserrat",
-          fontSize: '18px',
+          fontSize: '1.2rem',
           position: "relative",
             justifySelf: "left",
             paddingLeft: "1rem",
             paddingTop: "0.5rem",
         }}
       >
-        {Number(label)} {/*removes leading zero just in case*/}
+        {Number(label)}
       </div>
     )
 }

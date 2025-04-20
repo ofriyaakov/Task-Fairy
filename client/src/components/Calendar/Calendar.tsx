@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import './Calendar.css' // your own styling
 import { CellDateHeader } from "./CellDateHeader";
 import { CustomToolbar } from "./CustomToolbar";
-import { APP_COLOR, dateFormate } from "../../consts";
+import { APP_COLOR } from "../../consts";
 
 type TaskSummary = {
     [date: string]: {
@@ -35,10 +35,9 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
         setCurrentMonthDate(startOfMonth)
       }}
       views={['month']}
-      style={{ height: '80vh' }}
       components={{
         dateCellWrapper: ({ children, value }) => {
-          const dateStr = format(value, dateFormate)
+          const dateStr = format(value, 'yyyy-MM-dd')
           const dayData = taskSummary[dateStr]
           const isFullyAssigned = dayData?.assigned === dayData?.total
           const isOutOfMonth = value.getMonth() !== currentMonthDate.getMonth()
@@ -51,20 +50,20 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
           ? APP_COLOR.MINT_GREEN
           : APP_COLOR.LIGHT_RED
 
-          const border = isOutOfMonth ? "" : '0.8px solid #E6E6E6'
+          const border = isOutOfMonth ? "" : `0.8px solid ${APP_COLOR.PLATINUM_GREY}`
 
           const dayNumber: number = value.getDate()
 
           return (
             <div style={{ backgroundColor: bgColor, height: '100%', flex: '1 0', border: border, position: 'relative'  }}>
-              <div style={{ padding: '4px' }}>
+              <div style={{ padding: '0.25rem' }}>
                 {!isOutOfMonth && (
                   <CellDateHeader label={dayNumber} />
                 )}
              
                 {children} 
                  {!isOutOfMonth && dayData && (
-                  <div style={{ fontSize: '0.8em', marginTop: '4px' }}>
+                  <div style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
                     task - {dayData.assigned}/{dayData.total} assigned
                   </div>
                 )}

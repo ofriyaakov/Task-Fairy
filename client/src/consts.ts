@@ -11,6 +11,7 @@ export const APP_COLOR = {
 
     ALICE_BLUE: "#E3F2FD",
     OFF_WHITE: "#FAFAFA",
+    PLATINUM_GREY: "#E6E6E6",
     DARK_GREY: "#666666",
 
     MINT_GREEN: "#D4F8E8",
