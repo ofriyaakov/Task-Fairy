@@ -1,22 +1,13 @@
 import React, { useState } from "react";
-import { Calendar, dateFnsLocalizer, Event as RBCEvent } from 'react-big-calendar'
+import { Calendar, Event as RBCEvent } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { localizer } from './CalendarSetup'
-import { format } from 'date-fns'
-import './Calendar.css' // your own styling
-import { CellDateHeader } from "./CellDateHeader";
+import { localizer, TaskSummary } from './CalendarSetup'
+import './Calendar.css'
 import { CustomToolbar } from "./CustomToolbar";
-import { APP_COLOR } from "../../consts";
+import { CellContent } from "./CellContent";
 
-type TaskSummary = {
-    [date: string]: {
-      assigned: number
-      total: number
-    }
-  }
-  
   type MyCalendarProps = {
-    events: RBCEvent[] // or a more specific type if your event has custom fields
+    events: RBCEvent[]
     taskSummary: TaskSummary
   }
 
@@ -36,40 +27,12 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
       }}
       views={['month']}
       components={{
-        dateCellWrapper: ({ children, value }) => {
-          const dateStr = format(value, 'yyyy-MM-dd')
-          const dayData = taskSummary[dateStr]
-          const isFullyAssigned = dayData?.assigned === dayData?.total
-          const isOutOfMonth = value.getMonth() !== currentMonthDate.getMonth()
-
-          const bgColor = isOutOfMonth
-          ? APP_COLOR.WHITE
-          : !dayData
-          ? APP_COLOR.OFF_WHITE
-          : isFullyAssigned
-          ? APP_COLOR.MINT_GREEN
-          : APP_COLOR.LIGHT_RED
-
-          const border = isOutOfMonth ? "" : `0.8px solid ${APP_COLOR.PLATINUM_GREY}`
-
-          const dayNumber: number = value.getDate()
-
-          return (
-            <div style={{ backgroundColor: bgColor, height: '100%', flex: '1 0', border: border, position: 'relative'  }}>
-              <div style={{ padding: '0.25rem' }}>
-                {!isOutOfMonth && (
-                  <CellDateHeader label={dayNumber} />
-                )}
-             
-                {children} 
-                 {!isOutOfMonth && dayData && (
-                  <div style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
-                    task - {dayData.assigned}/{dayData.total} assigned
-                  </div>
-                )}
-              </div>
-            </div>
-          )
+        dateCellWrapper: ({ children, value }) => { 
+          return <CellContent
+          children={children}
+          value={value}
+          taskSummary={taskSummary}
+          currentMonthDate={currentMonthDate}></CellContent>
         },
         month: {
           dateHeader: () => null
