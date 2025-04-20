@@ -1,4 +1,5 @@
 import React from 'react'
+import { APP_COLOR } from '../../consts'
 
 type CellDateHeaderProps = {
     label: number
@@ -9,7 +10,7 @@ export const CellDateHeader: React.FC<CellDateHeaderProps> = ({ label }) => {
       <div
         style={{
           fontWeight: 'bold',
-          color: 'black',
+          color: APP_COLOR.BLACK,
           top: 4,
           left: 4,
           fontFamily: "Montserrat",

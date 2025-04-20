@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import './Calendar.css' // your own styling
 import { CellDateHeader } from "./CellDateHeader";
 import { CustomToolbar } from "./CustomToolbar";
+import { APP_COLOR, dateFormate } from "../../consts";
 
 type TaskSummary = {
     [date: string]: {
@@ -37,18 +38,18 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
       style={{ height: '80vh' }}
       components={{
         dateCellWrapper: ({ children, value }) => {
-          const dateStr = format(value, 'yyyy-MM-dd')
+          const dateStr = format(value, dateFormate)
           const dayData = taskSummary[dateStr]
           const isFullyAssigned = dayData?.assigned === dayData?.total
           const isOutOfMonth = value.getMonth() !== currentMonthDate.getMonth()
 
           const bgColor = isOutOfMonth
-          ? 'white'
+          ? APP_COLOR.WHITE
           : !dayData
-          ? '#FAFAFA'
+          ? APP_COLOR.OFF_WHITE
           : isFullyAssigned
-          ? '#d4f8e8'
-          : '#f8d4d4'
+          ? APP_COLOR.MINT_GREEN
+          : APP_COLOR.LIGHT_RED
 
           const border = isOutOfMonth ? "" : '0.8px solid #E6E6E6'
 

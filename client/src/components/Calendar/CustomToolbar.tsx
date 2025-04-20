@@ -1,13 +1,13 @@
 import React from 'react'
 import { ToolbarProps } from 'react-big-calendar'
-import { format } from 'date-fns'
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
+import { APP_COLOR } from '../../consts';
 
 export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
   return (
     <div
       style={{
-        backgroundColor: '#DDEEFB',
+        backgroundColor: APP_COLOR.ALICE_BLUE,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
