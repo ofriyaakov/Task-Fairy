@@ -23,7 +23,8 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
-import { createTask, TaskPayload } from "../queries/task";
+import { createTask } from "../queries/task";
+import { TaskPayload } from './../types/Task'
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { dateFormate, timeFormate } from "../consts";
 

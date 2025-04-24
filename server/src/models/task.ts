@@ -15,3 +15,19 @@ export interface Task {
   id: string;
   companyId: string;
 }
+
+export interface RawTask {
+  name: string;
+  description: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  gender: Gender;
+  location: string;
+  balance_points: number;
+  employees_amount: number;
+  save_to_tasks: boolean;
+  other: string;
+  id: string;
+  company_id: string;
+}
