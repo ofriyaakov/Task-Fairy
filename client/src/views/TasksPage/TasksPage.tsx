@@ -7,15 +7,15 @@ import TasksList from "../../components/TasksList";
 import { savedTaskTitle } from "../../consts";
 
 const TasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState<TaskDetailsCardType[]>([]);
+  const [savedTasks, setSavedTasks] = useState<TaskDetailsCardType[]>([]);
 
   const fetchSavedTasks = async () => {
     try {
       const fetchedSavedTasks: TaskDetailsCardType[] = await getAllSavedTasks();
-      setTasks(fetchedSavedTasks);
+      setSavedTasks(fetchedSavedTasks);
     } catch (err: any) {
       console.error(err.message);
-      setTasks([]);
+      setSavedTasks([]);
     }
   };
 
@@ -36,7 +36,7 @@ const TasksPage: React.FC = () => {
         </Box>
 
         <Box sx={{ width: "100%" }}>
-          <TasksList tasks={tasks} title={savedTaskTitle} />
+          <TasksList tasks={savedTasks} title={savedTaskTitle} />
         </Box>
       </Box>
     </div>
