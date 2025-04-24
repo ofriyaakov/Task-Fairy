@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskPayload } from './../types/Task';
+import { TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 export const createTask = async (payload: TaskPayload) => {
@@ -16,6 +16,21 @@ export const getAllSavedTasks = async () => {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
     return savedTasks;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "fetch saved tasks failed");
+    throw new Error(
+      error.response?.data?.message || "fetch saved tasks failed"
+    );
+  }
+};
+
+export const getEmployeeTasks = async (employeeId: string) => {
+  try {
+    const employeeTasks = (
+      await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
+    ).data;
+    return employeeTasks;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch employee tasks failed"
+    );
   }
 };

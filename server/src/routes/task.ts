@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask, getAllSavedTasks } from "../controllers/task";
+import {
+  createTask,
+  getAllSavedTasks,
+  getTasksByEmployeeId,
+} from "../controllers/task";
 
 const router = express.Router();
 
@@ -88,8 +92,6 @@ router.use(authenticateToken);
  *              other: 'Bring scanning equipment'
  */
 
-
-
 /**
  * @swagger
  * /task:
@@ -154,6 +156,54 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/saved", async (req: Request, res: Response) => {
   try {
     res.status(200).send(await getAllSavedTasks());
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+/**
+ * @swagger
+ * /employee/{employeeId}:
+ *   get:
+ *     summary: Get all tasks assigned to a specific employee
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: employeeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the employee
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   location:
+ *                     type: string
+ *                   startTime:
+ *                     type: string
+ *                   endTime:
+ *                     type: string
+ *                   balancePoints:
+ *                     type: integer
+ *                   gender:
+ *                     type: string
+ *       500:
+ *         description: Server error
+ */
+router.get("/employee/:employeeId", async (req: Request, res: Response) => {
+  try {
+    const { employeeId } = req.params;
+
+    res.status(200).send(await getTasksByEmployeeId(employeeId));
   } catch (err) {
     res.status(400).send(err);
   }
