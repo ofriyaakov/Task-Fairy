@@ -1,5 +1,5 @@
 import db from "../config/db";
-import { Task } from "../models/task";
+import { Task, RawTask } from "../models/task";
 
 export const createTask = async (task: Task) => {
   try {
@@ -44,5 +44,30 @@ export const createTask = async (task: Task) => {
     return rows[0];
   } catch (e) {
     console.error(e);
+  }
+};
+
+export const getAllSavedTasks = async () => {
+  try {
+    const result = await db.query(`
+      SELECT * FROM public.tasks 
+      WHERE save_to_tasks`);
+
+    const savedTasks: RawTask[] = result.rows
+
+    const formatedSavedTasks = savedTasks.map((task) => {
+      return {
+        name: task.name,
+        location: task.location,
+        startTime: task.start_time,
+        endTime: task.end_time,
+        balancePoints: task.balance_points,
+        gender: task.gender,
+      }
+    })
+
+    return formatedSavedTasks;
+  } catch (err) {
+    console.error(err);
   }
 };

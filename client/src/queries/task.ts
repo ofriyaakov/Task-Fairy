@@ -1,22 +1,5 @@
 import axiosInstance from "../axiosInstance";
-
-export type Gender = "Male" | "Female" | "Both";
-
-export interface TaskPayload {
-  name: string;
-  description: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  gender: Gender;
-  location: string;
-  balancePoints: number;
-  employeesAmount: number;
-  saveToTasks: boolean;
-  other: string;
-  id?: string;
-  companyId: string;
-}
+import { TaskPayload } from './../types/Task';
 
 const TASK_ROUTE = "/task";
 export const createTask = async (payload: TaskPayload) => {
@@ -25,5 +8,14 @@ export const createTask = async (payload: TaskPayload) => {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "creation task failed");
+  }
+};
+
+export const getAllSavedTasks = async () => {
+  try {
+    const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
+    return savedTasks;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "fetch saved tasks failed");
   }
 };

@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import NewTaskForm from "../../components/NewTaskForm";
+import SavedTasks from './../../components/SavedTasks';
 
 const TasksPage: React.FC = () => {
   return (
@@ -16,7 +17,9 @@ const TasksPage: React.FC = () => {
         </Box>
 
         {/* Right Column */}
-        <Box></Box>
+        <Box sx={{ width: "100%" }}>
+          <SavedTasks />
+        </Box>
       </Box>
     </div>
   );
