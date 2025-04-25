@@ -9,12 +9,12 @@ import {
 } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { emailRegex } from "../../consts";
+import { mainColor } from "../../consts";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
 }
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
@@ -88,15 +88,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
               fontFamily: '"Montserrat", sans-serif"',
-              "& fieldset": { borderColor: "#5F70C8" },
-              "&:hover fieldset": { borderColor: "#5F70C8" },
-              "&.Mui-focused fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
+              "&:hover fieldset": { borderColor: mainColor },
+              "&.Mui-focused fieldset": { borderColor: mainColor },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
+                <PersonOutlineIcon sx={{ color: mainColor }} />
               </InputAdornment>
             ),
           }}
@@ -115,15 +115,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
               fontFamily: '"Montserrat", sans-serif"',
-              "& fieldset": { borderColor: "#5F70C8" },
-              "&:hover fieldset": { borderColor: "#5F70C8" },
-              "&.Mui-focused fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
+              "&:hover fieldset": { borderColor: mainColor },
+              "&.Mui-focused fieldset": { borderColor: mainColor },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
+                <LockOutlinedIcon sx={{ color: mainColor }} />
               </InputAdornment>
             ),
           }}
@@ -139,7 +139,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             mt: 1,
             mb: 2,
             width: "70%",
-            bgcolor: "#5F70C8",
+            bgcolor: mainColor,
             color: "white",
             "&:hover": { bgcolor: "#5A78B0" },
             fontFamily: '"Montserrat", sans-serif"',

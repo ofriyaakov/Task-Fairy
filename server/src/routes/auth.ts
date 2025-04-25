@@ -8,6 +8,7 @@ import {
   register,
 } from "../controllers/auth";
 import { BadRequestError } from "../errors/BadRequestError";
+import { uniqueConstraintViolatedCode, uniqueEmailErrorCode } from "../../consts";
 
 /**
  * @swagger
@@ -274,7 +275,7 @@ router.post("/register", async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Registration error:", err);
 
-    if (err.code === "23505" && err.constraint === "unique_email") {
+    if (err.code === uniqueConstraintViolatedCode && err.constraint === uniqueEmailErrorCode) {
       return res.status(400).json({ message: "User with this email already exists" });
     }
 

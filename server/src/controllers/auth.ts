@@ -93,14 +93,11 @@ export const refresh = async (refreshToken: string) => {
 };
 
 export const register = async (newUser: User) => {
-  // 1) grab a dedicated client
   const client = await db.connect();
 
   try {
-    // 2) start transaction
     await client.query("BEGIN");
 
-    // 3) all your helper calls, passing `client` as executor
     const company = await addNewCompany(newUser.company_name, client);
     if (!company) throw new Error("company not created");
 
@@ -111,10 +108,8 @@ export const register = async (newUser: User) => {
     const user = await addNewUser(newUser, client);
     if (!user) throw new Error("user not created");
 
-    // 4) commit if all succeeded
     await client.query("COMMIT");
 
-    // 5) outside the transaction: issue tokens
     const accessToken  = generateAccessToken(user.user_id);
     const refreshToken = generateRefreshToken(user.user_id);
     await updateRefreshToken(user, refreshToken);
@@ -127,11 +122,9 @@ export const register = async (newUser: User) => {
       email:  user.email,
     };
   } catch (err) {
-    // on any error: rollback everything
     await client.query("ROLLBACK");
     throw err;
   } finally {
-    // always release the client
     client.release();
   }
 };

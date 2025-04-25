@@ -7,6 +7,7 @@ import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import { mainColor } from "../../consts";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
@@ -115,13 +116,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
               width: "100%",
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
+                  <PersonOutlineIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -144,12 +145,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonOutlineIcon sx={{ color: "#5F70C8" }} />
+                  <PersonOutlineIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -172,12 +173,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <BadgeOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <BadgeOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -200,12 +201,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PhoneOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <PhoneOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -228,12 +229,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <WorkOutlineOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <WorkOutlineOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -257,12 +258,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <EmailOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -286,12 +287,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <LockOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -317,12 +318,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: "#5F70C8" },
+              "& fieldset": { borderColor: mainColor },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOutlinedIcon sx={{ color: "#5F70C8" }} />
+                  <LockOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -339,7 +340,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             py: 1,
             borderRadius: 1,
             textTransform: "uppercase",
-            bgcolor: "#5F70C8",
+            bgcolor: mainColor,
             "&:hover": { bgcolor: "primary.dark" },
             fontFamily: '"Montserrat", sans-serif',
             width: "60%",

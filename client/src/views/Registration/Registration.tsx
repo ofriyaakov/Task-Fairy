@@ -8,6 +8,7 @@ import { useGlobalContext } from "../../contexts/GlobalContext";
 import { useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { mainColor } from "../../consts";
 
 export const Registration: React.FC = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export const Registration: React.FC = () => {
         color='primary.main'
         fontWeight='bold'
         fontSize={"2rem"}
-        sx={{ mt: 1, fontFamily: '"Montserrat", sans-serif', color: "#5F70C8" }}>
+        sx={{ mt: 1, fontFamily: '"Montserrat", sans-serif', color: mainColor }}>
         Turning To-Dos into Ta-Das!
       </Typography>
 
