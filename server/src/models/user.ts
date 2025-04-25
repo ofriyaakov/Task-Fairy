@@ -13,11 +13,13 @@ export type User = {
   first_name?: string;
   last_name?: string;
   password: string;
-  username: string;
   user_level: UserLevel;
-  tokens: string[];
-  company_id: string;
-};
+  tokens?: string[];
+  phone_number?: string;
+  group_id?: number;
+  group_name?: string;
+  company_name?: string;
+}
 
 export interface IUser {
   id: string;
