@@ -13,14 +13,17 @@ import {
   getUserByEmail,
   addNewUser,
 } from "./user";
+import { addNewCompany } from "./company";
+import { addNewGroup } from "./group";
+import db from "../config/db";
 
 export const login = async (
   email: IUser["email"],
   password: IUser["password"]
 ) => {
   const user: User = await getUserByEmail(email);
-  if (!user) throw new Error("User not found");
-  if (password != user.password) throw new Error("Invalid credentials");
+  if (!user) throw new Error("Invalid email or password");
+  if (password != user.password) throw new Error("Invalid email or password");
 
   const accessToken = generateAccessToken(user.user_id);
   const refreshToken = generateRefreshToken(user.user_id);
@@ -33,7 +36,7 @@ export const login = async (
     name: user.first_name + " " + user.last_name,
     email: user.email,
     tokens: user.tokens,
-    companyId: user.company_id,
+    group_id: user.group_id,
   };
 };
 
@@ -90,19 +93,38 @@ export const refresh = async (refreshToken: string) => {
 };
 
 export const register = async (newUser: User) => {
-  const user = await addNewUser(newUser);
-  if (!user) throw new Error("user not created");
+  const client = await db.connect();
 
-  const accessToken = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
-  updateRefreshToken(user, refreshToken);
+  try {
+    await client.query("BEGIN");
 
-  return {
-    accessToken,
-    refreshToken,
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    tokens: user.tokens,
-  };
+    const company = await addNewCompany(newUser.company_name, client);
+    if (!company) throw new Error("company not created");
+
+    const group = await addNewGroup(newUser.group_name || "managers", company.company_id, client);
+    if (!group) throw new Error("group not created");
+
+    newUser.group_id = group.group_id;
+    const user = await addNewUser(newUser, client);
+    if (!user) throw new Error("user not created");
+
+    await client.query("COMMIT");
+
+    const accessToken  = generateAccessToken(user.user_id);
+    const refreshToken = generateRefreshToken(user.user_id);
+    await updateRefreshToken(user, refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+      id:     user.user_id,
+      name:   user.first_name + " " + user.last_name,
+      email:  user.email,
+    };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 };

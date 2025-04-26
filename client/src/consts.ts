@@ -17,3 +17,7 @@ export const APP_COLOR = {
     MINT_GREEN: "#D4F8E8",
     LIGHT_RED: "#F8D4D4",
   };
+
+export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export const mainColor = "#5F70C8";
