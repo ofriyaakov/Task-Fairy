@@ -15,16 +15,18 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
 
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date())
 
+  const navigateMonth = (date: Date) => {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+    setCurrentMonthDate(startOfMonth)
+  }
+
   return (
     <Calendar
       localizer={localizer}
       events={events}
       defaultView="month"
       date={currentMonthDate}
-      onNavigate={(date) => {
-        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-        setCurrentMonthDate(startOfMonth)
-      }}
+      onNavigate={navigateMonth}
       views={['month']}
       components={{
         dateCellWrapper: ({ children, value }) => { 
