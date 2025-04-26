@@ -30,24 +30,34 @@ export const getUserById = async (id) => {
   }
 };
 
-export const getUserByEmail = async (email: IUser["email"]) => {
+export const getUserByEmail = async (
+  email: IUser["email"]
+): Promise<User> => {
+  const sql = `
+    SELECT 
+      u.*,
+      g.company_id,
+      g.group_name
+    FROM users   u
+    JOIN groups  g ON u.group_id = g.group_id
+    WHERE u.email = $1
+    LIMIT 1
+  `;
+
   try {
-    const result = await db.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+    const result = await db.query(sql, [email]);
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
-    const user: User = result.rows[0];
-    console.log("get user by email success:", user);
-    return user;
+
+    const userWithCompany: User = result.rows[0];
+    console.log("get user by email success:", userWithCompany);
+    return userWithCompany;
+
   } catch (err) {
-    console.error(err);
+    console.error("getUserByEmail error:", err);
     throw new Error("User not found");
   }
-  // const user = userModel.findOne({ email });
-  // if (!user) throw new Error("User not found");
-  // return user;
 };
 
 // export const addNewUser = (user: User) => userModel.create(user);

@@ -19,6 +19,7 @@ export type User = {
   group_id?: number;
   group_name?: string;
   company_name?: string;
+  company_id?: number;
 }
 
 export interface IUser {

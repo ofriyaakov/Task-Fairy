@@ -17,13 +17,18 @@ const Login: React.FC = () => {
   const handleLogin = async (email: string, password: string) => {
     try {
       const response = await login({ email, password });
+      
       setConnectedUser({
         id: response.id,
         name: response.name,
         email: response.email,
         companyId: response.companyId,
+        userLevel: response.userLevel,
+        groupId: response.groupId,
+        groupName: response.groupName,
       });
-      navigate("/dashboard");
+      
+      navigate(response.userLevel == 2 ? "/dashboard" : "/profile");
     } catch (err: any) {
       // Show snackbar with the server error message
       setErrorMsg(err?.message || "Invalid email or password");

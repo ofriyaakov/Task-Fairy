@@ -36,7 +36,10 @@ export const login = async (
     name: user.first_name + " " + user.last_name,
     email: user.email,
     tokens: user.tokens,
-    group_id: user.group_id,
+    groupId: user.group_id,
+    userLevel: user.user_level,
+    companyId: user.company_id,
+    groupName: user.group_name,
   };
 };
 
@@ -120,6 +123,9 @@ export const register = async (newUser: User) => {
       id:     user.user_id,
       name:   user.first_name + " " + user.last_name,
       email:  user.email,
+      userLevel: user.user_level,
+      groupId: user.group_id,
+      groupName: group.group_name,
     };
   } catch (err) {
     await client.query("ROLLBACK");
