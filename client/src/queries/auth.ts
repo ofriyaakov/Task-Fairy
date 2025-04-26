@@ -13,6 +13,9 @@ interface AuthResponse {
   name: string;
   email: string;
   companyId: string;
+  userLevel: number;
+  groupId: string;
+  groupName: string;
 }
 
 const AUTH_ROUTE = "/auth";

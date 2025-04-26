@@ -1,24 +1,8 @@
 import axiosInstance from "../axiosInstance";
-
-export type Gender = "Male" | "Female" | "Both";
-
-export interface TaskPayload {
-  name: string;
-  description: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  gender: Gender;
-  location: string;
-  balancePoints: number;
-  employeesAmount: number;
-  saveToTasks: boolean;
-  other: string;
-  id?: string;
-  companyId: string;
-}
+import { TaskForAi, TaskPayload } from './../types/Task';
 
 const TASK_ROUTE = "/task";
+const GAMINI_ROUTE = "/gemini";
 export const createTask = async (payload: TaskPayload) => {
   try {
     const response = await axiosInstance.post(`${TASK_ROUTE}/`, payload);
@@ -37,3 +21,23 @@ export const assignEmployees = async (taskId: string, employeeIds: string[]) => 
   }
 };
 
+export const getAllSavedTasks = async () => {
+  try {
+    const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
+    return savedTasks;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "fetch saved tasks failed");
+  }
+};
+
+export const analyzeTask = async (payload: TaskForAi) => {
+  try {
+    const response = await axiosInstance.post(
+      `${GAMINI_ROUTE}/taskAnalyze`,
+      payload
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "analyze task failed");
+  }
+};

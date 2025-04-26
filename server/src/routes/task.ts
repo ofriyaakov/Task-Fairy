@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask, assignEmployees } from "../controllers/task";
+import { createTask, assignEmployees, getAllSavedTasks } from "../controllers/task";
 
 const router = express.Router();
 
@@ -158,8 +158,38 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
     res.status(200).send(newAssiments)
   } catch (err) {
     console.error(err);
+  }
+})
+
+/**
+ * @swagger
+ * /saved:
+ *   get:
+ *       summary: Retrieve a list of all saved tasks
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       responses:
+ *           200:
+ *               description: A list of tasks
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.get("/saved", async (req: Request, res: Response) => {
+  try {
+    res.status(200).send(await getAllSavedTasks());
+  } catch (err) {
     res.status(400).send(err);
   }
-});
+})
 
 export default router;
