@@ -21,4 +21,24 @@ router.post("/prompt/", async (req, res) => {
   }
 });
 
+router.post("/taskAnalyze/", async (req, res) => {
+  try {
+    const { task, companyId } = req.body;
+
+    if (!task || !companyId) {
+      return res.status(400).json({ message: "Missing task or companyId" });
+    }
+
+    const aiAnswer = await geminiController.analyzeBalnacePoints({
+      task,
+      companyId,
+    });
+
+    if (!aiAnswer) res.status(404).json({ message: "Error from Gemini" });
+    else res.status(200).send(aiAnswer);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 export default router;

@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getAllTasksBalancePoints } from "./task.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -49,14 +50,43 @@ const sendPrompt = async () => {
 };
 
 const analyzeBalnacePoints = async (data) => {
-  const prompt = "We are a system that helps organiztions to manage their tasks and missions between their teams." +
-  "We will give you now the description of a task and you will rate it from 1 to 7." + 
-  "For example, if the task is very easy to do, you will give it a 1. If the task is very hard to do, you will give it a 7." +
-  "A hard task is something pysically hard to do, or something that takes a lot of time to do." +
-  "A easy task is something that is very easy to do, or something that takes a little time to do." +
-  "The task is: " + data.taskName;
+  const tasks = await getAllTasksBalancePoints(data.companyId);
 
-  //TODO: add previous data to the prompt
+  const background =
+    "We are a system that helps organiztions to manage their tasks and missions between their teams." +
+    "We will give you now the description of a task and you will rate it from 1 to 7.";
+
+  const scalingDescription =
+    "For example, if the task is very easy to do, you will give it a 1. If the task is very hard to do, you will give it a 7." +
+    "A hard task is something pysically hard to do, or something that takes a lot of time to do." +
+    "A easy task is something that is very easy to do, or something that takes a little time to do.";
+
+  const previousTasks = tasks;
+
+  let prompt =
+    background +
+    " " +
+    scalingDescription +
+    " " +
+    "Here is the data of the previous tasks: " +
+    JSON.stringify(previousTasks) +
+    " ";
+  prompt +=
+    " " +
+    "Here is the data of the task: " +
+    JSON.stringify(data) +
+    " " +
+    "The task is: " +
+    data.taskName +
+    " " +
+    "Can you rate it from 1 to 7? Give us just the number."
+
+  const result = await model.generateContent(prompt).catch((err) => {
+    console.error(err);
+    return err;
+  });
+
+  return result.response.text();
 };
 
 export default { sendPrompt, analyzeBalnacePoints };
