@@ -29,19 +29,26 @@ interface MenuItem {
 export const Navbar: FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const navigate = useNavigate();
-    const { setConnectedUser } = useGlobalContext() 
+    const { setConnectedUser, connectedUser } = useGlobalContext();
 
-    const mainMenuItems: MenuItem[] = [
+    const EmployeeMainMenuItems: MenuItem[] = [
+        { text: "Profile", icon: <BarChartIcon />, path: "/profile" },
+        { text: "Swaps", icon: <SwapHorizIcon />, path: "/swaps" },
+    ];
+
+    const ManagerMainMenuItems: MenuItem[] = [
         { text: "Dashboard", icon: <BarChartIcon />, path: "/dashboard" },
         { text: "Calendar", icon: <CalendarMonthIcon />, path: "/calendar" },
         { text: "Tasks", icon: <TaskIcon />, path: "/tasks" },
         { text: "Employees", icon: <GroupIcon />, path: "/employees" },
-        { text: "Swaps", icon: <SwapHorizIcon />, path: "/manager-swaps" },
+        { text: "Swaps", icon: <SwapHorizIcon />, path: "/swaps" },
     ];
     
     const bottomMenuItems: MenuItem[] = [
         { text: "Logout", icon: <LogoutIcon />, path: "/login", onClick: () => setConnectedUser(null) },
-    ];    
+    ];  
+    
+    const relevantMenuItems = connectedUser?.userLevel === 1 ? EmployeeMainMenuItems : ManagerMainMenuItems;
 
     const handleListItemClick = (index: number, path?: string, onClick?: Function) => {
         setSelectedIndex(index);
@@ -82,7 +89,7 @@ export const Navbar: FC = () => {
             </Box>
 
             <List>
-                {mainMenuItems.map((item, index) => (
+                {relevantMenuItems.map((item, index) => (
                     <ListItem key={item.text} disablePadding>
                         <ListItemButton
                             onClick={() => handleListItemClick(index, item.path)}
@@ -135,7 +142,7 @@ export const Navbar: FC = () => {
                 <Divider />
                 <List>
                     {bottomMenuItems.map((item, index) => {
-                        const bottomIndex = mainMenuItems.length + index;
+                        const bottomIndex = relevantMenuItems.length + index;
                         return (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton

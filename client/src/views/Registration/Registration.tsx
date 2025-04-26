@@ -24,6 +24,9 @@ export const Registration: React.FC = () => {
         name: response.name,
         email: response.email,
         companyId: response.companyId,
+        userLevel: response.userLevel,
+        groupId: response.groupId,
+        groupName: response.groupName
       });
       navigate("/dashboard");
     } catch (err: any) {

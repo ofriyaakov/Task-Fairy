@@ -9,9 +9,15 @@ import EmployeesPage from "./views/EmployeesPage/EmployeesPage";
 import TasksPage from "./views/TasksPage/TasksPage";
 import EmployeeSwapsPage from "./views/EmployeeSwapsPage/EmployeeSwapsPage";
 import ManagerSwapsPage from "./views/ManagerSwapsPage/ManagerSwapsPage";
+import { useGlobalContext } from "./contexts/GlobalContext";
+import ProfilePage from "./views/ProfilePage/ProfilePage";
+import { userLevels } from "./consts";
 
 // Main App Component
 const Router: React.FC = () => {
+  const { connectedUser } = useGlobalContext();
+  const userLevel = connectedUser?.userLevel || 0; // Default to 0 if not logged in  
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -20,7 +26,7 @@ const Router: React.FC = () => {
         path="/dashboard"
         element={
           <PageLayout>
-            <DashboardPage />
+            { userLevel == userLevels.manager ? <DashboardPage /> : userLevel == userLevels.employee ? <Navigate to="/profile" /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
@@ -28,7 +34,7 @@ const Router: React.FC = () => {
         path="/calendar"
         element={
           <PageLayout>
-            <CalendarPage />
+            { userLevel == userLevels.manager ? <CalendarPage /> : userLevel == userLevels.employee  ? <Navigate to="/profile" /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
@@ -36,7 +42,7 @@ const Router: React.FC = () => {
         path="/employees"
         element={
           <PageLayout>
-            <EmployeesPage />
+            { userLevel == userLevels.manager ? <EmployeesPage /> : userLevel == userLevels.employee  ? <Navigate to="/profile" /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
@@ -44,23 +50,23 @@ const Router: React.FC = () => {
         path="/tasks"
         element={
           <PageLayout>
-            <TasksPage />
+            { userLevel == userLevels.manager ? <TasksPage /> : userLevel == userLevels.employee  ? <Navigate to="/profile" /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
       <Route
-        path="/employee-swaps"
+        path="/swaps"
         element={
           <PageLayout>
-            <EmployeeSwapsPage />
+            { userLevel == userLevels.employee  ? <EmployeeSwapsPage /> : userLevel == userLevels.manager ? <ManagerSwapsPage /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
       <Route
-        path="/manager-swaps"
+        path="/profile"
         element={
           <PageLayout>
-            <ManagerSwapsPage />
+            { userLevel == userLevels.employee  ? <ProfilePage /> : userLevel == userLevels.manager ? <Navigate to="/dashboard" /> : <Navigate to="/login" /> }
           </PageLayout>
         }
       />
