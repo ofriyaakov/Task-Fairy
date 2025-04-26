@@ -53,7 +53,7 @@ export const getAllSavedTasks = async () => {
       SELECT * FROM public.tasks 
       WHERE save_to_tasks`);
 
-    const savedTasks: RawTask[] = result.rows
+    const savedTasks: RawTask[] = result.rows;
 
     const formatedSavedTasks = savedTasks.map((task) => {
       return {
@@ -63,10 +63,32 @@ export const getAllSavedTasks = async () => {
         endTime: task.end_time,
         balancePoints: task.balance_points,
         gender: task.gender,
-      }
-    })
+      };
+    });
 
     return formatedSavedTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getAllTasksBalancePoints = async (companyId: string) => {
+  try {
+    const result = await db.query(
+      `
+        SELECT * FROM public.tasks 
+        WHERE company_id = $1`,
+      [companyId]
+    );
+
+    const tasks: RawTask[] = result.rows;
+    const formatedTasks = tasks.map((task) => {
+      return {
+        name: task.name,
+        balancePoints: task.balance_points,
+      };
+    });
+    return formatedTasks;
   } catch (err) {
     console.error(err);
   }
