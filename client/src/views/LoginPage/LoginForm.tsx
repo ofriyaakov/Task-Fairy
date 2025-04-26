@@ -1,76 +1,106 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
   Button,
-  Typography,
+  Alert,
   InputAdornment,
   Container,
-  Link,
-  Alert,
 } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { emailRegex } from "../../consts";
+import { mainColor } from "../../consts";
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
+  onSubmit: (email: string, password: string) => Promise<void>;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [canSubmit, setCanSubmit] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (email && !emailRegex.test(email)) {
+      setEmailError("Enter a valid email");
+    } else {
+      setEmailError(null);
+    }
+    setCanSubmit(!emailError && emailRegex.test(email) && password.length > 0);
+  }, [email, password, emailError]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit) return;
     setError("");
     setLoading(true);
-
     try {
-      await onSubmit(username, password);
-    } catch (err) {
-      setError("Invalid username or password");
-    } finally {
+      await onSubmit(email, password);
+    } catch {
+      setError("Invalid email or password");
+          } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth='xs' sx={{ pt: 4, textAlign: "center" }}>
-      <img src='/logo.jpg' alt='Logo' />
+    <Container maxWidth='sm' sx={{ textAlign: "center" }}>
+      <Box
+        component="img"
+        src="/Logo.png"
+        alt="Logo"
+        sx={{
+        width: {
+          xs: "100%",
+          sm: "80%",
+          md: "60%",
+          lg: "400px",
+          xl: "400px",
+        },
+          height: "auto",
+          mx: "auto",
+        }}
+      />
 
-      <Box component='form' onSubmit={handleSubmit}>
+      <Box component='form' onSubmit={handleSubmit} sx={{ fontFamily: '"Montserrat", sans-serif' }}>
         {error && (
           <Alert severity='error' sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
-        {/* Username Field */}
+        {/* Email Field */}
         <TextField
-          fullWidth
-          placeholder='USERNAME'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder='EMAIL'
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          error={!!emailError}
+          helperText={emailError}
           required
           variant='outlined'
           sx={{
             mb: 2,
+            width: "70%",
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
+              fontFamily: '"Montserrat", sans-serif"',
+              "& fieldset": { borderColor: mainColor },
+              "&:hover fieldset": { borderColor: mainColor },
+              "&.Mui-focused fieldset": { borderColor: mainColor },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <PersonOutlineIcon sx={{ color: "#6B8CC8" }} />
+                <PersonOutlineIcon sx={{ color: mainColor }} />
               </InputAdornment>
             ),
           }}
         />
-
-        {/* Password Field */}
         <TextField
           fullWidth
           placeholder='PASSWORD'
@@ -79,11 +109,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
           variant='outlined'
-          sx={{ mb: 2 }}
+          sx={{
+            mb: 2,
+            width: "70%",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "4px",
+              fontFamily: '"Montserrat", sans-serif"',
+              "& fieldset": { borderColor: mainColor },
+              "&:hover fieldset": { borderColor: mainColor },
+              "&.Mui-focused fieldset": { borderColor: mainColor },
+            },
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <LockOutlinedIcon sx={{ color: "#6B8CC8" }} />
+                <LockOutlinedIcon sx={{ color: mainColor }} />
               </InputAdornment>
             ),
           }}
@@ -98,12 +138,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           sx={{
             mt: 1,
             mb: 2,
-            bgcolor: "#6B8CC8",
+            width: "70%",
+            bgcolor: mainColor,
             color: "white",
-            "&:hover": {
-              bgcolor: "#5A78B0",
-            },
-          }}>
+            "&:hover": { bgcolor: "#5A78B0" },
+            fontFamily: '"Montserrat", sans-serif"',
+          }}
+        >
           LOGIN
         </Button>
       </Box>

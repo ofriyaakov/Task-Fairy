@@ -1,28 +1,58 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, InputAdornment, SvgIcon } from "@mui/material";
+import { TextField, Button, Box, InputAdornment } from "@mui/material";
 import { RegistrationData } from "./types";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import { mainColor } from "../../consts";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
+  const managerLevel = "2";
   const [formData, setFormData] = useState<RegistrationData>({
-    username: "",
-    // phoneNumber: "",
-    // companyName: "",
-    user_level: "",
+    first_name: "",
+    last_name: "",
+    repeat_password: "",
+    phone_number: "",
+    company_name: "",
+    user_level: managerLevel,
     password: "",
     email: "",
-    user_id: ""
+    user_id: "",
   });
   const [loading, setLoading] = useState(false);
+
+  // ── VALIDATION RULES ────────────────────────────────────────────────────────
+  const isEmailValid = /\S+@\S+\.\S+/.test(formData.email);
+  const isPasswordValid = formData.password.length >= 6;
+  const isUserIdValid = /^\d{9}$/.test(formData.user_id);
+  const isPhoneNumberValid = /^\d{10}$/.test(formData.phone_number);
+  const doPasswordsMatch = formData.password === formData.repeat_password;
+  const areRequiredFilled =
+    formData.first_name.trim() &&
+    formData.last_name.trim() &&
+    formData.user_id.trim() &&
+    formData.phone_number.trim() &&
+    formData.company_name.trim() &&
+    formData.email.trim();
+  const isFormValid =
+    Boolean(areRequiredFilled) &&
+    isEmailValid &&
+    isPasswordValid &&
+    doPasswordsMatch;
+  // ────────────────────────────────────────────────────────────────────────────
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name as string]: value,
     }));
@@ -30,8 +60,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid) return;
     setLoading(true);
-
     try {
       await onSubmit(formData);
     } catch (err) {
@@ -42,75 +72,141 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", pt: 4, pb: 2, px: 2 }}>
-      {/* Logo and Title */}
-      <img src='/logo.jpg' alt='Logo' />
+    <Box sx={{ maxWidth: 550, mx: "auto", pb: 2, px: 2 }}>
+      {/* Logo */}
+      <Box
+        component="img"
+        src="/Logo.png"
+        alt="Logo"
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "400px",
+            xl: "400px",
+          },
+          height: "auto",
+          mx: "auto",
+        }}
+      />
 
       {/* Form */}
-      <Box component='form' onSubmit={handleSubmit} sx={{ width: "100%" }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
             gap: 2,
-          }}>
-          {/* User Name */}
+          }}
+        >
+          {/* First Name */}
           <TextField
-            fullWidth
-            name='username'
-            placeholder='USER NAME'
-            value={formData.username}
+            name="first_name"
+            placeholder="FIRST NAME *"
+            value={formData.first_name}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            error={formData.first_name !== "" && !formData.first_name.trim()}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+              width: "100%",
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <circle
-                      cx='12'
-                      cy='8'
-                      r='4'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <PersonOutlineIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
           />
 
-          {/* user id */}
+          {/* Last Name */}
           <TextField
             fullWidth
-            name='user_id'
-            placeholder='ID'
+            name="last_name"
+            placeholder="LAST NAME *"
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+            error={formData.last_name !== "" && !formData.last_name.trim()}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonOutlineIcon sx={{ color: mainColor }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* User ID */}
+          <TextField
+            fullWidth
+            name="user_id"
+            placeholder="ID *"
             value={formData.user_id}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            error={formData.user_id !== "" && !isUserIdValid}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <path
-                      d='M6 4H10C11.1046 4 12 4.89543 12 6V18C12 19.1046 11.1046 20 10 20H6C4.89543 20 4 19.1046 4 18V6C4 4.89543 4.89543 4 6 4Z'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M12 8H16C17.1046 8 18 8.89543 18 10V14C18 15.1046 17.1046 16 16 16H12'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <BadgeOutlinedIcon sx={{ color: mainColor }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Phone Number */}
+          <TextField
+            fullWidth
+            name="phone_number"
+            placeholder="PHONE NUMBER *"
+            value={formData.phone_number}
+            onChange={handleChange}
+            required
+            error={formData.phone_number !== "" && !isPhoneNumberValid}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PhoneOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -119,94 +215,26 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Company Name */}
           <TextField
             fullWidth
-            name='companyName'
-            placeholder='COMPANY NAME'
-            // value={formData.companyName}
-            // onChange={handleChange}
-            variant='outlined'
-            size='small'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='6'
-                      width='16'
-                      height='12'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M8 12H16' stroke='currentColor' />
-                    <path d='M8 16H16' stroke='currentColor' />
-                  </SvgIcon>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Company Role */}
-          <TextField
-            fullWidth
-            name='user_level'
-            placeholder='COMPANY ROLE'
-            value={formData.user_level}
-            onChange={handleChange}
-            variant='outlined'
-            size='small'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='6'
-                      y='4'
-                      width='12'
-                      height='16'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M10 10H14' stroke='currentColor' />
-                    <path d='M10 14H14' stroke='currentColor' />
-                    <path d='M11 6H13' stroke='currentColor' />
-                  </SvgIcon>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Password */}
-          <TextField
-            fullWidth
-            name='password'
-            placeholder='PASSWORD'
-            type='password'
-            value={formData.password}
+            name="company_name"
+            placeholder="COMPANY NAME *"
+            value={formData.company_name}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            error={formData.company_name !== "" && !formData.company_name.trim()}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='9'
-                      width='16'
-                      height='11'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path
-                      d='M7 9V7C7 5.34315 8.34315 4 10 4H14C15.6569 4 17 5.34315 17 7V9'
-                      stroke='currentColor'
-                    />
-                    <circle cx='12' cy='15' r='1.5' fill='currentColor' />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <WorkOutlineOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -215,29 +243,87 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           {/* Email */}
           <TextField
             fullWidth
-            name='email'
-            placeholder='EMAIL'
-            type='email'
+            name="email"
+            placeholder="EMAIL *"
+            type="email"
             value={formData.email}
             onChange={handleChange}
             required
-            variant='outlined'
-            size='small'
+            error={formData.email !== "" && !isEmailValid}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon fontSize='small'>
-                    <rect
-                      x='4'
-                      y='6'
-                      width='16'
-                      height='12'
-                      rx='1'
-                      stroke='currentColor'
-                      fill='none'
-                    />
-                    <path d='M4 9L12 15L20 9' stroke='currentColor' />
-                  </SvgIcon>
+                <InputAdornment position="start">
+                  <EmailOutlinedIcon sx={{ color: mainColor }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Password */}
+          <TextField
+            fullWidth
+            name="password"
+            placeholder="PASSWORD *"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            error={formData.password !== "" && !isPasswordValid}
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon sx={{ color: mainColor }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Repeat Password */}
+          <TextField
+            fullWidth
+            name="repeat_password"
+            placeholder="REPEAT PASSWORD *"
+            type="password"
+            value={formData.repeat_password}
+            onChange={handleChange}
+            required
+            error={
+              formData.repeat_password !== "" && !doPasswordsMatch
+            }
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px",
+                fontFamily: '"Montserrat", sans-serif',
+                color: "#102cc2",
+              },
+              "& fieldset": { borderColor: mainColor },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlinedIcon sx={{ color: mainColor }} />
                 </InputAdornment>
               ),
             }}
@@ -246,24 +332,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
         {/* Register Button */}
         <Button
-          type='submit'
-          fullWidth
-          variant='contained'
-          disabled={loading}
+          type="submit"
+          variant="contained"
+          disabled={loading || !isFormValid}
           sx={{
             mt: 3,
-            py: 1.5,
+            py: 1,
             borderRadius: 1,
             textTransform: "uppercase",
-            bgcolor: "primary.main",
+            bgcolor: mainColor,
             "&:hover": { bgcolor: "primary.dark" },
-          }}>
+            fontFamily: '"Montserrat", sans-serif',
+            width: "60%",
+          }}
+        >
           {loading ? "REGISTERING..." : "REGISTER"}
         </Button>
-
-        {/* Login Link */}
       </Box>
-      {/* Tagline */}
     </Box>
   );
 };

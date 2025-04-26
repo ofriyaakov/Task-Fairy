@@ -1,6 +1,8 @@
 import express, { Express } from "express";
 import authRoutes from "./src/routes/auth";
-import geminiRoues from "./src/routes/gemini";
+import geminiRoutes from "./src/routes/gemini";
+import taskRoutes from "./src/routes/task";
+
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
@@ -38,7 +40,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
-app.use("/gemini", geminiRoues);
+app.use("/gemini", geminiRoutes);
+app.use("/task", taskRoutes);
 
 app.use(errorHandler);
 app.use(express.static("front"));

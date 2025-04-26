@@ -1,9 +1,10 @@
 import userModel, { IUser, User } from "../models/user";
 import db from "../config/db";
+import { QueryResult } from "pg";
 
 export const getAllUsers = async () => {
   try {
-    const result = await db.query('SELECT * FROM users');
+    const result = await db.query("SELECT * FROM users");
     const users: User[] = result.rows;
     console.log("get all user success:", users);
     return users;
@@ -14,7 +15,9 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE user_id = $1', [id]);
+    const result = await db.query("SELECT * FROM users WHERE user_id = $1", [
+      id,
+    ]);
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
@@ -29,7 +32,9 @@ export const getUserById = async (id) => {
 
 export const getUserByEmail = async (email: IUser["email"]) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
@@ -47,11 +52,20 @@ export const getUserByEmail = async (email: IUser["email"]) => {
 
 // export const addNewUser = (user: User) => userModel.create(user);
 
-export const addNewUser = async (user: User) => {
+export const addNewUser = async (user: User, executor: { query: <T = any>(sql: string, params?: any[]) => Promise<QueryResult<T>> } = db) => {
   try {
-    const result = await db.query(
-      `INSERT INTO users (user_id, email, first_name, last_name, password, username, user_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [user.user_id, user.email, user.username.split(' ')[0], user.username.split(' ')[1], user.password, user.username, user.user_level]
+    const result = await executor.query<{
+      user_id: string;
+      email: string;
+      first_name: string;
+      last_name: string;
+      password: string;
+      user_level: number;
+      phone_number: string;
+      group_id: number;
+    }>(
+      `INSERT INTO users (user_id, email, first_name, last_name, password, user_level, phone_number, group_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [user.user_id, user.email, user.first_name, user.last_name, user.password, user.user_level, user.phone_number, user.group_id]
     );
 
     console.log("New user added:", result.rows[0]);
@@ -64,16 +78,10 @@ export const addNewUser = async (user: User) => {
 
 export const updateUserById = (
   id,
-  {
-    name,
-  }: Omit<IUser, "password" | "email" | "tokens">
+  { name }: Omit<IUser, "password" | "email" | "tokens">
 ) => {
-  userModel.findByIdAndUpdate(
-    id,
-    { name },
-    { new: true }
-  );
-}
+  userModel.findByIdAndUpdate(id, { name }, { new: true });
+};
 
 // export const updateUserTokenById = (id, newRefreshToken) =>
 //   userModel.findByIdAndUpdate(id, { tokens: newRefreshToken }, { new: true });
