@@ -16,9 +16,10 @@ import {
   TextField,
   Typography,
   Stack,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
-import { Star, Group } from "@mui/icons-material";
+import { Star, Group, AutoAwesome } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
@@ -354,16 +355,17 @@ const NewTaskForm: React.FC = () => {
                   />
                 </FormControl>
               </Box>
-              <Button
-                variant="contained"
-                color="inherit"
-                size="small"
-                sx={{ mr: 2 }}
-                onClick={() => handleTaskAnalyze()}
-                disabled={!formData.name || !formData.description}
-              >
-                AI
-              </Button>
+              <Tooltip title="AI Balance Points" arrow placement="top">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ mr: 3, mb: 1, borderRadius: 4, minWidth: 40, height: 40, borderWidth: 2 }}
+                  onClick={() => handleTaskAnalyze()}
+                  disabled={!formData.name || !formData.description}
+                >
+                  <AutoAwesome fontSize="small" />
+                </Button>
+              </Tooltip>
 
               <Box
                 sx={{

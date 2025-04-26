@@ -11,7 +11,7 @@ const sendPrompt = async () => {
 
   // will be removed in the future
   const data = {
-    Januarry: [
+    January: [
       { name: "Team A", points: 50 },
       { name: "Team B", points: 30 },
       { name: "Team C", points: 20 },
@@ -50,7 +50,7 @@ const sendPrompt = async () => {
 };
 
 const analyzeBalnacePoints = async (data) => {
-  const tasks = await getAllTasksBalancePoints(data.companyId);
+  const previousTasks = await getAllTasksBalancePoints(data.companyId);
 
   const background =
     "We are a system that helps organiztions to manage their tasks and missions between their teams." +
@@ -61,16 +61,15 @@ const analyzeBalnacePoints = async (data) => {
     "A hard task is something pysically hard to do, or something that takes a lot of time to do." +
     "A easy task is something that is very easy to do, or something that takes a little time to do.";
 
-  const previousTasks = tasks;
+  let prompt = background + " " + scalingDescription + " ";
 
-  let prompt =
-    background +
-    " " +
-    scalingDescription +
-    " " +
-    "Here is the data of the previous tasks: " +
-    JSON.stringify(previousTasks) +
-    " ";
+  if (previousTasks.length > 0) {
+    prompt +=
+      "This is the data of the previous tasks. Please rate the new task based on the previous ratings. " +
+      JSON.stringify(previousTasks) +
+      " ";
+  }
+
   prompt +=
     " " +
     "Here is the data of the task: " +
@@ -79,7 +78,7 @@ const analyzeBalnacePoints = async (data) => {
     "The task is: " +
     data.taskName +
     " " +
-    "Can you rate it from 1 to 7? Give us just the number."
+    "Can you rate it from 1 to 7? Give us just the number.";
 
   const result = await model.generateContent(prompt).catch((err) => {
     console.error(err);
