@@ -1,9 +1,13 @@
 import React from 'react'
+import "./Calendar.css"
 import { ToolbarProps } from 'react-big-calendar'
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import { APP_COLOR } from '../../consts';
 
 export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
+
+  const fontSize = 'clamp(0.6rem, 1vw + 1vh, 2.5rem)'
+
   return (
     <div
       style={{
@@ -11,9 +15,10 @@ export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '0.8rem 1.8rem',
+        padding: '0.4em 1em',
         fontWeight: 'bold',
-        fontSize: '1.8rem',
+        height: '8%',
+        fontSize: fontSize,
         borderRadius: '35px 35px 0px 0px',
         color: 'black',
         fontFamily: '"Montserrat", sans-serif',
@@ -22,26 +27,16 @@ export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
     >
       <button
         onClick={() => onNavigate('PREV')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        <ChevronLeft />
+        className='chevron-button'>
+        <ChevronLeft style={{ fontSize: fontSize }} />
       </button>
 
       <div>{label}</div>
 
       <button
         onClick={() => onNavigate('NEXT')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        <ChevronRight />
+        className='chevron-button'>
+        <ChevronRight style={{ fontSize: fontSize }} />
       </button>
     </div>
   )

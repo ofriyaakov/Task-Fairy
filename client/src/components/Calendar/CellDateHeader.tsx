@@ -11,14 +11,12 @@ export const CellDateHeader: React.FC<CellDateHeaderProps> = ({ label }) => {
         style={{
           fontWeight: 'bold',
           color: APP_COLOR.BLACK,
-          top: '0.25rem',
-          left: '0.25rem',
           fontFamily: '"Montserrat", sans-serif',
-          fontSize: '1.2rem',
+          fontSize: 'clamp(0.5rem, 0.7vh + 0.7vw, 2rem)',
           position: "relative",
-            justifySelf: "left",
-            paddingLeft: "1rem",
-            paddingTop: "0.5rem",
+          justifySelf: "left",
+          paddingLeft: "0.4em",
+          paddingTop: "0.25em",
         }}
       >
         {Number(label)}
