@@ -28,6 +28,7 @@ import { analyzeTask, createTask } from "../queries/task";
 import { TaskPayload, TaskForAi } from "./../types/Task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { dateFormate, timeFormate } from "../consts";
+import { BarLoader } from "react-spinners";
 
 interface TaskFormData {
   name: string;
@@ -52,6 +53,8 @@ const locations = [
 
 const NewTaskForm: React.FC = () => {
   const { connectedUser } = useGlobalContext();
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [clickedAI, setClickedAI] = useState(false);
 
   const [formData, setFormData] = useState<TaskFormData>({
     name: "",
@@ -71,6 +74,9 @@ const NewTaskForm: React.FC = () => {
     dayjs(date).format(format);
 
   const handleChange = (field: keyof TaskFormData, value: any) => {
+    if (field === "name" || field === "description") {
+      setClickedAI(false);
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -94,6 +100,8 @@ const NewTaskForm: React.FC = () => {
   };
 
   const handleTaskAnalyze = async () => {
+    setLoadingAI(true);
+    setClickedAI(true);
     const payload: TaskForAi = {
       name: formData.name,
       description: formData.description,
@@ -107,6 +115,7 @@ const NewTaskForm: React.FC = () => {
     } catch (err: any) {
       console.error(err.message);
     }
+    setLoadingAI(false);
   };
 
   return (
@@ -337,7 +346,7 @@ const NewTaskForm: React.FC = () => {
                   <TextField
                     label="Balance points"
                     type="number"
-                    value={formData.balancePoints}
+                    value={loadingAI ? "" : formData.balancePoints}
                     onChange={(e) =>
                       handleChange(
                         "balancePoints",
@@ -350,6 +359,14 @@ const NewTaskForm: React.FC = () => {
                           <Star />
                         </InputAdornment>
                       ),
+                      endAdornment: loadingAI ? (
+                        <InputAdornment position="start" sx={{ ml: -10 }}>
+                          <Box>
+                            <BarLoader width={150} height={4} color="#1976d2" />
+                          </Box>
+                        </InputAdornment>
+                      ) : null,
+                      readOnly: loadingAI,
                     }}
                     sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
@@ -359,9 +376,18 @@ const NewTaskForm: React.FC = () => {
                 <Button
                   variant="outlined"
                   size="small"
-                  sx={{ mr: 3, mb: 1, borderRadius: 4, minWidth: 40, height: 40, borderWidth: 2 }}
+                  sx={{
+                    mr: 3,
+                    mb: 1,
+                    borderRadius: 4,
+                    minWidth: 40,
+                    height: 40,
+                    borderWidth: 2,
+                  }}
                   onClick={() => handleTaskAnalyze()}
-                  disabled={!formData.name || !formData.description}
+                  disabled={
+                    !formData.name || !formData.description || clickedAI
+                  }
                 >
                   <AutoAwesome fontSize="small" />
                 </Button>
