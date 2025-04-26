@@ -47,6 +47,26 @@ export const createTask = async (task: Task) => {
   }
 };
 
+export const assignEmployees = async (taskId: string, employeeIds: string[]) => {
+  try {
+    const query = `
+        INSERT INTO public.r_tasks_users(task_id, user_id)
+	    VALUES ($1, $2)
+        RETURNING *
+      `;
+
+    const returnRows = []
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [taskId, id]);
+      returnRows.push(rows)
+    })
+
+    return returnRows;
+  } catch (e) {
+    console.error(e);
+  }
+};
 export const getAllSavedTasks = async () => {
   try {
     const result = await db.query(`

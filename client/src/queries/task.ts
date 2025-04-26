@@ -12,6 +12,15 @@ export const createTask = async (payload: TaskPayload) => {
   }
 };
 
+export const assignEmployees = async (taskId: string, employeeIds: string[]) => {
+  try {
+    const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, { taskId, employeeIds });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "failed to assign employees");
+  }
+};
+
 export const getAllSavedTasks = async () => {
   try {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
