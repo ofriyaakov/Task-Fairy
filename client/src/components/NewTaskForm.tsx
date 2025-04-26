@@ -23,8 +23,8 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
-import { createTask } from "../queries/task";
-import { TaskPayload } from './../types/Task'
+import { analyzeTask, createTask } from "../queries/task";
+import { TaskPayload, TaskForAi } from "./../types/Task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { dateFormate, timeFormate } from "../consts";
 
@@ -92,6 +92,22 @@ const NewTaskForm: React.FC = () => {
     }
   };
 
+  const handleTaskAnalyze = async () => {
+    const payload: TaskForAi = {
+      name: formData.name,
+      description: formData.description,
+      companyId: connectedUser?.companyId || "1",
+    };
+
+    try {
+      const response = await analyzeTask(payload);
+      formData.balancePoints = response;
+      setFormData((prev) => ({ ...prev, balancePoints: response }));
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
   return (
     <Paper
       elevation={0}
@@ -99,7 +115,8 @@ const NewTaskForm: React.FC = () => {
         p: 1,
         mx: "auto",
         borderRadius: 2,
-      }}>
+      }}
+    >
       <Headline color={"#e3f2fd"} title={"Create New Task"} />
       <Box
         sx={{
@@ -107,7 +124,8 @@ const NewTaskForm: React.FC = () => {
           mx: "auto",
           bgcolor: "#f8fbff",
           borderRadius: 2,
-        }}>
+        }}
+      >
         <form onSubmit={handleSubmit}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box
@@ -115,13 +133,14 @@ const NewTaskForm: React.FC = () => {
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
                 gap: 3,
-              }}>
+              }}
+            >
               {/* Left Column */}
               <Box>
                 <TextField
                   fullWidth
-                  label='Name'
-                  variant='outlined'
+                  label="Name"
+                  variant="outlined"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   sx={{
@@ -133,7 +152,7 @@ const NewTaskForm: React.FC = () => {
                 />
 
                 <StaticDatePicker
-                  orientation='portrait'
+                  orientation="portrait"
                   value={formData.date}
                   onChange={(newValue) => handleChange("date", newValue)}
                   slots={{
@@ -153,8 +172,8 @@ const NewTaskForm: React.FC = () => {
               <Box>
                 <TextField
                   fullWidth
-                  label='Description'
-                  variant='outlined'
+                  label="Description"
+                  variant="outlined"
                   multiline
                   rows={2}
                   value={formData.description}
@@ -169,12 +188,13 @@ const NewTaskForm: React.FC = () => {
 
                 <Box>
                   <FormLabel
-                    component='legend'
+                    component="legend"
                     sx={{
                       display: "flex",
                       transform: "scale(0.7)",
                       transformOrigin: "bottom left",
-                    }}>
+                    }}
+                  >
                     Time range
                   </FormLabel>
                   <Box
@@ -184,15 +204,17 @@ const NewTaskForm: React.FC = () => {
                       bgcolor: "white",
                       borderRadius: 1,
                       padding: 1,
-                    }}>
+                    }}
+                  >
                     <Box
                       sx={{
                         flex: 1,
                         transform: "scale(0.9)",
                         transformOrigin: "top center",
-                      }}>
+                      }}
+                    >
                       <TimePicker
-                        label='Start Time'
+                        label="Start Time"
                         value={formData.startTime}
                         onChange={(newValue) =>
                           handleChange("startTime", newValue)
@@ -204,9 +226,10 @@ const NewTaskForm: React.FC = () => {
                         flex: 1,
                         transform: "scale(0.9)",
                         transformOrigin: "top center",
-                      }}>
+                      }}
+                    >
                       <TimePicker
-                        label='End Time'
+                        label="End Time"
                         value={formData.endTime}
                         onChange={(newValue) =>
                           handleChange("endTime", newValue)
@@ -217,15 +240,16 @@ const NewTaskForm: React.FC = () => {
                 </Box>
 
                 <Box>
-                  <FormControl fullWidth component='fieldset'>
+                  <FormControl fullWidth component="fieldset">
                     <FormLabel
-                      component='legend'
+                      component="legend"
                       sx={{
                         display: "flex",
                         transform: "scale(0.7)",
                         transformOrigin: "bottom left",
                         width: "100%",
-                      }}>
+                      }}
+                    >
                       Required gender
                     </FormLabel>
 
@@ -241,21 +265,22 @@ const NewTaskForm: React.FC = () => {
                         padding: 1,
                         transform: "scale(0.9)",
                         transformOrigin: "top center",
-                      }}>
+                      }}
+                    >
                       <FormControlLabel
-                        value='Male'
-                        control={<Radio size='small' />}
-                        label='Male'
+                        value="Male"
+                        control={<Radio size="small" />}
+                        label="Male"
                       />
                       <FormControlLabel
-                        value='Female'
-                        control={<Radio size='small' />}
-                        label='Female'
+                        value="Female"
+                        control={<Radio size="small" />}
+                        label="Female"
                       />
                       <FormControlLabel
-                        value='Both'
-                        control={<Radio size='small' />}
-                        label='Both'
+                        value="Both"
+                        control={<Radio size="small" />}
+                        label="Both"
                       />
                     </RadioGroup>
                   </FormControl>
@@ -263,13 +288,14 @@ const NewTaskForm: React.FC = () => {
 
                 <FormControl fullWidth>
                   <FormLabel
-                    component='legend'
+                    component="legend"
                     sx={{
                       display: "flex",
                       transform: "scale(0.7)",
                       transformOrigin: "bottom left",
                       width: "100%",
-                    }}>
+                    }}
+                  >
                     Location
                   </FormLabel>
                   <Select
@@ -281,7 +307,8 @@ const NewTaskForm: React.FC = () => {
                       borderRadius: 1,
                       transform: "scale(0.9)",
                       transformOrigin: "top center",
-                    }}>
+                    }}
+                  >
                     {locations.map((location) => (
                       <MenuItem key={location} value={location}>
                         {location}
@@ -297,16 +324,18 @@ const NewTaskForm: React.FC = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   transform: "scale(0.9)",
                   transformOrigin: "top center",
-                }}>
+                }}
+              >
                 <FormControl fullWidth>
                   <TextField
-                    label='Balance points'
-                    type='number'
+                    label="Balance points"
+                    type="number"
                     value={formData.balancePoints}
                     onChange={(e) =>
                       handleChange(
@@ -316,7 +345,7 @@ const NewTaskForm: React.FC = () => {
                     }
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position='start'>
+                        <InputAdornment position="start">
                           <Star />
                         </InputAdornment>
                       ),
@@ -325,15 +354,27 @@ const NewTaskForm: React.FC = () => {
                   />
                 </FormControl>
               </Box>
+              <Button
+                variant="contained"
+                color="inherit"
+                size="small"
+                sx={{ mr: 2 }}
+                onClick={() => handleTaskAnalyze()}
+                disabled={!formData.name || !formData.description}
+              >
+                AI
+              </Button>
+
               <Box
                 sx={{
                   transform: "scale(0.9)",
                   transformOrigin: "top center",
-                }}>
+                }}
+              >
                 <FormControl fullWidth>
                   <TextField
-                    label='Employees amount'
-                    type='number'
+                    label="Employees amount"
+                    type="number"
                     value={formData.employeesAmount}
                     onChange={(e) =>
                       handleChange(
@@ -343,7 +384,7 @@ const NewTaskForm: React.FC = () => {
                     }
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position='start'>
+                        <InputAdornment position="start">
                           <Group />
                         </InputAdornment>
                       ),
@@ -356,11 +397,12 @@ const NewTaskForm: React.FC = () => {
                 sx={{
                   transform: "scale(0.9)",
                   transformOrigin: "top center",
-                }}>
+                }}
+              >
                 <FormControl fullWidth>
                   <TextField
-                    label='Other'
-                    type='text'
+                    label="Other"
+                    type="text"
                     value={formData.other}
                     onChange={(e) => handleChange("other", e.target.value)}
                     sx={{ bgcolor: "white", borderRadius: 1 }}
@@ -369,10 +411,11 @@ const NewTaskForm: React.FC = () => {
               </Box>
             </Box>
             <Button
-              type='submit'
-              variant='contained'
-              color='primary'
-              sx={{ minWidth: 300, mt: 3 }}>
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ minWidth: 300, mt: 3 }}
+            >
               Create
             </Button>
           </LocalizationProvider>

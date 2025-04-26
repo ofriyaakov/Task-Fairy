@@ -23,15 +23,16 @@ router.post("/prompt/", async (req, res) => {
 
 router.post("/taskAnalyze/", async (req, res) => {
   try {
-    const { task, companyId } = req.body;
+    const { name, description, companyId } = req.body;
 
-    if (!task || !companyId) {
-      return res.status(400).json({ message: "Missing task or companyId" });
+    if (!name || !description || !companyId) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const aiAnswer = await geminiController.analyzeBalnacePoints({
-      task,
-      companyId,
+      name,
+      description,
+      companyId
     });
 
     if (!aiAnswer) res.status(404).json({ message: "Error from Gemini" });
