@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask, getAllSavedTasks } from "../controllers/task";
+import { createTask, assignEmployees, getAllSavedTasks } from "../controllers/task";
 
 const router = express.Router();
 
@@ -88,8 +88,6 @@ router.use(authenticateToken);
  *              other: 'Bring scanning equipment'
  */
 
-
-
 /**
  * @swagger
  * /task:
@@ -130,6 +128,41 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * @swagger
+ * /task/assignEmployees:
+ *   post:
+ *       summary: Assign employees to a task
+ *       tags: [Task, Users]
+ *       requestBody:
+ *           required: true
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/r_tasks_users'
+ *       responses:
+ *           200:
+ *               description: Assigned employees successfully
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/r_tasks_users'
+ *           400:
+ *              description: Bad request - invalid data
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+router.post("/assignEmployees", async (req: Request, res: Response) => {
+  const { taskId, employeeIds } = req.body;
+
+  try {
+    const newAssiments = await assignEmployees(taskId, employeeIds);
+    res.status(200).send(newAssiments)
+  } catch (err) {
+    console.error(err);
+  }
+})
+
+/**
+ * @swagger
  * /saved:
  *   get:
  *       summary: Retrieve a list of all saved tasks
@@ -157,6 +190,6 @@ router.get("/saved", async (req: Request, res: Response) => {
   } catch (err) {
     res.status(400).send(err);
   }
-});
+})
 
 export default router;

@@ -1,29 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
+import SuggestionsDialog from './../../components/SuggestionsModal'
 import { MyCalendar } from '../../components/Calendar/Calendar';
+import { CalendarTask } from '../../types/Task';
 
 const CalendarPage: React.FC = () => {
-  const taskSummary = {
-    '2025-04-03': { assigned: 1, total: 1 },
-    '2025-04-01': { assigned: 3, total: 3 },
-    '2025-04-30': { assigned: 5, total: 8 },
-    // etc...
-  }
-  const events = [
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(true)
+
+  const taskSummary: CalendarTask[] = [
     {
-      start: new Date(2025, 0, 1),
-      end: new Date(2025, 0, 1),
-      title: 'New Year\'s Day',
+      name: 'Task 1',
+      location: 'Location 1',
+      startTime: '16:00:00',
+      endTime: '18:00:00',
+      balancePoints: 5,
+      gender: "Male",
+      taskId: "111111-tttttyyy-333",
+      date: '2025-04-01',
+      employeesAmount: 3,
+      assignedEmployeesAmount: 3
     },
     {
-      start: new Date(2025, 0, 2),
-      end: new Date(2025, 0, 2),
-      title: 'Day after New Year\'s Day',
-    },
-  ]
+      name: 'Task 2',
+      location: 'Location 2',
+      startTime: '16:00:00',
+      endTime: '18:00:00',
+      balancePoints: 5,
+      gender: "Male",
+      taskId: "111111-tttttyyy-555",
+      date: '2025-04-03',
+      employeesAmount: 1,
+      assignedEmployeesAmount: 1
+    }, 
+    {
+      name: 'Task 3',
+      location: 'Location 3',
+      startTime: '16:00:00',
+      endTime: '18:00:00',
+      balancePoints: 5,
+      gender: "Male",
+      taskId: "111111-tttttyyy-555",
+      date: '2025-04-28',
+      employeesAmount: 7,
+      assignedEmployeesAmount: 5
+    }]
 
     return <div className='App' style={{height: "60vh", width: "80%"}}>
-    <MyCalendar events={events} taskSummary={taskSummary} ></MyCalendar>
+    <MyCalendar taskSummary={taskSummary} ></MyCalendar>
     </div>;
+
+  //     //CHANGE AFTER CONNECTING THE CALEMDER AND THE MODAL
+  // return <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} />;
   };
   
   export default CalendarPage;

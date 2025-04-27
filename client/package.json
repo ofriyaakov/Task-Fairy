@@ -13,11 +13,13 @@
     "cra-template-typescript": "1.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "lucide-react": "^0.488.0",
     "react": "^19.0.0",
     "react-big-calendar": "^1.18.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.17.0",
     "react-time-picker": "^7.0.0",
     "typeface-nunito-sans": "^1.1.13"
   },

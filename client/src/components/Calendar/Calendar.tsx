@@ -1,29 +1,47 @@
-import React, { useState } from "react";
-import { Calendar, Event as RBCEvent } from 'react-big-calendar'
+import React, { useEffect, useState } from "react";
+import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { localizer, TaskSummary } from './CalendarSetup'
 import './Calendar.css'
 import { CustomToolbar } from "./CustomToolbar";
 import { CellContent } from "./CellContent";
+import { CalendarTask } from "../../types/Task";
 
   type MyCalendarProps = {
-    events: RBCEvent[]
-    taskSummary: TaskSummary
+    taskSummary: CalendarTask[]
   }
 
-export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
+export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary => {
+  const calendarEvents: TaskSummary = {}
+
+  taskSummary.forEach(task => {
+    const dateStr = task.date
+    if (!calendarEvents[dateStr]) {
+      calendarEvents[dateStr] = { assigned: task.assignedEmployeesAmount, total: task.employeesAmount }
+    }
+  })
+
+  return calendarEvents
+}
+
+
+export const MyCalendar = ({taskSummary }: MyCalendarProps) => {
 
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date())
+  const [calendarTasks, setCalendarTasks] = useState<TaskSummary>()
 
   const navigateMonth = (date: Date) => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
     setCurrentMonthDate(startOfMonth)
   }
 
+  useEffect(() => {
+    setCalendarTasks(taskToCalendarEvents(taskSummary))
+  }, [])
+
   return (
     <Calendar
       localizer={localizer}
-      events={events}
       defaultView="month"
       date={currentMonthDate}
       onNavigate={navigateMonth}
@@ -33,7 +51,7 @@ export const MyCalendar = ({ events, taskSummary }: MyCalendarProps) => {
           return <CellContent
           children={children}
           value={value}
-          taskSummary={taskSummary}
+          taskSummary={calendarTasks!!}
           currentMonthDate={currentMonthDate}></CellContent>
         },
         month: {

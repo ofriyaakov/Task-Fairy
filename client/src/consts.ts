@@ -21,3 +21,8 @@ export const APP_COLOR = {
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const mainColor = "#5F70C8";
+
+export const userLevels = {
+    employee: 1,
+    manager: 2
+};

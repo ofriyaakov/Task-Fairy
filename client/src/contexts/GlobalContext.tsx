@@ -5,6 +5,9 @@ interface User {
   name: string;
   email?: string;
   companyId: string;
+  userLevel: number;
+  groupId: string;
+  groupName: string;
 }
 
 interface GlobalContextType {

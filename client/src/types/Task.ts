@@ -24,3 +24,16 @@ export interface TaskDetailsCard {
     balancePoints: number;
     gender: Gender;
 }
+
+export interface CalendarTask extends TaskDetailsCard{
+    taskId: string;
+    date: string;
+    employeesAmount: number;
+    assignedEmployeesAmount: number;
+}
+
+export interface TaskForAi {
+    name: string;
+    description: string;
+    companyId: string;
+}
