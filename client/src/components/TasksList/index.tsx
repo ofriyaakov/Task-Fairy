@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, TextField, Paper, Stack } from "@mui/material";
-import { TaskDetailsCard as TaskDetailsCardType } from "../../types/Task";
+import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
 

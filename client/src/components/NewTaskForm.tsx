@@ -24,7 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
 import { createTask } from "../queries/task";
-import { TaskPayload } from './../types/Task'
+import { TaskDetails, TaskPayload } from "./../types/Task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { dateFormate, timeFormate } from "../consts";
 
@@ -52,12 +52,11 @@ const locations = [
 const NewTaskForm: React.FC = () => {
   const { connectedUser } = useGlobalContext();
 
-  const [formData, setFormData] = useState<TaskFormData>({
+  const [formData, setFormData] = useState<TaskDetails>({
     name: "",
     description: "",
-    date: dayjs(new Date()),
-    startTime: dayjs(new Date()),
-    endTime: dayjs(new Date()),
+    startTime: new Date(),
+    endTime: new Date(),
     gender: "Both",
     location: locations[0],
     balancePoints: 0,
@@ -69,7 +68,7 @@ const NewTaskForm: React.FC = () => {
   const formattedDayjs = (format: string, date: Dayjs) =>
     dayjs(date).format(format);
 
-  const handleChange = (field: keyof TaskFormData, value: any) => {
+  const handleChange = (field: keyof TaskDetails, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -78,9 +77,6 @@ const NewTaskForm: React.FC = () => {
 
     const payload: TaskPayload = {
       ...formData,
-      date: formattedDayjs(dateFormate, formData.date),
-      startTime: formattedDayjs(timeFormate, formData.startTime),
-      endTime: formattedDayjs(timeFormate, formData.endTime),
       companyId: connectedUser?.companyId || "",
     };
 
@@ -134,8 +130,10 @@ const NewTaskForm: React.FC = () => {
 
                 <StaticDatePicker
                   orientation='portrait'
-                  value={formData.date}
-                  onChange={(newValue) => handleChange("date", newValue)}
+                  value={dayjs(formData.startTime)}
+                  onChange={(newValue) =>
+                    handleChange("startTime", newValue?.toDate())
+                  }
                   slots={{
                     actionBar: () => null,
                     toolbar: () => null,
@@ -193,9 +191,9 @@ const NewTaskForm: React.FC = () => {
                       }}>
                       <TimePicker
                         label='Start Time'
-                        value={formData.startTime}
+                        value={dayjs(formData.startTime)}
                         onChange={(newValue) =>
-                          handleChange("startTime", newValue)
+                          handleChange("startTime", newValue?.toDate())
                         }
                       />
                     </Box>
@@ -207,9 +205,9 @@ const NewTaskForm: React.FC = () => {
                       }}>
                       <TimePicker
                         label='End Time'
-                        value={formData.endTime}
+                        value={dayjs(formData.endTime)}
                         onChange={(newValue) =>
-                          handleChange("endTime", newValue)
+                          handleChange("endTime", newValue?.toDate)
                         }
                       />
                     </Box>
