@@ -6,7 +6,6 @@ export const createTask = async (task: Task) => {
     const {
       name,
       description,
-      date,
       startTime,
       endTime,
       gender,
@@ -19,16 +18,15 @@ export const createTask = async (task: Task) => {
     }: Task = task;
 
     const query = `
-        INSERT INTO tasks (name, description, date, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, company_id
+        INSERT INTO tasks (name, description, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, company_id
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *
       `;
 
     const values = [
       name,
       description,
-      date,
       startTime,
       endTime,
       gender,
@@ -73,7 +71,6 @@ export const getAllSavedTasks = async () => {
 };
 
 export const getTasksByEmployeeId = async (employeeId: string) => {
-
   try {
     const result = await db.query(
       `SELECT t.* FROM public.tasks t

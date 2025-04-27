@@ -207,7 +207,7 @@ const NewTaskForm: React.FC = () => {
                         label='End Time'
                         value={dayjs(formData.endTime)}
                         onChange={(newValue) =>
-                          handleChange("endTime", newValue?.toDate)
+                          handleChange("endTime", newValue?.toDate())
                         }
                       />
                     </Box>
