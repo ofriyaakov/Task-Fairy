@@ -28,3 +28,5 @@ export type TaskSummaryCard = Pick<
 > & {
   status?: string;
 };
+
+export type TaskForAi = Pick<Task, "name" | "description" | "companyId">;

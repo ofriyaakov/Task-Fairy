@@ -45,6 +45,29 @@ export const createTask = async (task: Task) => {
   }
 };
 
+export const assignEmployees = async (
+  taskId: string,
+  employeeIds: string[]
+) => {
+  try {
+    const query = `
+        INSERT INTO public.r_tasks_users(task_id, user_id)
+	    VALUES ($1, $2)
+        RETURNING *
+      `;
+
+    const returnRows = [];
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [taskId, id]);
+      returnRows.push(rows);
+    });
+
+    return returnRows;
+  } catch (e) {
+    console.error(e);
+  }
+};
 export const getAllSavedTasks = async () => {
   try {
     const result = await db.query(`
@@ -91,6 +114,28 @@ export const getTasksByEmployeeId = async (employeeId: string) => {
     }));
 
     return formattedTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getAllTasksBalancePoints = async (companyId: string) => {
+  try {
+    const result = await db.query(
+      `
+        SELECT * FROM public.tasks 
+        WHERE company_id = $1`,
+      [companyId]
+    );
+
+    const tasks: RawTask[] = result.rows;
+    const formatedTasks = tasks.map((task) => {
+      return {
+        name: task.name,
+        balancePoints: task.balance_points,
+      };
+    });
+    return formatedTasks;
   } catch (err) {
     console.error(err);
   }

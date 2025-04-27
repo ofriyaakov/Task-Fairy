@@ -16,17 +16,18 @@ import {
   TextField,
   Typography,
   Stack,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
-import { Star, Group } from "@mui/icons-material";
+import { Star, Group, AutoAwesome } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import Headline from "./Headline";
-import { createTask } from "../queries/task";
-import { TaskDetails, TaskPayload } from "./../types/Task";
+import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
+import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { dateFormate, timeFormate } from "../consts";
+import { BarLoader } from "react-spinners";
 
 interface TaskFormData {
   name: string;
@@ -51,6 +52,8 @@ const locations = [
 
 const NewTaskForm: React.FC = () => {
   const { connectedUser } = useGlobalContext();
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [clickedAI, setClickedAI] = useState(false);
 
   const [formData, setFormData] = useState<TaskDetails>({
     name: "",
@@ -69,6 +72,9 @@ const NewTaskForm: React.FC = () => {
     dayjs(date).format(format);
 
   const handleChange = (field: keyof TaskDetails, value: any) => {
+    if (field === "name" || field === "description") {
+      setClickedAI(false);
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -86,6 +92,25 @@ const NewTaskForm: React.FC = () => {
     } catch (err: any) {
       console.error(err.message);
     }
+  };
+
+  const handleTaskAnalyze = async () => {
+    setLoadingAI(true);
+    setClickedAI(true);
+    const payload: TaskForAi = {
+      name: formData.name,
+      description: formData.description,
+      companyId: connectedUser?.companyId || "1",
+    };
+
+    try {
+      const response = await analyzeTask(payload);
+      formData.balancePoints = response;
+      setFormData((prev) => ({ ...prev, balancePoints: response }));
+    } catch (err: any) {
+      console.error(err.message);
+    }
+    setLoadingAI(false);
   };
 
   return (
@@ -305,7 +330,7 @@ const NewTaskForm: React.FC = () => {
                   <TextField
                     label='Balance points'
                     type='number'
-                    value={formData.balancePoints}
+                    value={loadingAI ? "" : formData.balancePoints}
                     onChange={(e) =>
                       handleChange(
                         "balancePoints",
@@ -318,11 +343,39 @@ const NewTaskForm: React.FC = () => {
                           <Star />
                         </InputAdornment>
                       ),
+                      endAdornment: loadingAI ? (
+                        <InputAdornment position='start' sx={{ ml: -10 }}>
+                          <Box>
+                            <BarLoader width={150} height={4} color='#1976d2' />
+                          </Box>
+                        </InputAdornment>
+                      ) : null,
+                      readOnly: loadingAI,
                     }}
                     sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
                 </FormControl>
               </Box>
+              <Tooltip title='AI Balance Points' arrow placement='top'>
+                <Button
+                  variant='outlined'
+                  size='small'
+                  sx={{
+                    mr: 3,
+                    mb: 1,
+                    borderRadius: 4,
+                    minWidth: 40,
+                    height: 40,
+                    borderWidth: 2,
+                  }}
+                  onClick={() => handleTaskAnalyze()}
+                  disabled={
+                    !formData.name || !formData.description || clickedAI
+                  }>
+                  <AutoAwesome fontSize='small' />
+                </Button>
+              </Tooltip>
+
               <Box
                 sx={{
                   transform: "scale(0.9)",
