@@ -18,7 +18,9 @@ export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary =
   taskSummary.forEach(task => {
     const dateStr = task.date
     if (!calendarEvents[dateStr]) {
-      calendarEvents[dateStr] = { assigned: task.assignedEmployeesAmount, total: task.employeesAmount }
+      calendarEvents[dateStr] = [{assigned: task.assignedEmployeesAmount, total: task.employeesAmount }]
+    } else {
+      calendarEvents[dateStr].push({assigned: task.assignedEmployeesAmount, total: task.employeesAmount })
     }
   })
 

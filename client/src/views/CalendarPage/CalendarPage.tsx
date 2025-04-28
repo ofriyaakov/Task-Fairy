@@ -43,6 +43,18 @@ const CalendarPage: React.FC = () => {
       date: '2025-04-28',
       employeesAmount: 7,
       assignedEmployeesAmount: 5
+    },
+    {
+      name: 'Task 4',
+      location: 'Location 4',
+      startTime: '18:00:00',
+      endTime: '21:00:00',
+      balancePoints: 6,
+      gender: "Male",
+      taskId: "111111-tttttyyy-555",
+      date: '2025-04-28',
+      employeesAmount: 2,
+      assignedEmployeesAmount: 2
     }]
 
     return <div className='App' style={{height: "60vh", width: "80%"}}>

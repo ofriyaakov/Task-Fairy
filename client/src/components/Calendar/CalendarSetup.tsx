@@ -2,11 +2,13 @@ import { dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import enUS from 'date-fns/locale/en-US'
 
+export type TaskOccupancy = {
+  assigned: number
+  total: number
+}
+
 export type TaskSummary = {
-  [date: string]: {
-    assigned: number
-    total: number
-  }
+  [date: string]: [TaskOccupancy]
 }
 
 const locales = {
