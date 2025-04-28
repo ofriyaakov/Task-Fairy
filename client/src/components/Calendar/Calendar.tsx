@@ -50,7 +50,7 @@ export const MyCalendar = ({taskSummary }: MyCalendarProps) => {
         dateCellWrapper: ({ children, value }) => { 
           return <CellContent
           children={children}
-          value={value}
+          date={value}
           taskSummary={calendarTasks!!}
           currentMonthDate={currentMonthDate}></CellContent>
         },

@@ -6,17 +6,17 @@ import { APP_COLOR } from '../../consts'
 
 type CellContentProps = {
     children: any,
-    value: any,
+    date: Date,
     currentMonthDate: Date,
     taskSummary: TaskSummary
 }
 
-export const CellContent: React.FC<CellContentProps> = ({ children, value, taskSummary, currentMonthDate}) => {
-    const dateStr = format(value, 'yyyy-MM-dd')
-    const dayData = taskSummary[dateStr]
+export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate}) => {
+    const dateStr = format(date, 'yyyy-MM-dd')
+    const dayData = taskSummary && taskSummary[dateStr]
     const isFullyAssigned = dayData?.assigned === dayData?.total
-    const isDateOutOfMonth = value.getMonth() !== currentMonthDate.getMonth()
-    const dayNumber: number = value.getDate()
+    const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth()
+    const dayNumber: number = date.getDate()
     const taskOccupancy = dayData ? `${dayData.assigned}/${dayData.total}` : "0/0"
 
     let bgColor: string;
