@@ -1,5 +1,5 @@
 import React from 'react'
-import { APP_COLOR } from '../../consts'
+import { APP_COLOR } from '../../theme'
 
 type CellDateHeaderProps = {
     label: number

@@ -2,7 +2,8 @@ import React from 'react'
 import { format } from 'date-fns'
 import { CellDateHeader } from './CellDateHeader'
 import { TaskSummary } from './CalendarSetup'
-import { APP_COLOR } from '../../consts'
+import {calendarFnsDateFormat } from '../../consts'
+import { APP_COLOR } from '../../theme'
 
 type CellContentProps = {
     children: any,
@@ -12,7 +13,7 @@ type CellContentProps = {
 }
 
 export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate}) => {
-    const dateStr = format(date, 'yyyy-MM-dd')
+    const dateStr = format(date, calendarFnsDateFormat)
     const dayData = taskSummary && taskSummary[dateStr]
     const isFullyAssigned = dayData?.assigned === dayData?.total
     const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth()

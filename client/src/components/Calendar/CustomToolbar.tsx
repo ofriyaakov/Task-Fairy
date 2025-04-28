@@ -2,7 +2,12 @@ import React from 'react'
 import "./Calendar.css"
 import { ToolbarProps } from 'react-big-calendar'
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import { APP_COLOR } from '../../consts';
+import { APP_COLOR } from '../../theme'
+
+export const CalendarNavigationAction = {
+  PREV: 'PREV',
+  NEXT: 'NEXT',
+} as const;
 
 export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
 
@@ -26,7 +31,7 @@ export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
       }}
     >
       <button
-        onClick={() => onNavigate('PREV')}
+        onClick={() => onNavigate(CalendarNavigationAction.PREV)}
         className='chevron-button'>
         <ChevronLeft style={{ fontSize: fontSize }} />
       </button>
@@ -34,7 +39,7 @@ export const CustomToolbar = ({ label, onNavigate }: ToolbarProps) => {
       <div>{label}</div>
 
       <button
-        onClick={() => onNavigate('NEXT')}
+        onClick={() => onNavigate(CalendarNavigationAction.NEXT)}
         className='chevron-button'>
         <ChevronRight style={{ fontSize: fontSize }} />
       </button>

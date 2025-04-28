@@ -6,6 +6,7 @@ import './Calendar.css'
 import { CustomToolbar } from "./CustomToolbar";
 import { CellContent } from "./CellContent";
 import { CalendarTask } from "../../types/Task";
+import { calendarMonthView } from "../../consts";
 
   type MyCalendarProps = {
     taskSummary: CalendarTask[]
@@ -42,10 +43,10 @@ export const MyCalendar = ({taskSummary }: MyCalendarProps) => {
   return (
     <Calendar
       localizer={localizer}
-      defaultView="month"
+      defaultView={calendarMonthView}
       date={currentMonthDate}
       onNavigate={navigateMonth}
-      views={['month']}
+      views={[calendarMonthView]}
       components={{
         dateCellWrapper: ({ children, value }) => { 
           return <CellContent

@@ -10,7 +10,7 @@ import {
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { emailRegex } from "../../consts";
-import { mainColor } from "../../consts";
+import { APP_COLOR } from "../../theme";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
@@ -88,15 +88,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
               fontFamily: '"Montserrat", sans-serif"',
-              "& fieldset": { borderColor: mainColor },
-              "&:hover fieldset": { borderColor: mainColor },
-              "&.Mui-focused fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
+              "&:hover fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
+              "&.Mui-focused fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <PersonOutlineIcon sx={{ color: mainColor }} />
+                <PersonOutlineIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
               </InputAdornment>
             ),
           }}
@@ -115,15 +115,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "4px",
               fontFamily: '"Montserrat", sans-serif"',
-              "& fieldset": { borderColor: mainColor },
-              "&:hover fieldset": { borderColor: mainColor },
-              "&.Mui-focused fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
+              "&:hover fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
+              "&.Mui-focused fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <LockOutlinedIcon sx={{ color: mainColor }} />
+                <LockOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
               </InputAdornment>
             ),
           }}
@@ -139,7 +139,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             mt: 1,
             mb: 2,
             width: "70%",
-            bgcolor: mainColor,
+            bgcolor: APP_COLOR.ROYAL_BLUE,
             color: "white",
             "&:hover": { bgcolor: "#5A78B0" },
             fontFamily: '"Montserrat", sans-serif"',
