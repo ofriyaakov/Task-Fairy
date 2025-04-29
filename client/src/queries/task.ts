@@ -41,3 +41,12 @@ export const analyzeTask = async (payload: TaskForAi) => {
     throw new Error(error.response?.data?.message || "analyze task failed");
   }
 };
+
+export const getAllTasksByMonth = async (month: number) => {
+  try {
+    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/${month}`)).data;
+    return tasks;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "fetch tasks by month failed");
+  }
+};

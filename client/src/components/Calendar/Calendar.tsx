@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React  from "react";
 import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { localizer, TaskSummary } from './CalendarSetup'
@@ -9,7 +9,10 @@ import { CalendarTask } from "../../types/Task";
 import { calendarMonthView } from "../../consts";
 
   type MyCalendarProps = {
-    taskSummary: CalendarTask[]
+    taskSummary: CalendarTask[],
+    date: Date,
+    navigateMonth: (date: Date) => void,
+    handleCellClick: (date: string) => void
   }
 
 export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary => {
@@ -28,25 +31,14 @@ export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary =
 }
 
 
-export const MyCalendar = ({taskSummary }: MyCalendarProps) => {
-
-  const [currentMonthDate, setCurrentMonthDate] = useState(new Date())
-  const [calendarTasks, setCalendarTasks] = useState<TaskSummary>()
-
-  const navigateMonth = (date: Date) => {
-    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-    setCurrentMonthDate(startOfMonth)
-  }
-
-  useEffect(() => {
-    setCalendarTasks(taskToCalendarEvents(taskSummary))
-  }, [])
+export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick}: MyCalendarProps) => {
+  const calendarTasks = taskToCalendarEvents(taskSummary);
 
   return (
     <Calendar
       localizer={localizer}
       defaultView={calendarMonthView}
-      date={currentMonthDate}
+      date={date}
       onNavigate={navigateMonth}
       views={[calendarMonthView]}
       components={{
@@ -55,7 +47,8 @@ export const MyCalendar = ({taskSummary }: MyCalendarProps) => {
           children={children}
           date={value}
           taskSummary={calendarTasks!!}
-          currentMonthDate={currentMonthDate}></CellContent>
+          currentMonthDate={date}
+          handleCellClick={handleCellClick}></CellContent>
         },
         month: {
           dateHeader: () => null

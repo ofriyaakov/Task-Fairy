@@ -1,65 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SuggestionsDialog from './../../components/SuggestionsModal'
 import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
+import { getAllTasksByMonth } from '../../queries/task';
 
 const CalendarPage: React.FC = () => {
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(true)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
+  const [taskSummary, setTaskSummary] = useState<CalendarTask[]>([]);
+  const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
 
-  const taskSummary: CalendarTask[] = [
-    {
-      name: 'Task 1',
-      location: 'Location 1',
-      startTime: '16:00:00',
-      endTime: '18:00:00',
-      balancePoints: 5,
-      gender: "Male",
-      taskId: "111111-tttttyyy-333",
-      date: '2025-04-01',
-      employeesAmount: 3,
-      assignedEmployeesAmount: 3
-    },
-    {
-      name: 'Task 2',
-      location: 'Location 2',
-      startTime: '16:00:00',
-      endTime: '18:00:00',
-      balancePoints: 5,
-      gender: "Male",
-      taskId: "111111-tttttyyy-555",
-      date: '2025-04-03',
-      employeesAmount: 1,
-      assignedEmployeesAmount: 1
-    }, 
-    {
-      name: 'Task 3',
-      location: 'Location 3',
-      startTime: '16:00:00',
-      endTime: '18:00:00',
-      balancePoints: 5,
-      gender: "Male",
-      taskId: "111111-tttttyyy-555",
-      date: '2025-04-28',
-      employeesAmount: 7,
-      assignedEmployeesAmount: 5
-    },
-    {
-      name: 'Task 4',
-      location: 'Location 4',
-      startTime: '18:00:00',
-      endTime: '21:00:00',
-      balancePoints: 6,
-      gender: "Male",
-      taskId: "111111-tttttyyy-555",
-      date: '2025-04-28',
-      employeesAmount: 2,
-      assignedEmployeesAmount: 2
-    }]
+  {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/}
+  const handleCellClick = (date: string) => { 
+    const tasksByDate = taskSummary.filter(task => task.date === date);
+    console.log("tasksByDate: ", tasksByDate);
+  };
 
-    return <div className='App' style={{height: "60vh", width: "80%"}}>
-    <MyCalendar taskSummary={taskSummary} ></MyCalendar>
-    </div>;
+  const navigateMonth = (date: Date) => {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+    setCurrentMonthDate(startOfMonth)
+  }
+
+  const fetchTasks = async () => {
+    try {
+      const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1)
+      setTaskSummary(fetchedTasks)
+      setLoadingTasks(false);
+    } catch (err: any) {
+      console.error(err.message);
+      setTaskSummary([])
+      setLoadingTasks(false);
+    }
+  }
+
+  useEffect(() => {
+    setLoadingTasks(true);
+    fetchTasks();
+  }, [currentMonthDate]);
+
+  return (
+    <div className='App' style={{height: "60vh", width: "80%"}}>
+      {loadingTasks ? <div>Loading...</div> :
+      <MyCalendar taskSummary={taskSummary} date={currentMonthDate} navigateMonth={navigateMonth} handleCellClick={handleCellClick} ></MyCalendar>
+      }
+    </div>
+  );
 
   //     //CHANGE AFTER CONNECTING THE CALEMDER AND THE MODAL
   // return <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} />;

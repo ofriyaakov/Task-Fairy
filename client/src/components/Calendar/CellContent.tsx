@@ -10,10 +10,11 @@ type CellContentProps = {
     children: any,
     date: Date,
     currentMonthDate: Date,
-    taskSummary: TaskSummary
+    taskSummary: TaskSummary,
+    handleCellClick: (date: string) => void
 }
 
-export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate}) => {
+export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick}) => {
     const dateStr = format(date, calendarFnsDateFormat);
     const dayData = taskSummary && taskSummary[dateStr];
     const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth();
@@ -24,7 +25,8 @@ export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSu
   
     return (
       <div style={{ height: '100%', flex: '1 0', border: border, position: 'relative', backgroundColor: bgColor }} 
-            onClick={() => (console.log("clicked date: ", dateStr, "has data: ", Boolean(dayData)))}> {/*TODO - handle click*/}
+        onClick={()=> handleCellClick(dateStr)}> 
+        
         {!isDateOutOfMonth && (
           <div style={{ padding: '0.25rem' }}>
             <CellDateHeader label={dayNumber} />
