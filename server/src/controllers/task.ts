@@ -121,8 +121,9 @@ export const getAllTasksByMonth = async (month: number) => {
       FROM public.tasks as tasks
       Left Join public.r_tasks_users as userTask
 	      on userTask.task_id = tasks.task_id
-      WHERE CAST(SUBSTRING(date, 6, 2) as Integer) = ${month}
-      GROUP BY tasks.task_id`);
+      WHERE CAST(SUBSTRING(date, 6, 2) as Integer) = $1
+      GROUP BY tasks.task_id`, 
+      [month]);
 
     const tasks: RawEmployeedTask[] = result.rows;
 
