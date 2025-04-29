@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask, assignEmployees, getAllSavedTasks } from "../controllers/task";
+import { createTask, assignEmployees, getAllSavedTasks, getAllTasksByMonth } from "../controllers/task";
 
 const router = express.Router();
 
@@ -187,6 +187,45 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
 router.get("/saved", async (req: Request, res: Response) => {
   try {
     res.status(200).send(await getAllSavedTasks());
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
+/**
+ * @swagger
+ * /task/month/{month}:
+ *   get:
+ *       summary: Retrieve a list of all tasks by month with employees number
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A list of tasks
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.get("/month/:month", async (req: Request, res: Response) => {
+  const month = parseInt(req.params.month);
+
+  try {
+    res.status(200).send(await getAllTasksByMonth(month));
   } catch (err) {
     res.status(400).send(err);
   }
