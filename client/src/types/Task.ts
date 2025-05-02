@@ -24,3 +24,9 @@ export interface TaskDetailsCard {
     balancePoints: number;
     gender: Gender;
 }
+
+export interface TaskForAi {
+    name: string;
+    description: string;
+    companyId: string;
+}

@@ -1,26 +1,20 @@
 import dotenv from "dotenv";
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 dotenv.config();
+const host = process.env.PG_HOST
+const database = process.env.PG_DATABASE
+const user = process.env.PG_USER
+const password = process.env.PG_PASSWORD
+const port = process.env.PG_PORT
 
-  const host = process.env.PG_HOST
-  const database = process.env.PG_DATABASE
-  const user = process.env.PG_USER
-  const password = process.env.PG_PASSWORD
-  const port = process.env.PG_PORT
-
-  const pool = new Pool({
+const pool = new Pool({
     user: user,
     password: password,
     host: host,
     port: Number(port),
     database: database,
     ssl: true
-  });
-  
+});
 
-  const db = {
-    query: (text: string, params?) => pool.query(text, params)
-  }
-
-  export default db;
+export default pool;
