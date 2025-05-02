@@ -1,10 +1,11 @@
 import { Box } from "@mui/material";
 import TasksList from "../../components/TasksList";
-import { TaskDetailsCard as TaskDetailsCardType } from "../../types/Task";
+import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
 import { useEffect, useState } from "react";
 import { getEmployeeTasks } from "../../queries/task";
 import { employeeTaskTitle } from "../../consts";
 import { useGlobalContext } from "../../contexts/GlobalContext";
+
 
 const EmployeesPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -13,9 +14,9 @@ const EmployeesPage: React.FC = () => {
     TaskDetailsCardType[]
   >([]);
 
-  const fetchSavedTasks = async () => {
+  const fetchEmployeeTasks = async () => {
     try {
-      const employeeId = connectedUser?.id; // or user.id depending on your user model
+      const employeeId = connectedUser?.id;
       if (!employeeId) throw new Error("User ID not found in context");
 
       const fetchedemployeeTasks: TaskDetailsCardType[] =
@@ -28,7 +29,7 @@ const EmployeesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchSavedTasks();
+    fetchEmployeeTasks();
   }, []);
   return (
     <Box

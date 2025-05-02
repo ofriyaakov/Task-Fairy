@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import NewTaskForm from "../../components/NewTaskForm";
 import { useEffect, useState } from "react";
 import { getAllSavedTasks } from "../../queries/task";
-import { TaskDetailsCard as TaskDetailsCardType } from "../../types/Task";
+import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
 import TasksList from "../../components/TasksList";
 import { savedTaskTitle } from "../../consts";
 
