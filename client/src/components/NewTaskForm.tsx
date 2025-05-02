@@ -29,20 +29,6 @@ import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { BarLoader } from "react-spinners";
 
-interface TaskFormData {
-  name: string;
-  description: string;
-  date: Dayjs;
-  startTime: Dayjs;
-  endTime: Dayjs;
-  gender: "Male" | "Female" | "Both";
-  location: string;
-  balancePoints: number;
-  employeesAmount: number;
-  saveToTasks: boolean;
-  other: string;
-}
-
 const locations = [
   "Shishut Ramat Gan",
   "Tel Aviv Center",
@@ -68,13 +54,31 @@ const NewTaskForm: React.FC = () => {
     other: "",
   });
 
-  const formattedDayjs = (format: string, date: Dayjs) =>
-    dayjs(date).format(format);
+  const handleDateChange = (selectedDate: Date) => {
+    setFormData((prev) => {
+      const newStart = dayjs(selectedDate)
+        .hour(dayjs(prev.startTime).hour())
+        .minute(dayjs(prev.startTime).minute())
+        .toDate();
+
+      const newEnd = dayjs(selectedDate)
+        .hour(dayjs(prev.endTime).hour())
+        .minute(dayjs(prev.endTime).minute())
+        .toDate();
+
+      return {
+        ...prev,
+        startTime: newStart,
+        endTime: newEnd,
+      };
+    });
+  };
 
   const handleChange = (field: keyof TaskDetails, value: any) => {
     if (field === "name" || field === "description") {
       setClickedAI(false);
     }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -157,7 +161,7 @@ const NewTaskForm: React.FC = () => {
                   orientation='portrait'
                   value={dayjs(formData.startTime)}
                   onChange={(newValue) =>
-                    handleChange("startTime", newValue?.toDate())
+                    newValue && handleDateChange(newValue.toDate())
                   }
                   slots={{
                     actionBar: () => null,
