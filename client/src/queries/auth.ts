@@ -14,7 +14,7 @@ interface AuthResponse {
   email: string;
   companyId: string;
   userLevel: number;
-  groupId: string;
+  groupId: number;
   groupName: string;
 }
 

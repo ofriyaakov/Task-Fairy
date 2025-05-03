@@ -198,6 +198,37 @@ router.get("/saved", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/balancePointsByGroup:
+ *   get:
+ *       summary: Retrieve balance points for a specific group for the current month
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: query
+ *             name: groupId
+ *             required: true
+ *             description: ID of the group to retrieve balance points for
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: Balance points for the group
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              max:
+ *                                  type: integer
+ *                              min:
+ *                                  type: integer
+ *                              avg:
+ *                                  type: number
+ */
+
 router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
   const { groupId } = req.query;
   try {

@@ -12,7 +12,7 @@ const BalancePointsDashboard: React.FC = () => {
 
   const fetchGroupBalancePointsData = async () => {
     try {
-      const groupId = connectedUser?.groupId || "0";
+      const groupId = connectedUser?.groupId || 0;
       const data = await getBalancePointsByGroup(groupId);
       setMax(data.max);
       setMin(data.min);
