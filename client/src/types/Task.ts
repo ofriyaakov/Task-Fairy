@@ -1,32 +1,32 @@
 export type Gender = "Male" | "Female" | "Both";
 
-export interface TaskPayload {
-    name: string;
-    description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    gender: Gender;
-    location: string;
-    balancePoints: number;
-    employeesAmount: number;
-    saveToTasks: boolean;
-    other: string;
-    id?: string;
-    companyId: string;
+export interface Task extends TaskDetails {
+  id: string;
+  companyId: string;
 }
 
-export interface TaskDetailsCard {
-    name: string;
-    location: string;
-    startTime: string;
-    endTime: string;
-    balancePoints: number;
-    gender: Gender;
+export interface TaskDetails {
+  name: string;
+  description: string;
+  startTime: Date;
+  endTime: Date;
+  gender: Gender;
+  location: string;
+  balancePoints: number;
+  employeesAmount: number;
+  saveToTasks: boolean;
+  other: string;
 }
 
-export interface TaskForAi {
-    name: string;
-    description: string;
-    companyId: string;
+export interface TaskPayload extends TaskDetails {
+  companyId: string;
 }
+
+export type TaskSummaryCard = Pick<
+  TaskDetails,
+  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender"
+> & {
+  status?: string;
+};
+
+export type TaskForAi = Pick<Task, "name" | "description" | "companyId">;

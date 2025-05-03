@@ -3,9 +3,9 @@ export type Gender = "Male" | "Female" | "Both";
 export interface Task {
   name: string;
   description: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  // date: string;
+  startTime: Date;
+  endTime: Date;
   gender: Gender;
   location: string;
   balancePoints: number;
@@ -19,9 +19,9 @@ export interface Task {
 export interface RawTask {
   name: string;
   description: string;
-  date: string;
-  start_time: string;
-  end_time: string;
+  // date: string;
+  start_time: Date;
+  end_time: Date;
   gender: Gender;
   location: string;
   balance_points: number;

@@ -5,11 +5,14 @@ export const loggedUserIdKey = "loggedUserId";
 export const accessTokenKey = "accessToken";
 export const refreshTokenKey = "refreshToken";
 
+export const savedTaskTitle = "Saved Tasks";
+export const employeeTaskTitle = "My Tasks";
+
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const mainColor = "#5F70C8";
 
 export const userLevels = {
-    employee: 1,
-    manager: 2
+  employee: 1,
+  manager: 2,
 };

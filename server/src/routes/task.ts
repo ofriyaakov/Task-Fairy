@@ -5,6 +5,8 @@ import {
   createTask,
   getAllSavedTasks,
   getBalancePointsByGroupForCurrentMonth,
+  getTasksByEmployeeId,
+  assignEmployees,
 } from "../controllers/task";
 
 const router = express.Router();
@@ -132,6 +134,41 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * @swagger
+ * /task/assignEmployees:
+ *   post:
+ *       summary: Assign employees to a task
+ *       tags: [Task, Users]
+ *       requestBody:
+ *           required: true
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/r_tasks_users'
+ *       responses:
+ *           200:
+ *               description: Assigned employees successfully
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/r_tasks_users'
+ *           400:
+ *              description: Bad request - invalid data
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+router.post("/assignEmployees", async (req: Request, res: Response) => {
+  const { taskId, employeeIds } = req.body;
+
+  try {
+    const newAssiments = await assignEmployees(taskId, employeeIds);
+    res.status(200).send(newAssiments);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+/**
+ * @swagger
  * /saved:
  *   get:
  *       summary: Retrieve a list of all saved tasks
@@ -170,6 +207,52 @@ router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
     res.status(200).send(balancePoints);
   } catch (err) {
     console.error(err);
+  }
+});
+/**
+ * @swagger
+ * /employee/{employeeId}:
+ *   get:
+ *     summary: Get all tasks assigned to a specific employee
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: employeeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the employee
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   location:
+ *                     type: string
+ *                   startTime:
+ *                     type: string
+ *                   endTime:
+ *                     type: string
+ *                   balancePoints:
+ *                     type: integer
+ *                   gender:
+ *                     type: string
+ *       500:
+ *         description: Server error
+ */
+router.get("/employee/:employeeId", async (req: Request, res: Response) => {
+  try {
+    const { employeeId } = req.params;
+
+    res.status(200).send(await getTasksByEmployeeId(employeeId));
+  } catch (err) {
     res.status(400).send(err);
   }
 });
