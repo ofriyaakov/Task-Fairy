@@ -74,3 +74,17 @@ export const getAllTasksByMonth = async (month: number) => {
     throw new Error(error.response?.data?.message || "fetch tasks by month failed");
   }
 };
+
+export const getBalancePointsByGroup = async (companyId: number) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/balancePointsByGroup/?companyId=${companyId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch balance points failed"
+    );
+  }
+};
+

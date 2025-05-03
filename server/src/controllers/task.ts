@@ -1,5 +1,5 @@
 import db from "../config/db";
-import { Task, RawTask, RawEmployeedTask } from "../models/task";
+import { Task, RawTask, RawEmployeedTask, RawTaskWithUserId } from "../models/task";
 
 export const createTask = async (task: Task) => {
   try {
@@ -173,6 +173,64 @@ export const getAllTasksByMonth = async (month: number) => {
 
     return formatedTasks;
 
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getBalancePointsByGroupForCurrentMonth = async (
+  companyId: number
+) => {
+  try {
+    const result = await db.query(
+      `SELECT tasks.*, users.user_id
+       FROM public.tasks
+       INNER JOIN public.r_tasks_users ON tasks.task_id = r_tasks_users.task_id
+       INNER JOIN public.users ON r_tasks_users.user_id = users.user_id
+       INNER JOIN public.groups ON users.group_id = groups.group_id AND groups.company_id = $1
+       WHERE tasks.start_time >= date_trunc('month', current_date)
+       AND tasks.start_time < date_trunc('month', current_date) + interval '1 month'
+       `,
+      [companyId]
+    );
+
+    const tasks: RawTaskWithUserId[] = result.rows;
+
+    const usersAmountData = await db.query(
+      `SELECT COUNT(*) FROM public.users 
+      INNER JOIN public.groups ON users.group_id = groups.group_id
+      AND groups.company_id = $1`,
+      [companyId]
+    );
+
+    const usersAmount = parseInt(usersAmountData.rows[0].count, 10);
+
+    const balancePointsByUser: { [key: string]: number } = {};
+    tasks.forEach((task) => {
+      const userId = task.user_id;
+      const balancePoints = task.balance_points;
+
+      if (balancePointsByUser[userId]) {
+        balancePointsByUser[userId] += balancePoints;
+      } else {
+        balancePointsByUser[userId] = balancePoints;
+      }
+    });
+    const balancePointsArray = Object.values(balancePointsByUser);
+
+    const maxBalancePoints = Math.max(...balancePointsArray);
+    let minBalancePoints = 0;
+    if (balancePointsByUser.length === usersAmount) {
+      minBalancePoints = Math.min(...balancePointsArray);
+    }
+    const avgBalancePoints =
+      balancePointsArray.reduce((acc, val) => acc + val, 0) / usersAmount || 0;
+
+    return {
+      max: maxBalancePoints,
+      min: minBalancePoints,
+      avg: avgBalancePoints,
+    };
   } catch (err) {
     console.error(err);
   }
