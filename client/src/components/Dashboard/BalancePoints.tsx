@@ -1,15 +1,15 @@
 import BalancePoints from "../BalancePoints";
 import { getBalancePointsByGroup } from "../../queries/task";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
 const BalancePointsDashboard: React.FC = () => {
   const { connectedUser } = useGlobalContext();
-  const [max, setMax] = React.useState(0);
-  const [min, setMin] = React.useState(0);
-  const [avg, setAvg] = React.useState(0);
+  const [max, setMax] = useState(0);
+  const [min, setMin] = useState(0);
+  const [avg, setAvg] = useState(0);
 
-  const fetchData = async () => {
+  const fetchGroupBalancePointsData = async () => {
     try {
       const groupId = connectedUser?.groupId || "0";
       const data = await getBalancePointsByGroup(groupId);
@@ -22,7 +22,7 @@ const BalancePointsDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchGroupBalancePointsData();
   }, []);
 
   return (
@@ -33,7 +33,11 @@ const BalancePointsDashboard: React.FC = () => {
         gap: "20px",
       }}
     >
-      <BalancePoints title="Avarage Balance" value={avg} />
+      <BalancePoints
+        title="Avarage Balance Points"
+        subtitle="From all employees"
+        value={avg}
+      />
 
       <div
         style={{
@@ -42,8 +46,16 @@ const BalancePointsDashboard: React.FC = () => {
           gap: "20px",
         }}
       >
-        <BalancePoints title="Max Balance" value={max} />
-        <BalancePoints title="Min Balance" value={min} />
+        <BalancePoints
+          title="Max Balance Points"
+          subtitle="For employee"
+          value={max}
+        />
+        <BalancePoints
+          title="Min Balance Points"
+          subtitle="For employee"
+          value={min}
+        />
       </div>
     </div>
   );

@@ -182,7 +182,10 @@ export const getBalancePointsByGroupForCurrentMonth = async (
     const balancePointsArray = Object.values(balancePointsByUser);
 
     const maxBalancePoints = Math.max(...balancePointsArray);
-    const minBalancePoints = Math.min(...balancePointsArray);
+    let minBalancePoints = 0;
+    if (balancePointsByUser.length === usersAmount) {
+      minBalancePoints = Math.min(...balancePointsArray);
+    }
     const avgBalancePoints =
       balancePointsArray.reduce((acc, val) => acc + val, 0) / usersAmount || 0;
 

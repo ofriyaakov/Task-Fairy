@@ -1,5 +1,6 @@
 interface BalancePointsProps {
   title: string;
+  subtitle?: string;
   value: number;
   color?: string;
 }
@@ -8,6 +9,7 @@ const BalancePoints: React.FC<BalancePointsProps> = ({
   title,
   value,
   color,
+  subtitle,
 }) => {
   let calculatedColor = "#FFFFFF";
 
@@ -40,6 +42,9 @@ const BalancePoints: React.FC<BalancePointsProps> = ({
       <div style={{ fontSize: "28px", fontWeight: "bold" }}>{value}</div>
       <div style={{ marginTop: "10px", color: "#666", fontSize: "18px" }}>
         {title}
+      </div>
+      <div style={{ color: "#999", fontSize: "14px" }}>
+        {subtitle && subtitle}
       </div>
     </div>
   );
