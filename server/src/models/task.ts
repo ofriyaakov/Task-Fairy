@@ -1,3 +1,5 @@
+import { TaskType } from "@google/generative-ai";
+
 export type Gender = "Male" | "Female" | "Both";
 
 export interface Task {
@@ -32,19 +34,6 @@ export interface RawTask {
   company_id: string;
 }
 
-export interface RawTaskWithUserId {
-  name: string;
-  description: string;
-  date: string;
-  start_time: string;
-  end_time: string;
-  gender: Gender;
-  location: string;
-  balance_points: number;
-  employees_amount: number;
-  save_to_tasks: boolean;
-  other: string;
-  id: string;
-  company_id: string;
+export interface RawTaskWithUserId extends RawTask {
   user_id: string;
 }

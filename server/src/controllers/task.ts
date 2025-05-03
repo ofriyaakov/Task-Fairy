@@ -1,6 +1,5 @@
 import db from "../config/db";
 import { Task, RawTask, RawTaskWithUserId } from "../models/task";
-import { getUserGroupId } from "./user";
 
 export const createTask = async (task: Task) => {
   try {
@@ -152,21 +151,20 @@ export const getBalancePointsByGroupForCurrentMonth = async (
        INNER JOIN public.r_tasks_users ON tasks.task_id = r_tasks_users.task_id
        INNER JOIN public.users ON r_tasks_users.user_id = users.user_id
        AND users.group_id = $1
-       WHERE tasks.date::timestamp >= date_trunc('month', current_date)
-       AND tasks.date::timestamp < date_trunc('month', current_date) + interval '1 month'
+       WHERE tasks.start_time >= date_trunc('month', current_date)
+       AND tasks.start_time < date_trunc('month', current_date) + interval '1 month'
        `,
       [groupId]
     );
 
     const tasks: RawTaskWithUserId[] = result.rows;
 
-    //I want to get the amount of people in the group
-    const groupUsers = await db.query(
-      `SELECT * FROM public.users WHERE group_id = $1`,
+    const usersAmountData = await db.query(
+      `SELECT COUNT(*) FROM public.users WHERE group_id = $1`,
       [groupId]
     );
-    const users: { user_id: string }[] = groupUsers.rows;
-    const usersAmount = users.length;
+
+    const usersAmount = parseInt(usersAmountData.rows[0].count, 10);
 
     const balancePointsByUser: { [key: string]: number } = {};
     tasks.forEach((task) => {

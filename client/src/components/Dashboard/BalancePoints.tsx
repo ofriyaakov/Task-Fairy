@@ -1,10 +1,11 @@
-import BalancePoints from "../BalancePoints";
+import RectangleData from "../RectangleData";
 import { getBalancePointsByGroup } from "../../queries/task";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
 const BalancePointsDashboard: React.FC = () => {
   const { connectedUser } = useGlobalContext();
+
   const [max, setMax] = useState(0);
   const [min, setMin] = useState(0);
   const [avg, setAvg] = useState(0);
@@ -33,10 +34,11 @@ const BalancePointsDashboard: React.FC = () => {
         gap: "20px",
       }}
     >
-      <BalancePoints
+      <RectangleData
         title="Avarage Balance Points"
         subtitle="From all employees"
         value={avg}
+        color="#DDEEFB"
       />
 
       <div
@@ -46,15 +48,17 @@ const BalancePointsDashboard: React.FC = () => {
           gap: "20px",
         }}
       >
-        <BalancePoints
+        <RectangleData
           title="Max Balance Points"
           subtitle="For employee"
           value={max}
+          color="#E1F7EF"
         />
-        <BalancePoints
+        <RectangleData
           title="Min Balance Points"
           subtitle="For employee"
           value={min}
+          color="#FFDFDF"
         />
       </div>
     </div>

@@ -1,29 +1,19 @@
-interface BalancePointsProps {
+interface RectangleDataProps {
   title: string;
   subtitle?: string;
   value: number;
   color?: string;
+  width?: string;
 }
 
-const BalancePoints: React.FC<BalancePointsProps> = ({
+const RectangleData: React.FC<RectangleDataProps> = ({
   title,
   value,
   color,
   subtitle,
+  width,
 }) => {
-  let calculatedColor = "#FFFFFF";
-
-  if (color) {
-    calculatedColor = color;
-  } else {
-    if (title.toUpperCase().includes("MAX")) {
-      calculatedColor = "#E1F7EF";
-    } else if (title.toUpperCase().includes("MIN")) {
-      calculatedColor = "#FFDFDF";
-    } else if (title.toUpperCase().includes("AVARAGE")) {
-      calculatedColor = "#DDEEFB";
-    }
-  }
+  let calculatedColor = color || "#ffffff";
 
   return (
     <div
@@ -31,16 +21,18 @@ const BalancePoints: React.FC<BalancePointsProps> = ({
         backgroundColor: calculatedColor,
         borderRadius: "12px",
         padding: "30px",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #E5E5E5",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         minHeight: "10vh",
+        minWidth: width || "15vw",
       }}
     >
       <div style={{ fontSize: "28px", fontWeight: "bold" }}>{value}</div>
-      <div style={{ marginTop: "10px", color: "#666", fontSize: "18px" }}>
+      <div style={{ marginTop: "10px", color: "#1E1E1E", fontSize: "18px" }}>
         {title}
       </div>
       <div style={{ color: "#999", fontSize: "14px" }}>
@@ -50,4 +42,4 @@ const BalancePoints: React.FC<BalancePointsProps> = ({
   );
 };
 
-export default BalancePoints;
+export default RectangleData;
