@@ -1,5 +1,5 @@
 import db from "../config/db";
-import { Task, RawTask, RawTaskWithUserId } from "../models/task";
+import { Task, RawTask, RawEmployeedTask, RawTaskWithUserId } from "../models/task";
 
 export const createTask = async (task: Task) => {
   try {
@@ -136,6 +136,43 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
       };
     });
     return formatedTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getAllTasksByMonth = async (month: number) => {
+  try {
+    const result = await db.query(`
+      SELECT tasks.*,
+       TO_CHAR(start_time AT TIME ZONE 'Asia/Jerusalem', 'YYYY-MM-DD') as date,
+       COUNT(userTask.user_id) as assigned_employees_amount
+      FROM public.tasks as tasks
+      Left Join public.r_tasks_users as userTask
+	      on userTask.task_id = tasks.task_id
+      WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $1
+      GROUP BY tasks.task_id`, 
+      [month]);
+
+    const tasks: RawEmployeedTask[] = result.rows;
+
+    const formatedTasks = tasks.map((task) => {
+      return {
+        name: task.name,
+        location: task.location,
+        startTime: task.start_time,
+        endTime: task.end_time,
+        balancePoints: task.balance_points,
+        gender: task.gender,
+        taskId: task.task_id,
+        date: task.date,
+        employeesAmount: task.employees_amount,
+        assignedEmployeesAmount: Number(task.assigned_employees_amount),
+      };
+    });
+
+    return formatedTasks;
+
   } catch (err) {
     console.error(err);
   }

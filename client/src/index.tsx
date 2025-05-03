@@ -1,4 +1,5 @@
 import React from "react";
+import '@fontsource/montserrat';
 import ReactDOM from "react-dom/client";
 import '@fontsource/montserrat';
 import "./index.css";

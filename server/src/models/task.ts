@@ -34,6 +34,12 @@ export interface RawTask {
   company_id: string;
 }
 
+export interface RawEmployeedTask extends RawTask {
+  date: string;
+  task_id: string;
+  assigned_employees_amount: number
+}
+
 export interface RawTaskWithUserId extends RawTask {
   user_id: string;
 }

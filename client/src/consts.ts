@@ -1,4 +1,5 @@
 export const dateFormate = "YYYY-MM-DD";
+export const calendarFnsDateFormat = 'yyyy-MM-dd';
 export const timeFormate = "HH:mm";
 
 export const loggedUserIdKey = "loggedUserId";
@@ -8,9 +9,9 @@ export const refreshTokenKey = "refreshToken";
 export const savedTaskTitle = "Saved Tasks";
 export const employeeTaskTitle = "My Tasks";
 
-export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const calendarMonthView = "month";
 
-export const mainColor = "#5F70C8";
+export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const userLevels = {
   employee: 1,

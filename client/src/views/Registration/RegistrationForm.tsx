@@ -7,7 +7,7 @@ import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import { mainColor } from "../../consts";
+import { APP_COLOR } from "../../theme";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
@@ -116,13 +116,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
               width: "100%",
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonOutlineIcon sx={{ color: mainColor }} />
+                  <PersonOutlineIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -145,12 +145,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonOutlineIcon sx={{ color: mainColor }} />
+                  <PersonOutlineIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -173,12 +173,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <BadgeOutlinedIcon sx={{ color: mainColor }} />
+                  <BadgeOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -201,12 +201,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PhoneOutlinedIcon sx={{ color: mainColor }} />
+                  <PhoneOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -229,12 +229,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <WorkOutlineOutlinedIcon sx={{ color: mainColor }} />
+                  <WorkOutlineOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -258,12 +258,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailOutlinedIcon sx={{ color: mainColor }} />
+                  <EmailOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -287,12 +287,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOutlinedIcon sx={{ color: mainColor }} />
+                  <LockOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -318,12 +318,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                 fontFamily: '"Montserrat", sans-serif',
                 color: "#102cc2",
               },
-              "& fieldset": { borderColor: mainColor },
+              "& fieldset": { borderColor: APP_COLOR.ROYAL_BLUE },
             }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOutlinedIcon sx={{ color: mainColor }} />
+                  <LockOutlinedIcon sx={{ color: APP_COLOR.ROYAL_BLUE }} />
                 </InputAdornment>
               ),
             }}
@@ -340,7 +340,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             py: 1,
             borderRadius: 1,
             textTransform: "uppercase",
-            bgcolor: mainColor,
+            bgcolor: APP_COLOR.ROYAL_BLUE,
             "&:hover": { bgcolor: "primary.dark" },
             fontFamily: '"Montserrat", sans-serif',
             width: "60%",

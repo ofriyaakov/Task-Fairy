@@ -4,6 +4,7 @@ import authenticateToken from "../middleware/jwt";
 import {
   createTask,
   getAllSavedTasks,
+  getAllTasksByMonth,
   getBalancePointsByGroupForCurrentMonth,
   getTasksByEmployeeId,
   assignEmployees,
@@ -287,5 +288,44 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
     res.status(400).send(err);
   }
 });
+
+/**
+ * @swagger
+ * /task/month/{month}:
+ *   get:
+ *       summary: Retrieve a list of all tasks by month with employees number
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A list of tasks
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.get("/month/:month", async (req: Request, res: Response) => {
+  const month = parseInt(req.params.month);
+
+  try {
+    res.status(200).send(await getAllTasksByMonth(month));
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
 
 export default router;

@@ -29,4 +29,10 @@ export type TaskSummaryCard = Pick<
   status?: string;
 };
 
+export interface CalendarTask extends TaskDetails{
+  taskId: string;
+  date: string;
+  assignedEmployeesAmount: number;
+}
+
 export type TaskForAi = Pick<Task, "name" | "description" | "companyId">;

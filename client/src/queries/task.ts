@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskForAi, TaskPayload } from "./../types/Task";
+import {TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -62,6 +62,16 @@ export const analyzeTask = async (payload: TaskForAi) => {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "analyze task failed");
+  }
+};
+
+export const getAllTasksByMonth = async (month: number) => {
+  try {
+    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/${month}`)).data;
+    return tasks;
+  } catch (error: any) {
+    console.error("getAllTasksByMonth error", error);
+    throw new Error(error.response?.data?.message || "fetch tasks by month failed");
   }
 };
 
