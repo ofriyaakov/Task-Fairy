@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { createTask, getAllSavedTasks } from "../controllers/task";
+import {
+  createTask,
+  getAllSavedTasks,
+  getBalancePointsByGroupForCurrentMonth,
+} from "../controllers/task";
 
 const router = express.Router();
 
@@ -88,8 +92,6 @@ router.use(authenticateToken);
  *              other: 'Bring scanning equipment'
  */
 
-
-
 /**
  * @swagger
  * /task:
@@ -155,6 +157,19 @@ router.get("/saved", async (req: Request, res: Response) => {
   try {
     res.status(200).send(await getAllSavedTasks());
   } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
+  const { groupId } = req.query;
+  try {
+    const balancePoints = await getBalancePointsByGroupForCurrentMonth(
+      Number(groupId)
+    );
+    res.status(200).send(balancePoints);
+  } catch (err) {
+    console.error(err);
     res.status(400).send(err);
   }
 });

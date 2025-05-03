@@ -32,3 +32,17 @@ export const analyzeTask = async (payload: TaskForAi) => {
     throw new Error(error.response?.data?.message || "analyze task failed");
   }
 };
+
+export const getBalancePointsByGroup = async (groupId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/balancePointsByGroup/?groupId=${groupId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch balance points failed"
+    );
+  }
+};
+

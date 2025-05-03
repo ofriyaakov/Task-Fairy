@@ -1,5 +1,6 @@
 import db from "../config/db";
-import { Task, RawTask } from "../models/task";
+import { Task, RawTask, RawTaskWithUserId } from "../models/task";
+import { getUserGroupId } from "./user";
 
 export const createTask = async (task: Task) => {
   try {
@@ -89,6 +90,60 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
       };
     });
     return formatedTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getBalancePointsByGroupForCurrentMonth = async (
+  groupId: number
+) => {
+  try {
+    const result = await db.query(
+      `SELECT tasks.*, users.user_id
+       FROM public.tasks
+       INNER JOIN public.r_tasks_users ON tasks.task_id = r_tasks_users.task_id
+       INNER JOIN public.users ON r_tasks_users.user_id = users.user_id
+       AND users.group_id = $1
+       WHERE tasks.date::timestamp >= date_trunc('month', current_date)
+       AND tasks.date::timestamp < date_trunc('month', current_date) + interval '1 month'
+       `,
+      [groupId]
+    );
+
+    const tasks: RawTaskWithUserId[] = result.rows;
+
+    //I want to get the amount of people in the group
+    const groupUsers = await db.query(
+      `SELECT * FROM public.users WHERE group_id = $1`,
+      [groupId]
+    );
+    const users: { user_id: string }[] = groupUsers.rows;
+    const usersAmount = users.length;
+
+    const balancePointsByUser: { [key: string]: number } = {};
+    tasks.forEach((task) => {
+      const userId = task.user_id;
+      const balancePoints = task.balance_points;
+
+      if (balancePointsByUser[userId]) {
+        balancePointsByUser[userId] += balancePoints;
+      } else {
+        balancePointsByUser[userId] = balancePoints;
+      }
+    });
+    const balancePointsArray = Object.values(balancePointsByUser);
+
+    const maxBalancePoints = Math.max(...balancePointsArray);
+    const minBalancePoints = Math.min(...balancePointsArray);
+    const avgBalancePoints =
+      balancePointsArray.reduce((acc, val) => acc + val, 0) / usersAmount || 0;
+
+    return {
+      max: maxBalancePoints,
+      min: minBalancePoints,
+      avg: avgBalancePoints,
+    };
   } catch (err) {
     console.error(err);
   }

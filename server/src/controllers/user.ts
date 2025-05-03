@@ -116,3 +116,23 @@ export const updateUserTokenById = async (id: string, newRefreshToken: any) => {
     throw err;
   }
 };
+
+export const getUserGroupId = async (userId: string) => {
+  try {
+    const result = await db.query(
+      `SELECT group_id FROM users WHERE user_id = $1`,
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const groupId: number = result.rows[0].group_id;
+    console.log("User group ID:", groupId);
+    return groupId;
+  } catch (err) {
+    console.error("Error getting user group ID:", err);
+    throw err;
+  }
+}
