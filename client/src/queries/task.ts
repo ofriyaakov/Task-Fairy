@@ -65,10 +65,10 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getBalancePointsByGroup = async (groupId: number) => {
+export const getBalancePointsByGroup = async (companyId: number) => {
   try {
     const response = await axiosInstance.get(
-      `${TASK_ROUTE}/balancePointsByGroup/?groupId=${groupId}`
+      `${TASK_ROUTE}/balancePointsByGroup/?companyId=${companyId}`
     );
     return response.data;
   } catch (error: any) {

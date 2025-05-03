@@ -87,7 +87,7 @@ const NewTaskForm: React.FC = () => {
 
     const payload: TaskPayload = {
       ...formData,
-      companyId: connectedUser?.companyId || "",
+      companyId: connectedUser?.companyId || 0,
     };
 
     try {
@@ -104,7 +104,7 @@ const NewTaskForm: React.FC = () => {
     const payload: TaskForAi = {
       name: formData.name,
       description: formData.description,
-      companyId: connectedUser?.companyId || "1",
+      companyId: connectedUser?.companyId || 0,
     };
 
     try {

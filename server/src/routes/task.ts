@@ -202,15 +202,15 @@ router.get("/saved", async (req: Request, res: Response) => {
  * @swagger
  * /task/balancePointsByGroup:
  *   get:
- *       summary: Retrieve balance points for a specific group for the current month
+ *       summary: Retrieve balance points for a specific company for the current month
  *       tags: [Task]
  *       security:
  *           - bearerAuth: []
  *       parameters:
  *           - in: query
- *             name: groupId
+ *             name: companyId
  *             required: true
- *             description: ID of the group to retrieve balance points for
+ *             description: ID of the company
  *             schema:
  *                 type: integer
  *       responses:
@@ -230,10 +230,10 @@ router.get("/saved", async (req: Request, res: Response) => {
  */
 
 router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
-  const { groupId } = req.query;
+  const { companyId } = req.query;
   try {
     const balancePoints = await getBalancePointsByGroupForCurrentMonth(
-      Number(groupId)
+      Number(companyId)
     );
     res.status(200).send(balancePoints);
   } catch (err) {

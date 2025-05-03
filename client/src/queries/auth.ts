@@ -12,7 +12,7 @@ interface AuthResponse {
   id: string;
   name: string;
   email: string;
-  companyId: string;
+  companyId: number;
   userLevel: number;
   groupId: number;
   groupName: string;

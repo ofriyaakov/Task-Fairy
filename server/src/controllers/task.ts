@@ -142,7 +142,7 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
 };
 
 export const getBalancePointsByGroupForCurrentMonth = async (
-  groupId: number
+  companyId: number
 ) => {
   try {
     const result = await db.query(
@@ -150,18 +150,20 @@ export const getBalancePointsByGroupForCurrentMonth = async (
        FROM public.tasks
        INNER JOIN public.r_tasks_users ON tasks.task_id = r_tasks_users.task_id
        INNER JOIN public.users ON r_tasks_users.user_id = users.user_id
-       AND users.group_id = $1
+       INNER JOIN public.groups ON users.group_id = groups.group_id AND groups.company_id = $1
        WHERE tasks.start_time >= date_trunc('month', current_date)
        AND tasks.start_time < date_trunc('month', current_date) + interval '1 month'
        `,
-      [groupId]
+      [companyId]
     );
 
     const tasks: RawTaskWithUserId[] = result.rows;
 
     const usersAmountData = await db.query(
-      `SELECT COUNT(*) FROM public.users WHERE group_id = $1`,
-      [groupId]
+      `SELECT COUNT(*) FROM public.users 
+      INNER JOIN public.groups ON users.group_id = groups.group_id
+      AND groups.company_id = $1`,
+      [companyId]
     );
 
     const usersAmount = parseInt(usersAmountData.rows[0].count, 10);
