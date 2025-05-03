@@ -6,7 +6,6 @@ export const createTask = async (task: Task) => {
     const {
       name,
       description,
-      date,
       startTime,
       endTime,
       gender,
@@ -19,16 +18,15 @@ export const createTask = async (task: Task) => {
     }: Task = task;
 
     const query = `
-        INSERT INTO tasks (name, description, date, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, company_id
+        INSERT INTO tasks (name, description, start_time, end_time, gender, location, balance_points, employees_amount, save_to_tasks, other, company_id
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *
       `;
 
     const values = [
       name,
       description,
-      date,
       startTime,
       endTime,
       gender,
@@ -47,7 +45,10 @@ export const createTask = async (task: Task) => {
   }
 };
 
-export const assignEmployees = async (taskId: string, employeeIds: string[]) => {
+export const assignEmployees = async (
+  taskId: string,
+  employeeIds: string[]
+) => {
   try {
     const query = `
         INSERT INTO public.r_tasks_users(task_id, user_id)
@@ -55,12 +56,12 @@ export const assignEmployees = async (taskId: string, employeeIds: string[]) => 
         RETURNING *
       `;
 
-    const returnRows = []
+    const returnRows = [];
 
     employeeIds.forEach(async (id) => {
       const { rows } = await db.query(query, [taskId, id]);
-      returnRows.push(rows)
-    })
+      returnRows.push(rows);
+    });
 
     return returnRows;
   } catch (e) {
@@ -92,6 +93,32 @@ export const getAllSavedTasks = async () => {
   }
 };
 
+export const getTasksByEmployeeId = async (employeeId: string) => {
+  try {
+    const result = await db.query(
+      `SELECT t.* FROM public.tasks t
+       JOIN public.r_tasks_users rtu ON t.task_id = rtu.task_id
+       WHERE rtu.user_id = $1`,
+      [employeeId]
+    );
+
+    const savedTasks = result.rows;
+
+    const formattedTasks = savedTasks.map((task) => ({
+      name: task.name,
+      location: task.location,
+      startTime: task.start_time,
+      endTime: task.end_time,
+      balancePoints: task.balance_points,
+      gender: task.gender,
+    }));
+
+    return formattedTasks;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const getAllTasksBalancePoints = async (companyId: string) => {
   try {
     const result = await db.query(
@@ -117,11 +144,13 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
 export const getAllTasksByMonth = async (month: number) => {
   try {
     const result = await db.query(`
-      SELECT tasks.*, COUNT(userTask.user_id) as assigned_employees_amount
+      SELECT tasks.*,
+       TO_CHAR(start_time AT TIME ZONE 'Asia/Jerusalem', 'YYYY-MM-DD') as date,
+       COUNT(userTask.user_id) as assigned_employees_amount
       FROM public.tasks as tasks
       Left Join public.r_tasks_users as userTask
 	      on userTask.task_id = tasks.task_id
-      WHERE CAST(SUBSTRING(date, 6, 2) as Integer) = $1
+      WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $1
       GROUP BY tasks.task_id`, 
       [month]);
 

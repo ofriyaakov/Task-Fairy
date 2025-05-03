@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskForAi, TaskPayload } from './../types/Task';
+import {TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -12,12 +12,20 @@ export const createTask = async (payload: TaskPayload) => {
   }
 };
 
-export const assignEmployees = async (taskId: string, employeeIds: string[]) => {
+export const assignEmployees = async (
+  taskId: string,
+  employeeIds: string[]
+) => {
   try {
-    const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, { taskId, employeeIds });
+    const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, {
+      taskId,
+      employeeIds,
+    });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "failed to assign employees");
+    throw new Error(
+      error.response?.data?.message || "failed to assign employees"
+    );
   }
 };
 
@@ -26,7 +34,22 @@ export const getAllSavedTasks = async () => {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
     return savedTasks;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "fetch saved tasks failed");
+    throw new Error(
+      error.response?.data?.message || "fetch saved tasks failed"
+    );
+  }
+};
+
+export const getEmployeeTasks = async (employeeId: string) => {
+  try {
+    const employeeTasks = (
+      await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
+    ).data;
+    return employeeTasks;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch employee tasks failed"
+    );
   }
 };
 
@@ -47,6 +70,7 @@ export const getAllTasksByMonth = async (month: number) => {
     const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/${month}`)).data;
     return tasks;
   } catch (error: any) {
+    console.error("getAllTasksByMonth error", error);
     throw new Error(error.response?.data?.message || "fetch tasks by month failed");
   }
 };
