@@ -2,7 +2,7 @@ export type Gender = "Male" | "Female" | "Both";
 
 export interface Task extends TaskDetails {
   id: string;
-  companyId: string;
+  companyId: number;
 }
 
 export interface TaskDetails {
@@ -19,7 +19,7 @@ export interface TaskDetails {
 }
 
 export interface TaskPayload extends TaskDetails {
-  companyId: string;
+  companyId: number;
 }
 
 export type TaskSummaryCard = Pick<
