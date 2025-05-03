@@ -8,6 +8,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import { mainColor } from "../../consts";
+import { checkIsraelId } from "../../helpers/functions";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationData) => Promise<void>;
@@ -31,7 +32,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   // ── VALIDATION RULES ────────────────────────────────────────────────────────
   const isEmailValid = /\S+@\S+\.\S+/.test(formData.email);
   const isPasswordValid = formData.password.length >= 6;
-  const isUserIdValid = /^\d{9}$/.test(formData.user_id);
+  const isUserIdValid = /^\d{9}$/.test(formData.user_id) && checkIsraelId(formData.user_id);
   const isPhoneNumberValid = /^\d{10}$/.test(formData.phone_number);
   const doPasswordsMatch = formData.password === formData.repeat_password;
   const areRequiredFilled =
@@ -48,14 +49,42 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
     doPasswordsMatch;
   // ────────────────────────────────────────────────────────────────────────────
 
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [idError, setIdError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [passwordMatchError, setPasswordMatchError] = useState<string | null>(
+    null
+  );
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name as string]: value,
     }));
+
+    if (!isEmailValid && name === "email") {
+      setEmailError("Email is not valid");
+    }
+
+    if (!isUserIdValid && name === "user_id") {
+      setIdError("ID is not valid");
+    }
+
+    if (!isPasswordValid && name === "password") {
+      setPasswordError("Password must be at least 6 characters long");
+    }
+
+    if (!doPasswordsMatch && name === "repeat_password") {
+      setPasswordMatchError("Passwords do not match");
+    }
+
+    if (!isPhoneNumberValid && name === "phone_number") {
+      setPhoneError("Phone number is not valid");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -165,6 +194,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             onChange={handleChange}
             required
             error={formData.user_id !== "" && !isUserIdValid}
+            helperText={!isUserIdValid && idError}
             variant="outlined"
             size="small"
             sx={{
@@ -193,6 +223,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             onChange={handleChange}
             required
             error={formData.phone_number !== "" && !isPhoneNumberValid}
+            helperText={!isPhoneNumberValid && phoneError}
             variant="outlined"
             size="small"
             sx={{
@@ -220,7 +251,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.company_name}
             onChange={handleChange}
             required
-            error={formData.company_name !== "" && !formData.company_name.trim()}
+            error={
+              formData.company_name !== "" && !formData.company_name.trim()
+            }
             variant="outlined"
             size="small"
             sx={{
@@ -250,6 +283,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             onChange={handleChange}
             required
             error={formData.email !== "" && !isEmailValid}
+            helperText={!isEmailValid && emailError}
             variant="outlined"
             size="small"
             sx={{
@@ -279,6 +313,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             onChange={handleChange}
             required
             error={formData.password !== "" && !isPasswordValid}
+            helperText={!isPasswordValid && passwordError}
             variant="outlined"
             size="small"
             sx={{
@@ -307,9 +342,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
             value={formData.repeat_password}
             onChange={handleChange}
             required
-            error={
-              formData.repeat_password !== "" && !doPasswordsMatch
-            }
+            error={formData.repeat_password !== "" && !doPasswordsMatch}
+            helperText={!doPasswordsMatch && formData.repeat_password !== "" && passwordMatchError }
             variant="outlined"
             size="small"
             sx={{
