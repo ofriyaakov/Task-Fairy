@@ -1,7 +1,7 @@
 import db from "../config/db";
 import { RawSwapRequest } from './../models/swap'
 
-export const getPendingSwapRequests = async (companyId: string) => {
+export const getPendingSwapRequests = async () => {
     try {
         const result = await db.query(`
         SELECT first_swap_info.first_user_id,
