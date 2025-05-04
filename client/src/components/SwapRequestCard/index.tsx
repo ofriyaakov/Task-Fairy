@@ -55,10 +55,9 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
             sx={{
                 p: 3,
                 borderRadius: 4,
-                mb: 2,
-                width: "48%",
+                width: "41%",
                 border: "1px solid rgb(229 229 229)",
-                height: '129px'
+                height: '135px'
             }}
         >
             {isSameTask ?
