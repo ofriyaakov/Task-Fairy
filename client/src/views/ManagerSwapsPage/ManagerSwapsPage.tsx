@@ -3,14 +3,16 @@ import SwapRequestCard from "../../components/SwapRequestCard";
 import { SwapRequest } from './../../types/Swap';
 import { getAllPendingSwapRequests } from './../../queries/swapRequests'
 import { useEffect, useState } from "react";
+import { useGlobalContext } from "../../contexts/GlobalContext";
 
 const ManagerSwapsPage: React.FC = () => {
-
+  const { connectedUser } = useGlobalContext();
   const [pendingSwapRequests, setPendingSwapRequest] = useState<SwapRequest[]>([])
 
   const fetchPendingSwapRequests = async () => {
     try {
-      const fetchedPendingSwapRequests: SwapRequest[] = await getAllPendingSwapRequests();
+      const companyId = connectedUser?.companyId || 0
+      const fetchedPendingSwapRequests: SwapRequest[] = await getAllPendingSwapRequests(+companyId);
       setPendingSwapRequest(fetchedPendingSwapRequests)
     } catch (err: any) {
       console.error(err.message);

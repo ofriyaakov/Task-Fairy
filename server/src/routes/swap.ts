@@ -28,7 +28,7 @@ router.use(authenticateToken);
  * @swagger
  * /pending:
  *   get:
- *       summary: Retrieve a list of all pending swap requests
+ *       summary: Retrieve a list of all pending swap requests by company id
  *       tags: [swap-requests]
  *       security:
  *           - bearerAuth: []
@@ -48,8 +48,9 @@ router.use(authenticateToken);
  */
 
 router.get("/pending", async (req: Request, res: Response) => {
+    const { companyId } = req.query;
     try {
-        res.status(200).send(await getPendingSwapRequests());
+        res.status(200).send(await getPendingSwapRequests(+companyId));
     } catch (err) {
         res.status(400).send(err);
     }

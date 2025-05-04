@@ -1,7 +1,7 @@
 import db from "../config/db";
 import { RawSwapRequest } from './../models/swap'
 
-export const getPendingSwapRequests = async () => {
+export const getPendingSwapRequests = async (companyId: number) => {
     try {
         const result = await db.query(`
         SELECT first_swap_info.first_user_id,
@@ -29,12 +29,12 @@ export const getPendingSwapRequests = async () => {
             JOIN public.swap_requests ON swap_requests.first_r_task_user = r_tasks_users.id 
             JOIN public.users ON users.user_id = r_tasks_users.user_id
             JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
-            WHERE status_id = 2) as first_swap_info
+            WHERE status_id = 2 and tasks.company_id = $1) as first_swap_info
         JOIN public.r_tasks_users ON r_tasks_users.id = first_swap_info.second_r_task_user
         JOIN public.swap_requests second_swap ON second_swap.second_r_task_user = first_swap_info.second_r_task_user
         JOIN public.users ON users.user_id = r_tasks_users.user_id
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
-        `);
+        `, [companyId]);
 
         const swapRequests: RawSwapRequest[] = result.rows;
         const formatedSwapRequests = swapRequests.map((rawSwapRequest) => {
