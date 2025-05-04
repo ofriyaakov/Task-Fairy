@@ -6,3 +6,8 @@ export interface SwapCardDetails {
     taskStartTime: string;
     taskEndTime: string;
 }
+
+export interface SwapRequest {
+    leftDetails: SwapCardDetails;
+    rightDetails: SwapCardDetails;
+}
