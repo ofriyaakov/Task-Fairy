@@ -2,15 +2,7 @@ import React from "react";
 import { Grid, Box, Typography, Paper } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
-
-interface SwapCardDetails {
-    employeeId: string;
-    employeeFirstName: string;
-    employeeLastName: string;
-    taskName: string;
-    taskStartTime: string;
-    taskEndTime: string;
-}
+import { SwapCardDetails } from './../../types/Swap'
 
 interface SwapDetailsProps {
     employeeWithTask: SwapCardDetails
