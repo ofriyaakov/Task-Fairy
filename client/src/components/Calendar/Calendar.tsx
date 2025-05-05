@@ -12,7 +12,8 @@ import { calendarMonthView } from "../../consts";
     taskSummary: CalendarTask[],
     date: Date,
     navigateMonth: (date: Date) => void,
-    handleCellClick: (date: string) => void
+    handleCellClick: (date: string) => void,
+    isManagerView: boolean
   }
 
 export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary => {
@@ -31,7 +32,7 @@ export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary =
 }
 
 
-export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick}: MyCalendarProps) => {
+export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, isManagerView}: MyCalendarProps) => {
   const calendarTasks = taskToCalendarEvents(taskSummary);
 
   return (
@@ -48,7 +49,8 @@ export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick}: 
           date={value}
           taskSummary={calendarTasks!!}
           currentMonthDate={date}
-          handleCellClick={handleCellClick}></CellContent>
+          handleCellClick={handleCellClick}
+          isManagerView={isManagerView}></CellContent>
         },
         month: {
           dateHeader: () => null

@@ -42,7 +42,12 @@ const CalendarPage: React.FC = () => {
   return (
     <div className='App' style={{height: "60vh", width: "80%"}}>
       {loadingTasks ? <div>Loading...</div> :
-      <MyCalendar taskSummary={taskSummary} date={currentMonthDate} navigateMonth={navigateMonth} handleCellClick={handleCellClick} ></MyCalendar>
+      <MyCalendar 
+        taskSummary={taskSummary}
+        date={currentMonthDate}
+        navigateMonth={navigateMonth}
+        handleCellClick={handleCellClick}
+        isManagerView={true} />
       }
     </div>
   );

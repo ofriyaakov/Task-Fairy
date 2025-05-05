@@ -27,11 +27,12 @@ export type TaskSummaryCard = Pick<
   "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender"
 > & {
   status?: string;
+  taskId: string;
 };
 
-export interface CalendarTask extends TaskDetails{
-  taskId: string;
+export interface CalendarTask extends TaskSummaryCard{
   date: string;
+  employeesAmount: number;
   assignedEmployeesAmount: number;
 }
 
