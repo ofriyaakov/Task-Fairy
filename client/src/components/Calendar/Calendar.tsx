@@ -41,6 +41,7 @@ export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick}: 
       date={date}
       onNavigate={navigateMonth}
       views={[calendarMonthView]}
+      style={{width:"100%"}}
       components={{
         dateCellWrapper: ({ children, value }) => { 
           return <CellContent
