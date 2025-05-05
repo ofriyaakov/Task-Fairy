@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getEmployeeTasks } from "../../queries/task";
 import { employeeTaskTitle } from "../../consts";
 import { useGlobalContext } from "../../contexts/GlobalContext";
-
+import { toast } from "react-toastify";
 
 const EmployeesPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -24,6 +24,7 @@ const EmployeesPage: React.FC = () => {
       setemployeeTasksTasks(fetchedemployeeTasks);
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! We couldent fetch your tasks");
       setemployeeTasksTasks([]);
     }
   };

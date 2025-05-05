@@ -28,6 +28,7 @@ import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
 import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { BarLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 const locations = [
   "Shishut Ramat Gan",
@@ -91,9 +92,10 @@ const NewTaskForm: React.FC = () => {
     };
 
     try {
-      const response = await createTask(payload);
-      console.log("Task created:", response);
+      await createTask(payload);
+      toast.success("Task created successfully!");
     } catch (err: any) {
+      toast.error("Failed to create task.");
       console.error(err.message);
     }
   };
@@ -113,6 +115,7 @@ const NewTaskForm: React.FC = () => {
       setFormData((prev) => ({ ...prev, balancePoints: response }));
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! Something went wrong");
     }
     setLoadingAI(false);
   };
