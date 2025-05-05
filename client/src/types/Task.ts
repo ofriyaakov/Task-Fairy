@@ -23,8 +23,8 @@ export interface TaskPayload extends TaskDetails {
 }
 
 export type TaskSummaryCard = Pick<
-  TaskDetails,
-  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender"
+  CalendarTask,
+  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender" | "taskId"
 > & {
   status?: string;
 };
