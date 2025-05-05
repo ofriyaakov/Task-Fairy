@@ -19,7 +19,6 @@ const Headline: React.FC<HeadlineProps> = ({ color, title }) => (
       variant='h6'
       sx={{
         fontWeight: "700",
-        // textTransform: "lowercase", // optional, if you want "create new task" like in your image
       }}>
       {title}
     </Typography>
