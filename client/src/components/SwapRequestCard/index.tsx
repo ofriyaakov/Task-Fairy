@@ -14,8 +14,8 @@ interface SwapRequestCardProps {
 }
 
 const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask }) => {
-
-    const taskDate = new Date(employeeWithTask.taskStartTime).toLocaleDateString('de-CH')
+    const dateFormat = 'de-CH'
+    const taskDate = new Date(employeeWithTask.taskStartTime).toLocaleDateString(dateFormat)
     const taskStartTime = new Date(employeeWithTask.taskStartTime).toLocaleTimeString()
     const taskEndTime = new Date(employeeWithTask.taskEndTime).toLocaleTimeString()
 
