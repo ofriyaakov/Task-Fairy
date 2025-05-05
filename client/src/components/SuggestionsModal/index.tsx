@@ -17,23 +17,18 @@ interface SuggestionsDialogProps {
     open: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
-    // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
-    // employeesAmount: number; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
-    onClose: () => void;
+    taskId: string; 
+    employeesAmount: number;
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     open,
-    setIsModalOpen
+    setIsModalOpen,
     // employeesSuggestions, 
-    // taskId,
-    // employeesAmount
+    taskId,
+    employeesAmount
 }) => {
     const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
-
-    // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
-    const taskId = '9dac927f-0680-4929-8271-46706581081e'
-    const employeesAmount = 2
 
     const isEnoughEmployees = useMemo(() => {
         return approvedEmployeeIds.length === employeesAmount;
