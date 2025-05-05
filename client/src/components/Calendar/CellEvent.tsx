@@ -22,7 +22,7 @@ export const CellEvent: React.FC<CellEventProps> = ({ data, date, isManagerView 
     return (
         <div style={{ fontSize: '0.9rem', marginTop: '0.25rem', backgroundColor: eventBgColor }}>
             {isManagerView 
-                ? (`task - {taskOccupancy} assigned`)
+                ? (`task - ${taskOccupancy} assigned`)
                 : (`Task`)
             }
         </div>

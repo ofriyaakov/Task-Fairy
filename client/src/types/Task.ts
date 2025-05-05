@@ -22,15 +22,18 @@ export interface TaskPayload extends TaskDetails {
   companyId: number;
 }
 
-export type TaskSummaryCard = Pick<
+export type ShortenTaskDetails = Pick<
   TaskDetails,
-  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender"
+  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender" 
 > & {
-  status?: string;
   taskId: string;
 };
 
-export interface CalendarTask extends TaskSummaryCard{
+export type TaskSummaryCard = ShortenTaskDetails & {
+  status?: string;
+};
+
+export interface CalendarTask extends ShortenTaskDetails {
   date: string;
   employeesAmount: number;
   assignedEmployeesAmount: number;

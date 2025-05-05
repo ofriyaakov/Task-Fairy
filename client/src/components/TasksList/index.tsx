@@ -7,9 +7,10 @@ import Headline from "../Headline";
 interface TaskListProps {
   title: string;
   tasks: TaskDetailsCardType[];
+  handleCardClick?: (taskId: string) => void 
 }
 
-const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
+const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredTasks = tasks.filter((task) =>
@@ -55,7 +56,7 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
           spacing={2}
           sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: "592px" }}>
           {filteredTasks.map((task, index) => (
-            <TaskDetailsCard key={index} task={task} />
+            <TaskDetailsCard key={index} task={task} handleCardClick={handleCardClick}/>
           ))}
         </Stack>
       </Box>

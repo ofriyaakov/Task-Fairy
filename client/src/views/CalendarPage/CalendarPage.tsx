@@ -3,6 +3,7 @@ import SuggestionsDialog from './../../components/SuggestionsModal'
 import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
 import { getAllTasksByMonth } from '../../queries/task';
+import TasksList from './../../components/TasksList'
 
 const CalendarPage: React.FC = () => {
 
@@ -10,11 +11,18 @@ const CalendarPage: React.FC = () => {
   const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
   const [taskSummary, setTaskSummary] = useState<CalendarTask[]>([]);
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
+  const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
+  const [currentTaskId, setCurrentTaskId] = useState<string>('')
 
-  {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/}
-  const handleCellClick = (date: string) => { 
+  {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/ }
+  const handleCellClick = (date: string) => {
     const tasksByDate = taskSummary.filter(task => task.date === date);
-    console.log("tasksByDate: ", tasksByDate);
+    setTaskListByDate(tasksByDate)
+  };
+
+  const handleTaskCardClick = (taskId: string) => {
+    setCurrentTaskId(taskId)
+    setIsModalOpen(true)
   };
 
   const navigateMonth = (date: Date) => {
@@ -40,7 +48,7 @@ const CalendarPage: React.FC = () => {
   }, [currentMonthDate]);
 
   return (
-    <div className='App' style={{height: "60vh", width: "80%"}}>
+    <div className='App' style={{ height: "86vh", width: "100%", display: "flex" }}>
       {loadingTasks ? <div>Loading...</div> :
       <MyCalendar 
         taskSummary={taskSummary}
@@ -49,12 +57,10 @@ const CalendarPage: React.FC = () => {
         handleCellClick={handleCellClick}
         isManagerView={true} />
       }
+      {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
+      {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} />}
     </div>
   );
+};
 
-  //     //CHANGE AFTER CONNECTING THE CALEMDER AND THE MODAL
-  // return <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} />;
-  };
-  
-  export default CalendarPage;
-  
+export default CalendarPage;
