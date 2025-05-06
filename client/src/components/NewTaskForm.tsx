@@ -27,13 +27,17 @@ import Headline from "./Headline";
 import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
 import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { BarLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
+import { State, City }  from 'country-state-city';
+
+const districts = State.getStatesOfCountry('IL');
+const israelCities = districts.flatMap((district) => {
+  return City.getCitiesOfState('IL', district.isoCode);
+});
 
 const locations = [
-  "Shishut Ramat Gan",
-  "Tel Aviv Center",
-  "Herzliya",
-  "Jerusalem",
+  "The Office",
+  ...israelCities.map((city) => city.name),
 ];
 
 const NewTaskForm: React.FC = () => {
@@ -121,7 +125,7 @@ const NewTaskForm: React.FC = () => {
     <Paper
       elevation={0}
       sx={{
-        p: 1,
+        padding: "0 8px 8px 8px",
         mx: "auto",
         borderRadius: 2,
       }}>
@@ -308,7 +312,18 @@ const NewTaskForm: React.FC = () => {
                       borderRadius: 1,
                       transform: "scale(0.9)",
                       transformOrigin: "top center",
-                    }}>
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200,
+                        },
+                      },
+                      MenuListProps: {
+                      dense: true,
+                      },
+                    }}
+                    >
                     {locations.map((location) => (
                       <MenuItem key={location} value={location}>
                         {location}
@@ -350,7 +365,7 @@ const NewTaskForm: React.FC = () => {
                       endAdornment: loadingAI ? (
                         <InputAdornment position='start' sx={{ ml: -10 }}>
                           <Box>
-                            <BarLoader width={150} height={4} color='#1976d2' />
+                            <BeatLoader color='#1976d2' />
                           </Box>
                         </InputAdornment>
                       ) : null,

@@ -14,12 +14,16 @@ export const createTask = async (payload: TaskPayload) => {
 
 export const assignEmployees = async (
   taskId: string,
-  employeeIds: string[]
+  employeeIds: string[],
+  taskDate: Date,
+  taskBalancePoints: number
 ) => {
-  try {
+  try {    
     const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, {
       taskId,
       employeeIds,
+      taskDate,
+      taskBalancePoints,
     });
     return response.data;
   } catch (error: any) {
@@ -88,3 +92,16 @@ export const getBalancePointsByGroup = async (companyId: number) => {
   }
 };
 
+export const getSuggestedEmployees = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/suggestedEmployees/?taskId=${taskId}`
+    );
+    return response.data;
+  }
+  catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch suggested employees failed"
+    );
+  }
+};

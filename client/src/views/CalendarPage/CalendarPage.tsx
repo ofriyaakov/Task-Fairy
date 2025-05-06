@@ -4,6 +4,7 @@ import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
 import { getAllTasksByMonth } from '../../queries/task';
 import TasksList from './../../components/TasksList'
+import { BeatLoader } from 'react-spinners';
 
 const CalendarPage: React.FC = () => {
 
@@ -13,6 +14,8 @@ const CalendarPage: React.FC = () => {
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
   const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
   const [currentTaskId, setCurrentTaskId] = useState<string>('')
+  const [currentTaskDate, setCurrentTaskDate] = useState<Date>(new Date())
+  const [currentBalancePoints, setCurrentBalancePoints] = useState<number>(0)
 
   {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/ }
   const handleCellClick = (date: string) => {
@@ -20,9 +23,11 @@ const CalendarPage: React.FC = () => {
     setTaskListByDate(tasksByDate)
   };
 
-  const handleTaskCardClick = (taskId: string) => {
+  const handleTaskCardClick = (taskId: string, taskDate: Date, balancePoints: number) => {
     setCurrentTaskId(taskId)
     setIsModalOpen(true)
+    setCurrentTaskDate(taskDate)
+    setCurrentBalancePoints(balancePoints)
   };
 
   const navigateMonth = (date: Date) => {
@@ -48,12 +53,12 @@ const CalendarPage: React.FC = () => {
   }, [currentMonthDate]);
 
   return (
-    <div className='App' style={{ height: "86vh", width: "100%", display: "flex" }}>
-      {loadingTasks ? <div>Loading...</div> :
+    <div className='App' style={{ height: "86vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+      {loadingTasks ? <BeatLoader color="#36d7b7" loading={loadingTasks} size={20} /> :
         <MyCalendar taskSummary={taskSummary} date={currentMonthDate} navigateMonth={navigateMonth} handleCellClick={handleCellClick} ></MyCalendar>
       }
       {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
-      {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} />}
+      {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} taskDate={currentTaskDate} taskBalancePoints={currentBalancePoints} />}
     </div>
   );
 };
