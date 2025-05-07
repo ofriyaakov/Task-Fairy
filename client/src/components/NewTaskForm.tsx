@@ -130,7 +130,7 @@ const NewTaskForm: React.FC = () => {
         sx={{
           p: 2,
           mx: "auto",
-          bgcolor: "#f8fbff",
+          bgcolor: "#FAFAFA",
           borderRadius: 2,
         }}>
         <form onSubmit={handleSubmit}>
