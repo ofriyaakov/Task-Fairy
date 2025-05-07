@@ -50,7 +50,12 @@ const CalendarPage: React.FC = () => {
   return (
     <div className='App' style={{ height: "86vh", width: "100%", display: "flex" }}>
       {loadingTasks ? <div>Loading...</div> :
-        <MyCalendar taskSummary={taskSummary} date={currentMonthDate} navigateMonth={navigateMonth} handleCellClick={handleCellClick} ></MyCalendar>
+      <MyCalendar 
+        taskSummary={taskSummary}
+        date={currentMonthDate}
+        navigateMonth={navigateMonth}
+        handleCellClick={handleCellClick}
+        isManagerView={true} />
       }
       {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
       {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} />}
