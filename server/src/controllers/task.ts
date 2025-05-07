@@ -141,7 +141,7 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number) => {
+export const getAllTasksByMonth = async (month: number, companyId: number) => {
   try {
     const result = await db.query(`
       SELECT tasks.*,
@@ -149,10 +149,11 @@ export const getAllTasksByMonth = async (month: number) => {
        COUNT(userTask.user_id) as assigned_employees_amount
       FROM public.tasks as tasks
       Left Join public.r_tasks_users as userTask
-	      on userTask.task_id = tasks.task_id
+	      ON userTask.task_id = tasks.task_id
       WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $1
+      AND company_id = $2
       GROUP BY tasks.task_id`, 
-      [month]);
+      [month, companyId]);
 
     const tasks: RawEmployeedTask[] = result.rows;
 

@@ -4,6 +4,7 @@ import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
 import { getAllTasksByMonth } from '../../queries/task';
 import TasksList from './../../components/TasksList'
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const CalendarPage: React.FC = () => {
 
@@ -13,6 +14,8 @@ const CalendarPage: React.FC = () => {
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
   const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
   const [currentTaskId, setCurrentTaskId] = useState<string>('')
+
+  const { connectedUser } = useGlobalContext();
 
   {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/ }
   const handleCellClick = (date: string) => {
@@ -32,7 +35,8 @@ const CalendarPage: React.FC = () => {
 
   const fetchTasks = async () => {
     try {
-      const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1)
+      const companyId = connectedUser?.companyId || 0;
+      const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1, companyId)
       setTaskSummary(fetchedTasks)
       setLoadingTasks(false);
     } catch (err: any) {

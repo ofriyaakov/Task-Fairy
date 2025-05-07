@@ -65,9 +65,9 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number) => {
+export const getAllTasksByMonth = async (month: number, companyId: number) => {
   try {
-    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/${month}`)).data;
+    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`)).data;
     return tasks;
   } catch (error: any) {
     console.error("getAllTasksByMonth error", error);
