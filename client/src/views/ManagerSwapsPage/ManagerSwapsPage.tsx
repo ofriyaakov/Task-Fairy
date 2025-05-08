@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import SwapRequestCard from "../../components/SwapRequestCard";
 import { SwapRequest } from './../../types/Swap';
 import { getAllPendingSwapRequests } from './../../queries/swapRequests'
@@ -34,16 +34,20 @@ const ManagerSwapsPage: React.FC = () => {
           pb: 2,
           pt: 2,
           bgcolor: "rgb(250 250 250)",
-          height: "100%",
-          borderRadius: "24px"
+          height: "80vh",
+          borderRadius: "24px",
+          overflowY: 'scroll'
         }}>
-        <Stack
-          spacing={2}
-          sx={{ overflowY: "auto", overflowX: "hidden", height: "80vh", }}>
-          {pendingSwapRequests.map((swapRequest) => (
-            <SwapRequestCard leftDetails={swapRequest.leftDetails} rightDetails={swapRequest.rightDetails} />
-          ))}
-        </Stack>
+        <Grid container spacing={2}>
+            {pendingSwapRequests.map((swapRequest, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <SwapRequestCard 
+                  leftDetails={swapRequest.leftDetails} 
+                  rightDetails={swapRequest.rightDetails} 
+                />
+              </Grid>
+            ))}
+          </Grid>
       </Box>
     </div>)
 };

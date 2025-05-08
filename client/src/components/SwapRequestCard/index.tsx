@@ -57,7 +57,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
       sx={{
         p: 3,
         borderRadius: 4,
-        width: "41%",
+        width: "92%",
         border: "1px solid rgb(229 229 229)",
         height: "135px",
       }}
