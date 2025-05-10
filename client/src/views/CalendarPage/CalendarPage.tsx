@@ -17,7 +17,7 @@ const CalendarPage: React.FC = () => {
   const [currentTaskId, setCurrentTaskId] = useState<string>('')
   const [currentTaskDate, setCurrentTaskDate] = useState<Date>(new Date())
   const [currentBalancePoints, setCurrentBalancePoints] = useState<number>(0)
-
+  
   const { connectedUser } = useGlobalContext();
 
   {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/ }
