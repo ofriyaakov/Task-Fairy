@@ -16,6 +16,13 @@ export const APP_COLOR = {
   ROYAL_BLUE : "#5F70C8",
 };
 
+export const INDICATION_COLOR = {
+  BEST: '#A8E6CF',     // pastel green
+  GOOD: '#FFFBAB',      // pastel yellow
+  MID: '#FFD3B6',      // pastel orange
+  BAD: '#FF8B94'      // pastel red
+}
+
 const theme = createTheme({
   typography: {
     fontFamily: '"Nunito Sans", sans-serif',

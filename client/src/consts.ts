@@ -17,3 +17,5 @@ export const userLevels = {
   employee: 1,
   manager: 2,
 };
+
+export const officeTitle = "The Office";
