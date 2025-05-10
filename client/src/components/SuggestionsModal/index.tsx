@@ -18,8 +18,6 @@ import { getSuggestedEmployees } from './../../queries/task';
 import { APP_COLOR } from './../../theme';
 import { BeatLoader } from 'react-spinners';
 
-const hd = new Holidays('IL');
-
 interface SuggestionsDialogProps {
     open: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
