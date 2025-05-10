@@ -42,10 +42,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
     const [suggestedEmployees, setSuggestedEmployees] = useState<employeeDatailsCard[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
-
-
-    console.log(taskBalancePoints, "taskBalancePoints")
-    console.log(taskDate, "taskDate");
     
     useEffect(() => {
         const fetchSuggestedEmployees = async () => {
@@ -86,8 +82,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
     const handleApproveEmployee = (employeeId: string) => {
         setApprovedEmployeeIds([...approvedEmployeeIds, employeeId])
-        console.log(approvedEmployeeIds, "approvedEmployeeIds");
-        
     }
 
     const handleRemoveEmployee = (deletedEmployeeId: string) => {

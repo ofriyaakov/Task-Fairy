@@ -73,9 +73,6 @@ export const assignEmployees = async (
 
     const returnRows = [];
 
-    console.log(employeeIds, "employeeIds");
-    
-
     // Increase holiday count for each employee assigned to the task
     if(isHolidayOrSaturday(taskDate)) {
       await increaseHolidayCountForUser(employeeIds);
