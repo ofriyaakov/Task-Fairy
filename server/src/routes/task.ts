@@ -8,6 +8,7 @@ import {
   getBalancePointsByGroupForCurrentMonth,
   getTasksByEmployeeId,
   assignEmployees,
+  getSuggestedEmployees
 } from "../controllers/task";
 
 const router = express.Router();
@@ -158,10 +159,10 @@ router.post("/", async (req: Request, res: Response) => {
  *              description: Unauthorized - invalid or missing token
  */
 router.post("/assignEmployees", async (req: Request, res: Response) => {
-  const { taskId, employeeIds } = req.body;
+  const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
 
   try {
-    const newAssiments = await assignEmployees(taskId, employeeIds);
+    const newAssiments = await assignEmployees(taskId, taskDate, taskBalancePoints, employeeIds);
     res.status(200).send(newAssiments);
   } catch (err) {
     console.error(err);
@@ -328,6 +329,47 @@ router.get("/month/", async (req: Request, res: Response) => {
 
   try {
     res.status(200).send(await getAllTasksByMonth(Number(month), Number(companyId)));
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
+/**
+ * @swagger
+ * /task/suggestedEmployees/{taskId}:
+ *   get:
+ *       summary: Retrieve a list of suggested employees for a specific task
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: path
+ *             name: taskId
+ *             required: true
+ *             description: ID of the task
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: A list of suggested employees
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                  name:
+ *                                      type: string
+ */
+
+router.get("/suggestedEmployees", async (req: Request, res: Response) => {
+  const taskId = req.query.taskId as string;
+  try {
+    const suggestedEmployees = await getSuggestedEmployees(taskId);
+    res.status(200).send(suggestedEmployees);
   } catch (err) {
     res.status(400).send(err);
   }
