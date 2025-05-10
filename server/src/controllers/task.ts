@@ -6,6 +6,7 @@ import { City } from "country-state-city";
 import haversine from 'haversine-distance';
 import { increaseHolidayCountForUser, increaseBalancePointsForUsers } from "./user";
 import { isHolidayOrSaturday } from "../utils/help"
+import { officeTitle } from "../../consts";
 
 type SpacingMap = { [userId: string]: number };
 
@@ -391,7 +392,7 @@ export const getSuggestedEmployees = async (taskId: string) => {
     {}
   );
 
-  const taskLocationObj = taskLocation !== "The Office" ? City.getCitiesOfCountry("IL").find(c => c.name === taskLocation) : null;
+  const taskLocationObj = taskLocation !== officeTitle ? City.getCitiesOfCountry("IL").find(c => c.name === taskLocation) : null;
   const taskLocationCoordinates: Coordinates | null = taskLocationObj
   ? {
       lat: parseFloat(taskLocationObj.latitude),

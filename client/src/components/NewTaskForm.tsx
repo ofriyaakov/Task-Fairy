@@ -29,6 +29,7 @@ import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { BeatLoader } from "react-spinners";
 import { State, City }  from 'country-state-city';
+import { officeTitle } from "../consts";
 
 const districts = State.getStatesOfCountry('IL');
 const israelCities = districts.flatMap((district) => {
@@ -36,7 +37,7 @@ const israelCities = districts.flatMap((district) => {
 });
 
 const locations = [
-  "The Office",
+  officeTitle,
   ...israelCities.map((city) => city.name),
 ];
 
