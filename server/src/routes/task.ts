@@ -300,7 +300,12 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
  *           - bearerAuth: []
  *       parameters:
  *          - name: month
- *            in: path
+ *            in: query
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: companyId
+ *            in: query
  *            required: true
  *            schema:
  *              type: string
@@ -319,11 +324,11 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
  *              description: Unauthorized - invalid or missing token
  */
 
-router.get("/month/:month", async (req: Request, res: Response) => {
-  const month = parseInt(req.params.month);
+router.get("/month/", async (req: Request, res: Response) => {
+  const { companyId, month } = req.query;
 
   try {
-    res.status(200).send(await getAllTasksByMonth(month));
+    res.status(200).send(await getAllTasksByMonth(Number(month), Number(companyId)));
   } catch (err) {
     res.status(400).send(err);
   }
