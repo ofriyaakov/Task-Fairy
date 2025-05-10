@@ -53,9 +53,14 @@ const CalendarPage: React.FC = () => {
   }, [currentMonthDate]);
 
   return (
-    <div className='App' style={{ height: "86vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+    <div className='App' style={{ height: "86vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {loadingTasks ? <BeatLoader color="#36d7b7" loading={loadingTasks} size={20} /> :
-        <MyCalendar taskSummary={taskSummary} date={currentMonthDate} navigateMonth={navigateMonth} handleCellClick={handleCellClick} ></MyCalendar>
+      <MyCalendar 
+        taskSummary={taskSummary}
+        date={currentMonthDate}
+        navigateMonth={navigateMonth}
+        handleCellClick={handleCellClick}
+        isManagerView={true} />
       }
       {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
       {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} taskDate={currentTaskDate} taskBalancePoints={currentBalancePoints} />}
