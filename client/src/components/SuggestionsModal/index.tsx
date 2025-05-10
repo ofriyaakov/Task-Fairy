@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -7,72 +7,65 @@ import {
     Button,
     Typography,
     Grid,
-    Divider
+    Divider,
+    Box
 } from '@mui/material';
 import { employeeDatailsCard } from './../../types/employee'
 import EmployeeDetailsCard from './../EmployeeDetailsCard'
 import { assignEmployees } from './../../queries/task'
+import Holidays from 'date-holidays';
+import { getSuggestedEmployees } from './../../queries/task';
+import { APP_COLOR } from './../../theme';
+import { BeatLoader } from 'react-spinners';
 
 interface SuggestionsDialogProps {
     open: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
-    // taskId: string; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
-    // employeesAmount: number; WILL BE PASSED FROM THE CALENDAR AFTER CLICKING ON A TASK
-    onClose: () => void;
+    taskId: string; 
+    employeesAmount: number;
+    taskDate: Date;
+    taskBalancePoints: number;
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     open,
-    setIsModalOpen
+    setIsModalOpen,
     // employeesSuggestions, 
-    // taskId,
-    // employeesAmount
+    taskId,
+    employeesAmount,
+    taskDate,
+    taskBalancePoints
 }) => {
     const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([])
+    const [suggestedEmployees, setSuggestedEmployees] = useState<employeeDatailsCard[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    
+    useEffect(() => {
+        const fetchSuggestedEmployees = async () => {
+            try {
+                const response = await getSuggestedEmployees(taskId);
+                setSuggestedEmployees(response);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error fetching suggested employees:", error);
+            }
+        };
 
-    // TO REPLACE AFTER WE CONNECT THIS COMPONENT TO THE CALENDAR
-    const taskId = '9dac927f-0680-4929-8271-46706581081e'
-    const employeesAmount = 2
+        if (open) {
+            setIsLoading(true);
+            setApprovedEmployeeIds([])
+            fetchSuggestedEmployees();
+        }
+    }, [open]);
 
     const isEnoughEmployees = useMemo(() => {
         return approvedEmployeeIds.length === employeesAmount;
     }, [approvedEmployeeIds, employeesAmount]);
 
-    // TO REPLACE AFTER WE HAVE THE ALGORITHM
-    const employeesSuggestions: employeeDatailsCard[] = [
-        {
-            firstName: "Ofri",
-            lastName: "Yaakov",
-            employeeId: "21260",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        },
-        {
-            firstName: "Ofri2",
-            lastName: "2",
-            employeeId: "2126",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        },
-        {
-            firstName: "Ofri3",
-            lastName: "3",
-            employeeId: "212",
-            companyName: "sigma",
-            city: "Afula",
-            balancePoints: 10,
-            gender: "female"
-        }
-    ]
-
     const handleSave = async () => {
         try {
-            await assignEmployees(taskId, approvedEmployeeIds)
+            await assignEmployees(taskId, approvedEmployeeIds, taskDate, taskBalancePoints);
             setApprovedEmployeeIds([])
             setIsModalOpen(false)
         } catch (err: any) {
@@ -92,7 +85,6 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
     const handleRemoveEmployee = (deletedEmployeeId: string) => {
         const removeEmployee = approvedEmployeeIds?.filter(employeeId => employeeId !== deletedEmployeeId)
         setApprovedEmployeeIds(removeEmployee)
-
     }
 
     return (
@@ -102,10 +94,9 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
             fullWidth
             PaperProps={{
                 style: {
-                    backgroundColor: 'rgb(221 238 251)',
+                    backgroundColor: 'white',
                     borderRadius: '12px',
                     padding: '16px',
-                    border: "3px solid rgb(69 123 157)",
                     width: "860px",
                     height: "710px"
                 }
@@ -121,57 +112,82 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                         mb: 1
                     }}
                 >
-                    our suggestions
+                    Our Suggestions ({approvedEmployeeIds.length} / {employeesAmount})
                 </Typography>
             </DialogTitle>
 
-            <Divider sx={{ mb: 3 }} style={{ backgroundColor: "rgb(69 123 157)" }} />
+            <Divider sx={{ mb: 3 }} style={{ backgroundColor: "rgb(251 251 251)" }} />
 
             <DialogContent>
+                {isLoading ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      minHeight: '200px',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <h4>Our smart algorithm is loading suggestions for you...</h4>
+                    <BeatLoader />
+                  </Box>
+                ) : (
                 <Grid container spacing={2}>
-                    {employeesSuggestions.map((employee: employeeDatailsCard, index) => (
-                        <Grid item xs={12} md={6} key={index}>
-                            <EmployeeDetailsCard
-                                employee={employee}
-                                handleApproveEmployee={handleApproveEmployee}
-                                handleRemoveEmployee={handleRemoveEmployee}
-                                isDisable={isEnoughEmployees}
-                            />
-                        </Grid>
-                    ))}
+                  {suggestedEmployees.map((employee: employeeDatailsCard, index) => (
+                    <Grid item xs={12} md={6} key={index}>
+                      <EmployeeDetailsCard
+                        employee={employee}
+                        handleApproveEmployee={handleApproveEmployee}
+                        handleRemoveEmployee={handleRemoveEmployee}
+                        isDisable={isEnoughEmployees}
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
+              )}
             </DialogContent>
 
             <DialogActions sx={{
-                justifyContent: 'space-around',
+                justifyContent: 'center',
                 mt: 2,
                 pb: 3
             }}>
                 <Button
-                    variant="contained"
-                    onClick={handleSave}
-                    style={{
-                        width: "215px",
-                        height: "56.8px",
-                        backgroundColor: "rgb(69 123 157)"
-                    }}
-                    disabled={!isEnoughEmployees}
+                  variant="contained"
+                  onClick={handleSave}
+                  disabled={!isEnoughEmployees}
+                  sx={{
+                    width: 150,
+                    height: 40.8,
+                    bgcolor: APP_COLOR.ROYAL_BLUE,
+                    mx: 2,
+                    transition: 'background-color 0.2s',
+                    textTransform: 'none',
+                
+                    '&:disabled': {
+                      bgcolor: 'rgba(69, 123, 157, 0.5)',
+                      color: 'rgba(255, 255, 255, 0.7)', 
+                    }
+                  }}
                 >
-                    save
+                  Save
                 </Button>
 
                 <Button
                     variant="outlined"
                     onClick={handleCancel}
                     style={{
-                        width: "215px",
-                        height: "56.8px",
+                        width: "150px",
+                        height: "40.8px",
                         backgroundColor: "white",
                         color: "rgb(69 123 157)",
                         border: "1px solid rgb(69 123 157)",
+                        marginRight: "20px",
+                        marginLeft: "20px",
+                        textTransform: "none",
                     }}
                 >
-                    cancel
+                    Cancel
                 </Button>
             </DialogActions>
         </Dialog>

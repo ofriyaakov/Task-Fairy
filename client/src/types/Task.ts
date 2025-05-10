@@ -2,7 +2,7 @@ export type Gender = "Male" | "Female" | "Both";
 
 export interface Task extends TaskDetails {
   id: string;
-  companyId: string;
+  companyId: number;
 }
 
 export interface TaskDetails {
@@ -19,14 +19,24 @@ export interface TaskDetails {
 }
 
 export interface TaskPayload extends TaskDetails {
-  companyId: string;
+  companyId: number;
 }
 
-export type TaskSummaryCard = Pick<
+export type ShortenedTaskDetails = Pick<
   TaskDetails,
-  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender"
+  "name" | "location" | "startTime" | "endTime" | "balancePoints" | "gender" 
 > & {
+  taskId: string;
+};
+
+export type TaskSummaryCard = ShortenedTaskDetails & {
   status?: string;
 };
+
+export interface CalendarTask extends ShortenedTaskDetails {
+  date: string;
+  employeesAmount: number;
+  assignedEmployeesAmount: number;
+}
 
 export type TaskForAi = Pick<Task, "name" | "description" | "companyId">;

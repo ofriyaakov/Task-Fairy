@@ -10,12 +10,14 @@ import dayjs from "dayjs";
 
 interface TaskDetailsCardProps {
   task: TaskDetailsCardType;
+  handleCardClick?: (taskId: string, taskDate: Date, balancePoints: number) => void 
 }
 
-const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task }) => {
+const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, handleCardClick }) => {
   return (
     <Paper
       elevation={0}
+      onClick={()=> handleCardClick && handleCardClick(task.taskId || "", task.startTime, task.balancePoints)}
       sx={{
         p: 2,
         borderRadius: 2,

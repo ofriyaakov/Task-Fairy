@@ -30,9 +30,7 @@ export const getUserById = async (id) => {
   }
 };
 
-export const getUserByEmail = async (
-  email: IUser["email"]
-): Promise<User> => {
+export const getUserByEmail = async (email: IUser["email"]): Promise<User> => {
   const sql = `
     SELECT 
       u.*,
@@ -53,7 +51,6 @@ export const getUserByEmail = async (
     const userWithCompany: User = result.rows[0];
     console.log("get user by email success:", userWithCompany);
     return userWithCompany;
-
   } catch (err) {
     console.error("getUserByEmail error:", err);
     throw new Error("User not found");
@@ -62,7 +59,12 @@ export const getUserByEmail = async (
 
 // export const addNewUser = (user: User) => userModel.create(user);
 
-export const addNewUser = async (user: User, executor: { query: <T = any>(sql: string, params?: any[]) => Promise<QueryResult<T>> } = db) => {
+export const addNewUser = async (
+  user: User,
+  executor: {
+    query: <T = any>(sql: string, params?: any[]) => Promise<QueryResult<T>>;
+  } = db
+) => {
   try {
     const result = await executor.query<{
       user_id: string;
@@ -75,7 +77,16 @@ export const addNewUser = async (user: User, executor: { query: <T = any>(sql: s
       group_id: number;
     }>(
       `INSERT INTO users (user_id, email, first_name, last_name, password, user_level, phone_number, group_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [user.user_id, user.email, user.first_name, user.last_name, user.password, user.user_level, user.phone_number, user.group_id]
+      [
+        user.user_id,
+        user.email,
+        user.first_name,
+        user.last_name,
+        user.password,
+        user.user_level,
+        user.phone_number,
+        user.group_id,
+      ]
     );
 
     console.log("New user added:", result.rows[0]);
@@ -116,3 +127,83 @@ export const updateUserTokenById = async (id: string, newRefreshToken: any) => {
     throw err;
   }
 };
+
+export const increaseHolidayCountForUser = async (employeeIds: string[]) => {
+  try {
+    const query = `UPDATE users SET holiday_count = holiday_count + 1 WHERE user_id = $1 RETURNING *`;
+
+    const returnRows = [];
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [id]);
+      returnRows.push(rows);
+    });
+
+    console.log("User holiday raised:", returnRows);
+    return returnRows;
+  } catch (err) {
+    console.error("Error raising holiday for user:", err);
+    throw err;
+  }
+};
+
+export const decreaseHolidayCountForUser = async (employeeIds: string[]) => {
+  try {
+    const query = `UPDATE users SET holiday_count = holiday_count - 1 WHERE user_id = $1 RETURNING *`;
+
+    const returnRows = [];
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [id]);
+      returnRows.push(rows);
+    });
+
+    console.log("User holiday lowered:", returnRows);
+    return returnRows;
+  } catch (err) {
+    console.error("Error lowering holiday for user:", err);
+    throw err;
+  }
+};
+
+export const getAllEmployeesByCompanyIdAndGender = async (companyId: string, gender: string) => {
+  try {
+    let query = `
+      SELECT u.*, g.group_name, g.company_id
+      FROM users u
+      JOIN groups g ON u.group_id = g.group_id
+      WHERE g.company_id = $1
+      AND u.user_level = 1
+    `;
+
+    if(gender !== "Both") {
+      query += ` AND u.gender = $2`;
+    }
+
+    const { rows } = await db.query(query, gender === 'Both' ? [companyId] : [companyId, gender]);
+    console.log("get all employees by company id success:", rows);
+    return rows;
+  } catch (err) {
+    console.error("Error getting employees by company id:", err);
+    throw err;
+  }
+}
+
+export const increaseBalancePointsForUsers = async (employeeIds: string[], balancePoints: number) => {
+  try {
+    const query = `UPDATE users SET balance_points = balance_points + $1 WHERE user_id = $2 RETURNING *`;
+
+    const returnRows = [];
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [balancePoints, id]);
+      returnRows.push(rows);
+    });
+
+    console.log("User balance points raised:", returnRows);
+    return returnRows;
+  } catch (err) {
+    console.error("Error raising balance points for user:", err);
+    throw err;
+  }
+}

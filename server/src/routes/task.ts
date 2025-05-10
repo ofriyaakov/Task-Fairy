@@ -4,8 +4,11 @@ import authenticateToken from "../middleware/jwt";
 import {
   createTask,
   getAllSavedTasks,
+  getAllTasksByMonth,
+  getBalancePointsByGroupForCurrentMonth,
   getTasksByEmployeeId,
   assignEmployees,
+  getSuggestedEmployees
 } from "../controllers/task";
 
 const router = express.Router();
@@ -156,10 +159,10 @@ router.post("/", async (req: Request, res: Response) => {
  *              description: Unauthorized - invalid or missing token
  */
 router.post("/assignEmployees", async (req: Request, res: Response) => {
-  const { taskId, employeeIds } = req.body;
+  const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
 
   try {
-    const newAssiments = await assignEmployees(taskId, employeeIds);
+    const newAssiments = await assignEmployees(taskId, taskDate, taskBalancePoints, employeeIds);
     res.status(200).send(newAssiments);
   } catch (err) {
     console.error(err);
@@ -197,6 +200,48 @@ router.get("/saved", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/balancePointsByGroup:
+ *   get:
+ *       summary: Retrieve balance points for a specific company for the current month
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: query
+ *             name: companyId
+ *             required: true
+ *             description: ID of the company
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: Balance points for the group
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              max:
+ *                                  type: integer
+ *                              min:
+ *                                  type: integer
+ *                              avg:
+ *                                  type: number
+ */
+
+router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
+  const { companyId } = req.query;
+  try {
+    const balancePoints = await getBalancePointsByGroupForCurrentMonth(
+      Number(companyId)
+    );
+    res.status(200).send(balancePoints);
+  } catch (err) {
+    console.error(err);
+  }
+});
 /**
  * @swagger
  * /employee/{employeeId}:
@@ -244,5 +289,90 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
     res.status(400).send(err);
   }
 });
+
+/**
+ * @swagger
+ * /task/month/{month}:
+ *   get:
+ *       summary: Retrieve a list of all tasks by month with employees number
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: month
+ *            in: query
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: companyId
+ *            in: query
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A list of tasks
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.get("/month/", async (req: Request, res: Response) => {
+  const { companyId, month } = req.query;
+
+  try {
+    res.status(200).send(await getAllTasksByMonth(Number(month), Number(companyId)));
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
+/**
+ * @swagger
+ * /task/suggestedEmployees/{taskId}:
+ *   get:
+ *       summary: Retrieve a list of suggested employees for a specific task
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: path
+ *             name: taskId
+ *             required: true
+ *             description: ID of the task
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: A list of suggested employees
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                  name:
+ *                                      type: string
+ */
+
+router.get("/suggestedEmployees", async (req: Request, res: Response) => {
+  const taskId = req.query.taskId as string;
+  try {
+    const suggestedEmployees = await getSuggestedEmployees(taskId);
+    res.status(200).send(suggestedEmployees);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
 
 export default router;

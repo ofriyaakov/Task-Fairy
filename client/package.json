@@ -10,11 +10,14 @@
     "@mui/material": "^6.4.11",
     "@mui/x-date-pickers": "^7.29.0",
     "axios": "^1.7.9",
+    "country-state-city": "^3.2.1",
     "cra-template-typescript": "1.2.0",
     "date-fns": "^4.1.0",
+    "date-holidays": "^3.24.2",
     "dayjs": "^1.11.13",
     "lucide-react": "^0.488.0",
     "react": "^19.0.0",
+    "react-big-calendar": "^1.18.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
@@ -49,6 +52,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/react": "^19.0.2",
+    "@types/react-big-calendar": "^1.16.1",
     "@types/react-dom": "^19.0.2"
   }
 }

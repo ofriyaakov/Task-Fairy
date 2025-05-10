@@ -3,13 +3,16 @@ import { Box, TextField, Paper, Stack } from "@mui/material";
 import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 interface TaskListProps {
   title: string;
   tasks: TaskDetailsCardType[];
+  handleCardClick?: (taskId: string, taskDate: Date, balancePoints: number) => void 
 }
 
-const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
+const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredTasks = tasks.filter((task) =>
@@ -25,7 +28,7 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
         maxWidth: "388px",
         overflow: "hidden",
       }}>
-      <Box sx={{ mt: "8px" }}>
+      <Box>
         <Headline color='rgb(206, 244, 255)' title={title} />
       </Box>
 
@@ -34,18 +37,23 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
           px: 2,
           pb: 2,
           bgcolor: "rgb(250 250 250)",
-          height: "650px",
+          height: "77vh",
         }}>
         <TextField
-          placeholder='search'
-          variant='outlined'
+          variant="outlined"
+          placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
             sx: {
               borderRadius: 2,
               mb: 2,
-              width: "356px",
+              width: '356px',
               mt: 2,
             },
           }}
@@ -53,9 +61,9 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks }) => {
 
         <Stack
           spacing={2}
-          sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: "592px" }}>
+          sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: "65vh" }}>
           {filteredTasks.map((task, index) => (
-            <TaskDetailsCard key={index} task={task} />
+            <TaskDetailsCard key={index} task={task} handleCardClick={handleCardClick}/>
           ))}
         </Stack>
       </Box>

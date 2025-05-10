@@ -6,7 +6,7 @@ import { login } from "../../queries/auth";
 import './Login.css';
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { useState } from "react";
-import { mainColor } from "../../consts";
+import { APP_COLOR } from "../../theme";
 
 const Login: React.FC = () => {
   const { setConnectedUser } = useGlobalContext();
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
         variant="h6"
         component="div"
         sx={{
-          color: mainColor,
+          color: APP_COLOR.ROYAL_BLUE,
           mt: 1,
           fontWeight: "bolder",
           fontSize: "2.3rem",
