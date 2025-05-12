@@ -1,11 +1,15 @@
 import "./EmployeesPage.css";
 import { Box } from "@mui/material";
 import TasksList from "../../components/TasksList";
-import { CalendarTask, TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
+import {
+  CalendarTask,
+  TaskSummaryCard as TaskDetailsCardType,
+} from "../../types/Task";
 import { useEffect, useState } from "react";
 import { getEmployeeTasks } from "../../queries/task";
 import { employeeTaskTitle } from "../../consts";
 import { useGlobalContext } from "../../contexts/GlobalContext";
+import { toast } from "react-toastify";
 import { MyCalendar } from "../../components/Calendar/Calendar";
 import RectangleData from "../../components/RectangleData";
 import { APP_COLOR } from "../../theme";
@@ -22,18 +26,25 @@ const EmployeesPage: React.FC = () => {
   const [avgBalancePoints, setAvgBalancePoints] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const mapTasksAndfilterByMonth = (tasks: TaskDetailsCardType[], date: Date) => {
-    const calendarTask: CalendarTask[] = tasks.map(task => {
-      return {
+  const mapTasksAndfilterByMonth = (
+    tasks: TaskDetailsCardType[],
+    date: Date
+  ) => {
+    const calendarTask: CalendarTask[] = tasks
+      .map((task) => {
+        return {
           ...task,
-          date: new Date(task.startTime).toISOString().split('T')[0],
+          date: new Date(task.startTime).toISOString().split("T")[0],
           employeesAmount: -1,
-          assignedEmployeesAmount: -1
-        }
-      }).filter(task => Number(task.date.split("-")[1]) === date.getMonth() + 1);
+          assignedEmployeesAmount: -1,
+        };
+      })
+      .filter(
+        (task) => Number(task.date.split("-")[1]) === date.getMonth() + 1
+      );
 
-    setCalendarTasks(calendarTask)
-  }
+    setCalendarTasks(calendarTask);
+  };
 
   const fetchEmployeeTasks = async () => {
     try {
@@ -41,11 +52,12 @@ const EmployeesPage: React.FC = () => {
       if (!employeeId) throw new Error("User ID not found in context");
 
       const fetchedemployeeTasks: TaskDetailsCardType[] =
-      await getEmployeeTasks(employeeId);
+        await getEmployeeTasks(employeeId);
       setemployeeTasks(fetchedemployeeTasks);
       mapTasksAndfilterByMonth(fetchedemployeeTasks, currentMonthDate);
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! We couldent fetch your tasks");
       setemployeeTasks([]);
     }
   };
@@ -77,10 +89,10 @@ const EmployeesPage: React.FC = () => {
   }
 
   const navigateMonth = (date: Date) => {
-    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-    setCurrentMonthDate(startOfMonth)
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    setCurrentMonthDate(startOfMonth);
     mapTasksAndfilterByMonth(employeeTasks, startOfMonth);
-  }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -88,7 +100,7 @@ const EmployeesPage: React.FC = () => {
     fetchEmployeeBalancePoints();
     fetchCompanyAvgBalancePoints();
   }, []);
-  
+
   return (
     <div className= "page-container">
       {loading ?

@@ -4,6 +4,7 @@ import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
 import { getAllTasksByMonth } from '../../queries/task';
 import TasksList from './../../components/TasksList'
+import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
@@ -46,6 +47,7 @@ const CalendarPage: React.FC = () => {
       setLoadingTasks(false);
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! Something went wrong");
       setTaskSummary([])
       setLoadingTasks(false);
     }

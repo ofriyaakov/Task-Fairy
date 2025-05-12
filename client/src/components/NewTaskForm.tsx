@@ -6,7 +6,6 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
-  IconButton,
   InputAdornment,
   MenuItem,
   Paper,
@@ -14,32 +13,28 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Typography,
-  Stack,
   Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { Star, Group, AutoAwesome } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Headline from "./Headline";
 import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
 import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
+import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
-import { State, City }  from 'country-state-city';
+import { State, City } from "country-state-city";
 import { officeTitle } from "../consts";
 
-const districts = State.getStatesOfCountry('IL');
+const districts = State.getStatesOfCountry("IL");
 const israelCities = districts.flatMap((district) => {
-  return City.getCitiesOfState('IL', district.isoCode);
+  return City.getCitiesOfState("IL", district.isoCode);
 });
 
-const locations = [
-  officeTitle,
-  ...israelCities.map((city) => city.name),
-];
+const locations = [officeTitle, ...israelCities.map((city) => city.name)];
 
 const NewTaskForm: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -96,9 +91,10 @@ const NewTaskForm: React.FC = () => {
     };
 
     try {
-      const response = await createTask(payload);
-      console.log("Task created:", response);
+      await createTask(payload);
+      toast.success("Task created successfully!");
     } catch (err: any) {
+      toast.error("Failed to create task.");
       console.error(err.message);
     }
   };
@@ -118,6 +114,7 @@ const NewTaskForm: React.FC = () => {
       setFormData((prev) => ({ ...prev, balancePoints: response }));
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! Something went wrong");
     }
     setLoadingAI(false);
   };
@@ -135,7 +132,7 @@ const NewTaskForm: React.FC = () => {
         sx={{
           p: 2,
           mx: "auto",
-          bgcolor: "#f8fbff",
+          bgcolor: "#FAFAFA",
           borderRadius: 2,
         }}>
         <form onSubmit={handleSubmit}>
@@ -144,10 +141,15 @@ const NewTaskForm: React.FC = () => {
               sx={{
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                gap: 3,
+                gap: 4,
               }}>
               {/* Left Column */}
-              <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}>
                 <TextField
                   fullWidth
                   label='Name'
@@ -157,8 +159,6 @@ const NewTaskForm: React.FC = () => {
                   sx={{
                     bgcolor: "white",
                     borderRadius: 1,
-                    transform: "scale(0.9)",
-                    transformOrigin: "top center",
                   }}
                 />
 
@@ -174,9 +174,16 @@ const NewTaskForm: React.FC = () => {
                   }}
                   sx={{
                     bgcolor: "white",
+                    mt: 2,
                     borderRadius: 1,
-                    transform: "scale(0.9)",
+                    transform: "scale(1.15)",
                     transformOrigin: "top center",
+                    maxHeight: "300px !important",
+                    height: "300px",
+                    maxWidth: "350px",
+                    marginX: 0,
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 />
               </Box>
@@ -188,14 +195,12 @@ const NewTaskForm: React.FC = () => {
                   label='Description'
                   variant='outlined'
                   multiline
-                  rows={2}
+                  rows={3}
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   sx={{
                     bgcolor: "white",
                     borderRadius: 1,
-                    transform: "scale(0.9)",
-                    transformOrigin: "top center",
                   }}
                 />
 
@@ -204,6 +209,7 @@ const NewTaskForm: React.FC = () => {
                     component='legend'
                     sx={{
                       display: "flex",
+                      mt: 2,
                       transform: "scale(0.7)",
                       transformOrigin: "bottom left",
                     }}>
@@ -220,8 +226,6 @@ const NewTaskForm: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        transform: "scale(0.9)",
-                        transformOrigin: "top center",
                       }}>
                       <TimePicker
                         label='Start Time'
@@ -234,8 +238,6 @@ const NewTaskForm: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        transform: "scale(0.9)",
-                        transformOrigin: "top center",
                       }}>
                       <TimePicker
                         label='End Time'
@@ -249,7 +251,7 @@ const NewTaskForm: React.FC = () => {
                 </Box>
 
                 <Box>
-                  <FormControl fullWidth component='fieldset'>
+                  <FormControl fullWidth component='fieldset' sx={{ mt: 2 }}>
                     <FormLabel
                       component='legend'
                       sx={{
@@ -271,8 +273,8 @@ const NewTaskForm: React.FC = () => {
                         bgcolor: "white",
                         borderRadius: 1,
                         padding: 1,
-                        transform: "scale(0.9)",
-                        transformOrigin: "top center",
+
+                        justifyContent: "space-between",
                       }}>
                       <FormControlLabel
                         value='Male'
@@ -298,6 +300,7 @@ const NewTaskForm: React.FC = () => {
                     component='legend'
                     sx={{
                       display: "flex",
+                      mt: 2,
                       transform: "scale(0.7)",
                       transformOrigin: "bottom left",
                       width: "100%",
@@ -321,10 +324,9 @@ const NewTaskForm: React.FC = () => {
                         },
                       },
                       MenuListProps: {
-                      dense: true,
+                        dense: true,
                       },
-                    }}
-                    >
+                    }}>
                     {locations.map((location) => (
                       <MenuItem key={location} value={location}>
                         {location}
@@ -335,16 +337,20 @@ const NewTaskForm: React.FC = () => {
               </Box>
             </Box>
 
+            {/* bottom Column */}
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                mt: 6,
               }}>
               <Box
                 sx={{
-                  transform: "scale(0.9)",
-                  transformOrigin: "top center",
+                  display: "flex",
+                  alignContent: "center",
+                  maxWidth: "30%",
+                  alignItems: "center",
                 }}>
                 <FormControl fullWidth>
                   <TextField
@@ -357,6 +363,7 @@ const NewTaskForm: React.FC = () => {
                         parseInt(e.target.value) || 0
                       )
                     }
+                    inputProps={{ min: 0 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
@@ -375,31 +382,29 @@ const NewTaskForm: React.FC = () => {
                     sx={{ bgcolor: "white", borderRadius: 1 }}
                   />
                 </FormControl>
+                <Tooltip title='AI Balance Points' arrow placement='top'>
+                  <Button
+                    variant='outlined'
+                    size='small'
+                    sx={{
+                      ml: 1,
+                      borderRadius: 4,
+                      minWidth: 40,
+                      height: 40,
+                      borderWidth: 2,
+                    }}
+                    onClick={() => handleTaskAnalyze()}
+                    disabled={
+                      !formData.name || !formData.description || clickedAI
+                    }>
+                    <AutoAwesome fontSize='small' />
+                  </Button>
+                </Tooltip>
               </Box>
-              <Tooltip title='AI Balance Points' arrow placement='top'>
-                <Button
-                  variant='outlined'
-                  size='small'
-                  sx={{
-                    mr: 3,
-                    mb: 1,
-                    borderRadius: 4,
-                    minWidth: 40,
-                    height: 40,
-                    borderWidth: 2,
-                  }}
-                  onClick={() => handleTaskAnalyze()}
-                  disabled={
-                    !formData.name || !formData.description || clickedAI
-                  }>
-                  <AutoAwesome fontSize='small' />
-                </Button>
-              </Tooltip>
 
               <Box
                 sx={{
-                  transform: "scale(0.9)",
-                  transformOrigin: "top center",
+                  maxWidth: "30%",
                 }}>
                 <FormControl fullWidth>
                   <TextField
@@ -412,6 +417,7 @@ const NewTaskForm: React.FC = () => {
                         parseInt(e.target.value) || 0
                       )
                     }
+                    inputProps={{ min: 0 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
@@ -425,8 +431,7 @@ const NewTaskForm: React.FC = () => {
               </Box>
               <Box
                 sx={{
-                  transform: "scale(0.9)",
-                  transformOrigin: "top center",
+                  maxWidth: "30%",
                 }}>
                 <FormControl fullWidth>
                   <TextField
@@ -439,13 +444,34 @@ const NewTaskForm: React.FC = () => {
                 </FormControl>
               </Box>
             </Box>
-            <Button
-              type='submit'
-              variant='contained'
-              color='primary'
-              sx={{ minWidth: 300, mt: 3 }}>
-              Create
-            </Button>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 20,
+                mt: 4,
+              }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.saveToTasks}
+                    onChange={(e) =>
+                      handleChange("saveToTasks", e.target.checked)
+                    }
+                  />
+                }
+                label='Add to saved tasks'
+              />
+
+              <Button
+                type='submit'
+                variant='contained'
+                color='primary'
+                sx={{ minWidth: 250, textTransform: "none" }}>
+                Create
+              </Button>
+            </Box>
           </LocalizationProvider>
         </form>
       </Box>
