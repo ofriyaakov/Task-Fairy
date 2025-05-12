@@ -207,3 +207,39 @@ export const increaseBalancePointsForUsers = async (employeeIds: string[], balan
     throw err;
   }
 }
+
+export const getUserBalancePointsById = async (employeeId: string) => {
+  try {
+    const result = await db.query("SELECT balance_points FROM users WHERE user_id = $1", [
+      employeeId,
+    ]);
+    if (result.rows.length === 0) {
+      throw new Error("User not found 1");
+    }
+    const balancePoints: number = result.rows[0];
+    return balancePoints;
+  } catch (err) {
+    console.error(err);
+    throw new Error("User not found 2");
+  }
+}
+
+export const getAvgBalancePointsByCompany = async (companyId: number) => {
+  try {
+    const result = await db.query(
+      `SELECT AVG(users.balance_points)
+       FROM public.users as users
+       INNER JOIN public.groups as gr
+        ON users.group_id = gr.group_id
+       INNER JOIN public.companies as company
+        ON gr.company_id = company.company_id
+       WHERE company.company_id = $1`,
+      [companyId]
+    );
+
+    const companyAvg: number = result.rows[0];
+    return companyAvg;
+  } catch (err) {
+    console.error(err);
+  }
+};
