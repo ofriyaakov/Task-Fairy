@@ -53,13 +53,13 @@ const BalancePointsDashboard: React.FC = () => {
           title='Max Balance Points'
           subtitle='For employee'
           value={max}
-          color='#E1F7EF'
+          color={APP_COLOR.MINT_GREEN}
         />
         <RectangleData
           title='Min Balance Points'
           subtitle='For employee'
           value={min}
-          color='#FFDFDF'
+          color={APP_COLOR.LIGHT_RED}
         />
       </div>
     </div>

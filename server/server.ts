@@ -3,6 +3,7 @@ import authRoutes from "./src/routes/auth";
 import geminiRoutes from "./src/routes/gemini";
 import taskRoutes from "./src/routes/task";
 import swapRequestsRoutes from "./src/routes/swap";
+import userRoutes from "./src/routes/user";
 
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -44,6 +45,7 @@ app.use("/auth", authRoutes);
 app.use("/gemini", geminiRoutes);
 app.use("/task", taskRoutes);
 app.use("/swap-requests", swapRequestsRoutes);
+app.use("/user", userRoutes);
 
 app.use(errorHandler);
 app.use(express.static("front"));
