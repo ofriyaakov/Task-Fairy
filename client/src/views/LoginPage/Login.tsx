@@ -1,11 +1,9 @@
-import { Button, Typography, Snackbar } from "@mui/material";
-import Alert from "@mui/material/Alert";
+import { Typography } from "@mui/material";
 import LoginForm from "./LoginForm";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../queries/auth";
 import "./Login.css";
 import { useGlobalContext } from "../../contexts/GlobalContext";
-import { useState } from "react";
 import { APP_COLOR } from "../../theme";
 import { toast } from "react-toastify";
 

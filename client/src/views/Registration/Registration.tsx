@@ -5,9 +5,6 @@ import { RegistrationData } from "./types";
 import { register } from "../../queries/auth";
 import "./Registration.css";
 import { useGlobalContext } from "../../contexts/GlobalContext";
-import { useState } from "react";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import { APP_COLOR } from "../../theme";
 import { toast } from "react-toastify";
 

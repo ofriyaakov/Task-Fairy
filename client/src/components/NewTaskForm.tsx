@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   FormControl,
   FormControlLabel,
   FormLabel,
-  IconButton,
   InputAdornment,
   MenuItem,
   Paper,
@@ -14,20 +12,17 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Typography,
-  Stack,
   Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { Star, Group, AutoAwesome } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Headline from "./Headline";
 import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
 import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { BarLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 import { State, City }  from 'country-state-city';
