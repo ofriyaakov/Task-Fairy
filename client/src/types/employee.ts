@@ -1,9 +1,11 @@
 export interface employeeDatailsCard {
-    firstName: string;
-    lastName: string;
-    employeeId: string;
-    companyName: string;
+    first_name: string;
+    last_name: string;
+    user_id: string;
+    company_name: string;
     city: string
-    balancePoints: number;
+    balance_points: number;
     gender: string;
+    score: number;
+    group_name: string;
 }

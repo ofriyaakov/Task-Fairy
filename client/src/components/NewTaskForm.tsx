@@ -6,7 +6,6 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
-  IconButton,
   InputAdornment,
   MenuItem,
   Paper,
@@ -14,27 +13,28 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Typography,
-  Stack,
   Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { Star, Group, AutoAwesome } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Headline from "./Headline";
 import { TaskDetails, TaskPayload, TaskForAi } from "./../types/Task";
 import { analyzeTask, createTask } from "../queries/task";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { BarLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import { BeatLoader } from "react-spinners";
+import { State, City } from "country-state-city";
+import { officeTitle } from "../consts";
 
-const locations = [
-  "Shishut Ramat Gan",
-  "Tel Aviv Center",
-  "Herzliya",
-  "Jerusalem",
-];
+const districts = State.getStatesOfCountry("IL");
+const israelCities = districts.flatMap((district) => {
+  return City.getCitiesOfState("IL", district.isoCode);
+});
+
+const locations = [officeTitle, ...israelCities.map((city) => city.name)];
 
 const NewTaskForm: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -91,9 +91,10 @@ const NewTaskForm: React.FC = () => {
     };
 
     try {
-      const response = await createTask(payload);
-      console.log("Task created:", response);
+      await createTask(payload);
+      toast.success("Task created successfully!");
     } catch (err: any) {
+      toast.error("Failed to create task.");
       console.error(err.message);
     }
   };
@@ -113,6 +114,7 @@ const NewTaskForm: React.FC = () => {
       setFormData((prev) => ({ ...prev, balancePoints: response }));
     } catch (err: any) {
       console.error(err.message);
+      toast.error("Oops! Something went wrong");
     }
     setLoadingAI(false);
   };
@@ -121,7 +123,7 @@ const NewTaskForm: React.FC = () => {
     <Paper
       elevation={0}
       sx={{
-        p: 1,
+        padding: "0 8px 8px 8px",
         mx: "auto",
         borderRadius: 2,
       }}>
@@ -199,8 +201,6 @@ const NewTaskForm: React.FC = () => {
                   sx={{
                     bgcolor: "white",
                     borderRadius: 1,
-                    //transform: "scale(0.9)",
-                    transformOrigin: "top center",
                   }}
                 />
 
@@ -226,8 +226,6 @@ const NewTaskForm: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        //transform: "scale(0.9)",
-                        transformOrigin: "top center",
                       }}>
                       <TimePicker
                         label='Start Time'
@@ -240,8 +238,6 @@ const NewTaskForm: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        //transform: "scale(0.9)",
-                        transformOrigin: "top center",
                       }}>
                       <TimePicker
                         label='End Time'
@@ -277,8 +273,7 @@ const NewTaskForm: React.FC = () => {
                         bgcolor: "white",
                         borderRadius: 1,
                         padding: 1,
-                        //transform: "scale(0.9)",
-                        transformOrigin: "top center",
+
                         justifyContent: "space-between",
                       }}>
                       <FormControlLabel
@@ -319,6 +314,18 @@ const NewTaskForm: React.FC = () => {
                     sx={{
                       bgcolor: "white",
                       borderRadius: 1,
+                      transform: "scale(0.9)",
+                      transformOrigin: "top center",
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200,
+                        },
+                      },
+                      MenuListProps: {
+                        dense: true,
+                      },
                     }}>
                     {locations.map((location) => (
                       <MenuItem key={location} value={location}>
@@ -356,12 +363,20 @@ const NewTaskForm: React.FC = () => {
                         parseInt(e.target.value) || 0
                       )
                     }
+                    inputProps={{ min: 0 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
                           <Star />
                         </InputAdornment>
                       ),
+                      endAdornment: loadingAI ? (
+                        <InputAdornment position='start' sx={{ ml: -10 }}>
+                          <Box>
+                            <BeatLoader color='#1976d2' />
+                          </Box>
+                        </InputAdornment>
+                      ) : null,
                       readOnly: loadingAI,
                     }}
                     sx={{ bgcolor: "white", borderRadius: 1 }}
@@ -389,8 +404,6 @@ const NewTaskForm: React.FC = () => {
 
               <Box
                 sx={{
-                  //transform: "scale(0.9)",
-                  transformOrigin: "top center",
                   maxWidth: "30%",
                 }}>
                 <FormControl fullWidth>
@@ -404,6 +417,7 @@ const NewTaskForm: React.FC = () => {
                         parseInt(e.target.value) || 0
                       )
                     }
+                    inputProps={{ min: 0 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
@@ -417,8 +431,6 @@ const NewTaskForm: React.FC = () => {
               </Box>
               <Box
                 sx={{
-                  //transform: "scale(0.9)",
-                  transformOrigin: "top center",
                   maxWidth: "30%",
                 }}>
                 <FormControl fullWidth>

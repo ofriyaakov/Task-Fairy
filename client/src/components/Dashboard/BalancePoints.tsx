@@ -2,6 +2,8 @@ import RectangleData from "../RectangleData";
 import { getBalancePointsByGroup } from "../../queries/task";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
+import { toast } from "react-toastify";
+import { APP_COLOR } from "../../theme";
 
 const BalancePointsDashboard: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -19,6 +21,7 @@ const BalancePointsDashboard: React.FC = () => {
       setAvg(data.avg);
     } catch (error) {
       console.error("Error fetching balance points:", error);
+      toast.error("Oops! Something went wrong");
     }
   };
 
@@ -32,13 +35,12 @@ const BalancePointsDashboard: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-      }}
-    >
+      }}>
       <RectangleData
-        title="Avarage Balance Points"
-        subtitle="From all employees"
+        title='Avarage Balance Points'
+        subtitle='From all employees'
         value={avg}
-        color="#DDEEFB"
+        color={APP_COLOR.ALICE_BLUE_DARKER}
       />
 
       <div
@@ -46,19 +48,18 @@ const BalancePointsDashboard: React.FC = () => {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: "20px",
-        }}
-      >
+        }}>
         <RectangleData
-          title="Max Balance Points"
-          subtitle="For employee"
+          title='Max Balance Points'
+          subtitle='For employee'
           value={max}
-          color="#E1F7EF"
+          color='#E1F7EF'
         />
         <RectangleData
-          title="Min Balance Points"
-          subtitle="For employee"
+          title='Min Balance Points'
+          subtitle='For employee'
           value={min}
-          color="#FFDFDF"
+          color='#FFDFDF'
         />
       </div>
     </div>

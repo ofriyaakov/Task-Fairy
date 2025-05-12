@@ -11,10 +11,11 @@ type CellContentProps = {
     date: Date,
     currentMonthDate: Date,
     taskSummary: TaskSummary,
-    handleCellClick: (date: string) => void
+    handleCellClick: (date: string) => void,
+    isManagerView: boolean
 }
 
-export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick}) => {
+export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick, isManagerView}) => {
     const dateStr = format(date, calendarFnsDateFormat);
     const dayData = taskSummary && taskSummary[dateStr];
     const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth();
@@ -33,7 +34,7 @@ export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSu
             {children}
             {dayData && dayData.map((data: TaskOccupancy, index: number) => {
               return (
-                <CellEvent key={index} data={data} />
+                <CellEvent key={index} data={data} date={date} isManagerView={isManagerView} />
               );
             })}
           </div>
