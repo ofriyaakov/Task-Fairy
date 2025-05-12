@@ -68,7 +68,7 @@ const EmployeesPage: React.FC = () => {
       if (!companyId) throw new Error("User ID not found in context");
 
       const avgBalancePoints: number = await getCompanyAvgBalancePoints(companyId);
-      setAvgBalancePoints(avgBalancePoints);
+      setAvgBalancePoints(Number(Number(avgBalancePoints).toFixed(1)));
       setLoading(false);
     } catch (err: any) {
       console.error(err.message);
