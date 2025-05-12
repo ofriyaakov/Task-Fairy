@@ -14,12 +14,16 @@ export const createTask = async (payload: TaskPayload) => {
 
 export const assignEmployees = async (
   taskId: string,
-  employeeIds: string[]
+  employeeIds: string[],
+  taskDate: Date,
+  taskBalancePoints: number
 ) => {
-  try {
+  try {    
     const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, {
       taskId,
       employeeIds,
+      taskDate,
+      taskBalancePoints,
     });
     return response.data;
   } catch (error: any) {
@@ -65,9 +69,9 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number) => {
+export const getAllTasksByMonth = async (month: number, companyId: number) => {
   try {
-    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/${month}`)).data;
+    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`)).data;
     return tasks;
   } catch (error: any) {
     console.error("getAllTasksByMonth error", error);
@@ -88,3 +92,16 @@ export const getBalancePointsByGroup = async (companyId: number) => {
   }
 };
 
+export const getSuggestedEmployees = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/suggestedEmployees/?taskId=${taskId}`
+    );
+    return response.data;
+  }
+  catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch suggested employees failed"
+    );
+  }
+};

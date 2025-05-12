@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import authRoutes from "./src/routes/auth";
 import geminiRoutes from "./src/routes/gemini";
 import taskRoutes from "./src/routes/task";
+import swapRequestsRoutes from "./src/routes/swap";
 
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -42,6 +43,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 app.use("/gemini", geminiRoutes);
 app.use("/task", taskRoutes);
+app.use("/swap-requests", swapRequestsRoutes);
 
 app.use(errorHandler);
 app.use(express.static("front"));

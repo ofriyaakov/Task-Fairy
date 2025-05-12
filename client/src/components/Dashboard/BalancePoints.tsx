@@ -3,6 +3,7 @@ import { getBalancePointsByGroup } from "../../queries/task";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { toast } from "react-toastify";
+import { APP_COLOR } from "../../theme";
 
 const BalancePointsDashboard: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -39,7 +40,7 @@ const BalancePointsDashboard: React.FC = () => {
         title='Avarage Balance Points'
         subtitle='From all employees'
         value={avg}
-        color='#DDEEFB'
+        color={APP_COLOR.ALICE_BLUE_DARKER}
       />
 
       <div

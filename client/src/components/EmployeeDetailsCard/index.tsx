@@ -3,10 +3,9 @@ import { Grid, Box, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 import StarIcon from '@mui/icons-material/Star';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import Badge from '@mui/material/Badge';
 import WcIcon from '@mui/icons-material/Wc';
-import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import { INDICATION_COLOR } from '../../theme';
 
 import { employeeDatailsCard } from '../../types/employee';
 
@@ -24,82 +23,114 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
     isDisable
 }) => {
 
-    const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('white')
+    const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('#f5f5f5')
+    const [isApproved, setIsApproved] = useState<boolean>(false)
 
     const approveEmployee = () => {
-        handleApproveEmployee(employee.employeeId)
-        setCardBackgroundColor('rgb(225 247 239)')
+        handleApproveEmployee(employee.user_id)
+        setCardBackgroundColor('#e1f4ff')
+        setIsApproved(true)
     }
 
     const removeEmployee = () => {
-        handleRemoveEmployee(employee.employeeId)
-        setCardBackgroundColor('rgb(247 224 224)')
+        handleRemoveEmployee(employee.user_id)
+        setCardBackgroundColor('#f5f5f5')
+        setIsApproved(false)
     }
 
+    const score = Math.round(employee.score);
+
+    let badgeColor: string;
+    if (score > 70) {
+      badgeColor = INDICATION_COLOR.BEST;      // pastel green
+    } else if (score > 40) {
+      badgeColor = INDICATION_COLOR.GOOD;      // pastel yellow
+    } else if (score > 20) {
+      badgeColor = INDICATION_COLOR.MID;      // pastel orange
+    } else {
+      badgeColor = INDICATION_COLOR.BAD;      // pastel red
+    }
 
     return (
-        <Box sx={{ p: 2, height: '15vh', width: "356px", border: "2px solid rgb(229 229 229)", borderRadius: "8px", backgroundColor: cardBackgroundColor }}>
-            <Grid container direction="column" alignItems="center" >
-                <Grid item xs={6} md={6}>
-                    <Box display={"flex"}>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Box display="flex" alignItems="center">
-                                    <PersonIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{employee.firstName} {employee.lastName}, {employee.employeeId}</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <HomeIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{employee.city}</Typography>
-                                </Box>
-                            </Grid>
-
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <GroupWorkIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{employee.companyName}</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <StarIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{employee.balancePoints} balance points</Typography>
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={9}>
-                                <Box display="flex" alignItems="center">
-                                    <WcIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                    <Typography variant="body1">{employee.gender}</Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                        <Grid alignContent={"center"}>
-                            {!isDisable ? <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={approveEmployee}>
-                                <Box display="flex" alignItems="center" >
-                                    <CheckIcon sx={{ fontSize: 35, color: 'rgb(97 196 83)' }} />
-                                </Box>
-                            </Grid> :
-                                <Grid item xs={3} style={{ cursor: 'pointer', pointerEvents: 'none', }} onClick={approveEmployee}>
-                                    <Box display="flex" alignItems="center" >
-                                        <CheckIcon sx={{ fontSize: 35, color: 'grey' }} />
+        <Badge
+            badgeContent={`${score}%`} 
+            overlap="rectangular" 
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            sx={{
+                display: "inline-block",
+                "& .MuiBadge-badge": {
+                  right: 12,
+                  top: 12,
+                  transform: "scale(1.5)",
+                  transformOrigin: "100% 0%",  
+                  fontSize: "0.75rem",
+                  minWidth: "24px",
+                  height: "24px",
+                  borderRadius: "12px",
+                  padding: "0 6px",
+                  backgroundColor: badgeColor,
+                  boxShadow: "0 0 6px rgba(0, 0, 0, 0.2)",
+                }
+              }} 
+        > 
+            <Box
+                sx={{
+                    p: 2,
+                    height: '15vh',
+                    width: '356px',
+                    border: '2px solid rgb(229 229 229)',
+                    borderRadius: '8px',
+                    backgroundColor: cardBackgroundColor,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'background-color 0.2s ease-in-out',
+                
+                    '&:hover': {
+                      backgroundColor: 'rgba(88, 145, 211, 0.27)',
+                      cursor: 'pointer'
+                    }
+                }}
+                 onClick={isApproved ? removeEmployee : !isDisable ? approveEmployee : () => { }}
+                >
+                <Grid container direction="column" alignItems="center" >
+                    <Grid item xs={6} md={6}>
+                        <Box display={"flex"}>
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <Box display="flex" alignItems="center">
+                                        <PersonIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
+                                        <Typography variant="body1">{employee.first_name} {employee.last_name}, {employee.group_name}</Typography>
                                     </Box>
-                                </Grid>}
-                            <Grid item xs={3} style={{ cursor: 'pointer' }} onClick={removeEmployee} >
-                                <Box display="flex" alignItems="center">
-                                    <CloseIcon sx={{ fontSize: 35, color: 'rgb(226 86 24)' }} />
-                                </Box>
+                                </Grid>
+            
+                                <Grid item xs={9}>
+                                    <Box display="flex" alignItems="center">
+                                        <HomeIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
+                                        <Typography variant="body1">{employee.city}</Typography>
+                                    </Box>
+                                </Grid>
+            
+    
+                                <Grid item xs={9}>
+                                    <Box display="flex" alignItems="center">
+                                        <StarIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
+                                        <Typography variant="body1">{employee.balance_points} balance points</Typography>
+                                    </Box>
+                                </Grid>
+                                
+                                <Grid item xs={9}>
+                                    <Box display="flex" alignItems="center">
+                                        <WcIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
+                                        <Typography variant="body1">{employee.gender}</Typography>
+                                    </Box>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Box>
+                        </Box>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Box>
+            </Box>
+        </Badge>
     );
 }
 
