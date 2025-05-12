@@ -18,7 +18,7 @@ const BalancePointsDashboard: React.FC = () => {
       const data = await getBalancePointsByGroup(companyId);
       setMax(data.max);
       setMin(data.min);
-      setAvg(data.avg);
+      setAvg(Math.round(data.avg * 100) / 100);
     } catch (error) {
       console.error("Error fetching balance points:", error);
       toast.error("Oops! Something went wrong");
