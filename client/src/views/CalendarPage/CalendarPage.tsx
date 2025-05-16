@@ -21,7 +21,6 @@ const CalendarPage: React.FC = () => {
   
   const { connectedUser } = useGlobalContext();
 
-  {/*TODO - show list of tasks on click. "tasksByDate" contains the relevant data*/ }
   const handleCellClick = (date: string) => {
     const tasksByDate = taskSummary.filter(task => task.date === date);
     setTaskListByDate(tasksByDate)
