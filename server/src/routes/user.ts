@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById, updateUserById } from "../controllers/user";
+import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById, updateUserById, addNewEmployees } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
 
@@ -274,5 +274,17 @@ router.get("/points/company/:company_id", async (req: Request, res: Response, ne
 //     next(err);
 //   }
 // });
+
+router.post("/addNewEmployees", async (req: Request, res: Response) => {
+  const { employees, company_id } = req.body;
+
+  try {
+    res.status(200).send(await addNewEmployees(employees, company_id));
+  } catch (err) {
+    console.error("Registration of new employees error:", err);
+
+    res.status(400).json({ message: err.message || "Something went wrong" });
+  }
+});
 
 export default router;
