@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import {TaskForAi, TaskPayload } from "./../types/Task";
+import { TaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -18,7 +18,7 @@ export const assignEmployees = async (
   taskDate: Date,
   taskBalancePoints: number
 ) => {
-  try {    
+  try {
     const response = await axiosInstance.post(`${TASK_ROUTE}/assignEmployees`, {
       taskId,
       employeeIds,
@@ -71,11 +71,17 @@ export const analyzeTask = async (payload: TaskForAi) => {
 
 export const getAllTasksByMonth = async (month: number, companyId: number) => {
   try {
-    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`)).data;
+    const tasks = (
+      await axiosInstance.get(
+        `${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`
+      )
+    ).data;
     return tasks;
   } catch (error: any) {
     console.error("getAllTasksByMonth error", error);
-    throw new Error(error.response?.data?.message || "fetch tasks by month failed");
+    throw new Error(
+      error.response?.data?.message || "fetch tasks by month failed"
+    );
   }
 };
 
@@ -98,10 +104,15 @@ export const getSuggestedEmployees = async (taskId: string) => {
       `${TASK_ROUTE}/suggestedEmployees/?taskId=${taskId}`
     );
     return response.data;
-  }
-  catch (error: any) {
+  } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch suggested employees failed"
     );
   }
+};
+
+export const getTaskById = async (id: string): Promise<TaskDetails> => {
+  const res = await fetch(`${TASK_ROUTE}/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch task");
+  return res.json();
 };

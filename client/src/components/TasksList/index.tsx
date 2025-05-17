@@ -9,7 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 interface TaskListProps {
   title: string;
   tasks: TaskDetailsCardType[];
-  handleCardClick?: (taskId: string, taskDate: Date, balancePoints: number) => void 
+  handleCardClick?: (taskId: string, taskDate?: Date, balancePoints?: number) => void 
 }
 
 const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick }) => {

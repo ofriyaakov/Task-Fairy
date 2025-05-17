@@ -1,13 +1,17 @@
 import { Box } from "@mui/material";
 import NewTaskForm from "../../components/NewTaskForm";
 import { useEffect, useState } from "react";
-import { getAllSavedTasks } from "../../queries/task";
-import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
+import { getAllSavedTasks, getTaskById } from "../../queries/task";
+import {
+  TaskDetails,
+  TaskSummaryCard as TaskDetailsCardType,
+} from "../../types/Task";
 import TasksList from "../../components/TasksList";
 import { savedTaskTitle } from "../../consts";
 
 const TasksPage: React.FC = () => {
   const [savedTasks, setSavedTasks] = useState<TaskDetailsCardType[]>([]);
+  const [selectedTask, setSelectedTask] = useState<TaskDetails | null>(null);
 
   const fetchSavedTasks = async () => {
     try {
@@ -16,6 +20,16 @@ const TasksPage: React.FC = () => {
     } catch (err: any) {
       console.error(err.message);
       setSavedTasks([]);
+    }
+  };
+
+  const handleCardClick = async (taskId: string) => {
+    try {
+      const task = await getTaskById(taskId);
+      setSelectedTask(task);
+      console.log("a", task);
+    } catch (err: any) {
+      console.error("Failed to fetch task details:", err.message);
     }
   };
 
@@ -32,11 +46,15 @@ const TasksPage: React.FC = () => {
           gap: 1,
         }}>
         <Box sx={{ width: "100%" }}>
-          <NewTaskForm />
+          <NewTaskForm initialData={selectedTask} />
         </Box>
 
         <Box sx={{ width: "100%" }}>
-          <TasksList tasks={savedTasks} title={savedTaskTitle} />
+          <TasksList
+            tasks={savedTasks}
+            title={savedTaskTitle}
+            handleCardClick={handleCardClick}
+          />
         </Box>
       </Box>
     </div>
