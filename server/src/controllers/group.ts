@@ -25,3 +25,33 @@ export const addNewGroup = async (
     throw err;
   }
 };
+
+export const getGroupByNameAndCompany = async (
+  groupName: string,
+  companyId: number,
+  executor: {
+    query: <T = any>(sql: string, params?: any[]) => Promise<QueryResult<T>>;
+  } = db
+) => {
+  const sql = `
+    SELECT g.group_id, g.group_name, g.company_id
+    FROM groups g
+    WHERE g.group_name = $1 AND g.company_id = $2
+    LIMIT 1
+  `;
+
+  try {
+    const result = await executor.query(sql, [groupName, companyId]);
+    if (result.rows.length === 0) {
+      console.log("Group not found");
+      return null;
+    }
+
+    const group = result.rows[0];
+    console.log("get group by name and company success:", group);
+    return group;
+  } catch (err) {
+    console.error("getGroupByNameAndCompany error:", err);
+    throw new Error("DB error while fetching group");
+  }
+};

@@ -1,4 +1,5 @@
 import axiosInstance from "../axiosInstance";
+import { newEmployee } from "../types/employee";
 
 const USER_ROUTE = "/user";
 
@@ -19,3 +20,12 @@ export const getCompanyAvgBalancePoints = async (companyId: number): Promise<num
       throw new Error(error.response?.data?.message || "Recieving avg balance points failed");
     }
   };
+
+export const addNewEmployees = async (employees: newEmployee[], company_id: number): Promise<any> => {
+  try {
+    const response = await axiosInstance.post(`${USER_ROUTE}/addNewEmployees`, { employees, company_id });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Adding new employees failed");
+  }
+}
