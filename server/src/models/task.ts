@@ -29,6 +29,7 @@ export interface RawTask {
   employees_amount: number;
   save_to_tasks: boolean;
   other: string;
+  id: string;
   task_id: string;
   company_id: string;
 }
@@ -36,7 +37,7 @@ export interface RawTask {
 export interface RawEmployeedTask extends RawTask {
   date: string;
   task_id: string;
-  assigned_employees_amount: number
+  assigned_employees_amount: number;
 }
 
 export interface RawTaskWithUserId extends RawTask {

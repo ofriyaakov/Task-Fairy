@@ -111,8 +111,12 @@ export const getSuggestedEmployees = async (taskId: string) => {
   }
 };
 
-export const getTaskById = async (id: string): Promise<TaskDetails> => {
-  const res = await fetch(`${TASK_ROUTE}/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch task");
-  return res.json();
+export const getTaskById = async (taskId: string) => {
+  try {
+    const task = (await axiosInstance.get(`${TASK_ROUTE}/?taskId=${taskId}`))
+      .data;
+    return task;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to fetch task");
+  }
 };

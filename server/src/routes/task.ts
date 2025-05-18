@@ -204,9 +204,9 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
  *       404:
  *         description: Task not found
  */
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
-    const taskId = req.params.id;
+    const taskId = req.query.taskId as string;
     const task = await getTaskById(taskId);
 
     console.log(taskId, task);

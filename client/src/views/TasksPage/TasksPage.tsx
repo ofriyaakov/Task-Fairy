@@ -27,7 +27,6 @@ const TasksPage: React.FC = () => {
     try {
       const task = await getTaskById(taskId);
       setSelectedTask(task);
-      console.log("a", task);
     } catch (err: any) {
       console.error("Failed to fetch task details:", err.message);
     }

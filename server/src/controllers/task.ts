@@ -105,7 +105,7 @@ export const getTaskById = async (taskId: string) => {
   try {
     const query = `
       SELECT * FROM public.tasks
-      WHERE t.id = $1
+      WHERE task_id = $1
     `;
 
     const { rows } = await db.query(query, [taskId]);
