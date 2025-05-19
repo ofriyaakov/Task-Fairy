@@ -209,7 +209,6 @@ router.get("/", async (req: Request, res: Response) => {
     const taskId = req.query.taskId as string;
     const task = await getTaskById(taskId);
 
-    console.log(taskId, task);
     if (!task) {
       return res.status(404).send({ message: "Task not found" });
     }
