@@ -55,7 +55,7 @@ const EmployeeSwapsPage: React.FC = () => {
             handleCellClick={handleCellClick}
             isManagerView={false} />
           }
-          {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate}/></div>}
+          {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} height='52vh'/></div>}
         </div>
       );
 };
