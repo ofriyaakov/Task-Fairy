@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
-import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById, updateUserById, addNewEmployees } from "../controllers/user";
+import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById,
+   getUserById, updateUserById, addNewEmployees, getAssignedEmployeesAmount } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
 
@@ -286,5 +287,49 @@ router.post("/addNewEmployees", async (req: Request, res: Response) => {
     res.status(400).json({ message: err.message || "Something went wrong" });
   }
 });
+
+/**
+ * @swagger
+ * /assignedAmount:
+ *   get:
+ *       summary: Retrieve amount of assigned empployees by company and month
+ *       tags: [Users]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: companyId
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A number
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *           400:
+ *              description: Bad request
+ *           404:
+ *              description: Not Found
+ */
+
+router.get("/assignedAmount/company/:companyId/month/:month", async (req: Request, res: Response) => {
+    const companyId = req.params.companyId
+    const month = req.params.month
+      try {
+        const assignedAmount = await getAssignedEmployeesAmount(+companyId, +month);
+        res.status(200).send(assignedAmount);
+      } catch (err) {
+        console.error(err);
+      }
+  }
+);
 
 export default router;

@@ -1,7 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BalancePoints from "../../components/Dashboard/BalancePoints";
+import RectangleData from './../../components/RectangleData';
+import { useGlobalContext } from "../../contexts/GlobalContext";
+import { getAssignedEmployeesAmount } from './../../queries/user';
 
 const DashboardPage: React.FC = () => {
+
+  const { connectedUser } = useGlobalContext();
+  const companyId = connectedUser?.companyId || 0
+  const month = (new Date()).getMonth() + 1
+
+  const [assignedEmployeesAmount, setAssignedEmployeesAmount] = useState(0);
+
+  const fetchAssignedEmployeesAmount = async () => {
+      try {
+        const fetchedAmount: number = await getAssignedEmployeesAmount(companyId, month);
+        setAssignedEmployeesAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
+  
+    useEffect(() => {
+      fetchAssignedEmployeesAmount();
+    }, [companyId, month]);
+
   return (
     <div
       className="dashboard-page"
@@ -30,7 +54,7 @@ const DashboardPage: React.FC = () => {
           flexGrow: 0,
         }}
       >
-        <div className="stat-card">Employees have tasks</div>
+        <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="260px"/>
         <div className="stat-card">Tasks need to be assigned</div>
         <div className="stat-card">Avg task per week</div>
         <div className="stat-card">Swap requests</div>
