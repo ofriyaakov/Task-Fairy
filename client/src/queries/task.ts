@@ -114,3 +114,12 @@ export const getUnassignedTasksAmount = async (companyId: number, month: number)
     throw new Error(error.response?.data?.message || "Recieving unassigned tasks amount failed");
   }
 };
+
+export const getAvgTasksPerWeek = async (companyId: number, month: number): Promise<number> => {
+  try {
+    const response = await axiosInstance.get(`${TASK_ROUTE}/avgPerWeek/company/${companyId}/month/${month}`);
+    return response.data.avg || 0;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Recieving avg tasks amount per week failed");
+  }
+};

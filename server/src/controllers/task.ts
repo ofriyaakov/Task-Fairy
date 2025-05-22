@@ -504,3 +504,22 @@ export const getUnassignedTasksAmount = async (companyId: number, month: number)
     console.error(err);
   }
 };
+
+export const getAvgTasksPerWeek = async (companyId: number, month: number) => {
+  try {
+    const result = await db.query(`
+      SELECT AVG(tasks_amount_by_week)
+      FROM (
+        SELECT COUNT(task_id) AS tasks_amount_by_week
+        FROM public.tasks
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
+        GROUP BY DATE_TRUNC('week', start_time)
+      )`, [companyId, month]
+    );
+    const avg: number = result.rows[0];
+    return avg;
+
+  } catch (err) {
+    console.error(err);
+  }
+};
