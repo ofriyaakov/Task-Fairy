@@ -481,3 +481,26 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
   return topEmployees;
 };
+
+export const getUnassignedTasksAmount = async (companyId: number, month: number) => {
+  try {
+    const result = await db.query(`
+      SELECT (
+        SELECT SUM(employees_amount)
+        FROM public.tasks
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
+        ) - (
+        SELECT COUNT(r_tasks_users.id)
+        FROM public.r_tasks_users
+        JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = $2
+      ) as amount 
+      `, [companyId, month]
+    );
+    const amount: number = result.rows[0];
+    return amount;
+
+  } catch (err) {
+    console.error(err);
+  }
+};

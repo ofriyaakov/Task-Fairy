@@ -3,6 +3,7 @@ import BalancePoints from "../../components/Dashboard/BalancePoints";
 import RectangleData from './../../components/RectangleData';
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { getAssignedEmployeesAmount } from './../../queries/user';
+import { getUnassignedTasksAmount } from './../../queries/task';
 
 const DashboardPage: React.FC = () => {
 
@@ -11,6 +12,7 @@ const DashboardPage: React.FC = () => {
   const month = (new Date()).getMonth() + 1
 
   const [assignedEmployeesAmount, setAssignedEmployeesAmount] = useState(0);
+  const [unassignedTasksAmount, setUnassignedTasksAmount] = useState(0);
 
   const fetchAssignedEmployeesAmount = async () => {
       try {
@@ -21,9 +23,20 @@ const DashboardPage: React.FC = () => {
         console.error(err.message);
       }
     };
+
+    const fetchUnassignedTasksAmount = async () => {
+      try {
+        const fetchedAmount: number = await getUnassignedTasksAmount(companyId, month);
+        setUnassignedTasksAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
   
     useEffect(() => {
       fetchAssignedEmployeesAmount();
+      fetchUnassignedTasksAmount();
     }, [companyId, month]);
 
   return (
@@ -55,7 +68,7 @@ const DashboardPage: React.FC = () => {
         }}
       >
         <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="260px"/>
-        <div className="stat-card">Tasks need to be assigned</div>
+        <RectangleData title="Tasks need to be assigned" value={unassignedTasksAmount} color="#FFFFFF" width="260px"/>
         <div className="stat-card">Avg task per week</div>
         <div className="stat-card">Swap requests</div>
       </div>
