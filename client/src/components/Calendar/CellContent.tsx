@@ -12,16 +12,17 @@ type CellContentProps = {
     currentMonthDate: Date,
     taskSummary: TaskSummary,
     handleCellClick: (date: string) => void,
+    selectedDate: string,
     isManagerView: boolean
 }
 
-export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick, isManagerView}) => {
+export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick, isManagerView, selectedDate}) => {
     const dateStr = format(date, calendarFnsDateFormat);
     const dayData = taskSummary && taskSummary[dateStr];
     const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth();
     const dayNumber: number = date.getDate();
   
-    const border = isDateOutOfMonth ? "" : `0.8px solid ${APP_COLOR.PLATINUM_GREY}`;
+    const border =  isDateOutOfMonth ? "" : dateStr === selectedDate ? `1px solid ${APP_COLOR.DARK_GREY}` : `0.8px solid ${APP_COLOR.PLATINUM_GREY}`;
     const bgColor = isDateOutOfMonth ? APP_COLOR.WHITE : APP_COLOR.OFF_WHITE;
   
     return (

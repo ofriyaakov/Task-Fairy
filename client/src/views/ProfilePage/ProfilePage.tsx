@@ -128,8 +128,7 @@ const ProfilePage: React.FC = () => {
                 taskSummary={calendarTasks}
                 date={currentMonthDate}
                 navigateMonth={navigateMonth}
-                isManagerView={false}
-                handleCellClick={() => {}} />
+                isManagerView={false} />
             </div>
           </div>
 
