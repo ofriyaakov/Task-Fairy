@@ -30,6 +30,16 @@ export interface IUser {
   tokens: string[];
 }
 
+export interface employeeData {
+  user_id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  group_name?: string;
+  balance_points?: number;
+  last_task_date?: string;
+}
+
 export type tUser = Document<unknown, {}, IUser> &
   IUser &
   Required<{

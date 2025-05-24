@@ -1,6 +1,7 @@
-import userModel, { IUser, User } from "../models/user";
+import userModel, { IUser, User, employeeData } from "../models/user";
 import db from "../config/db";
 import { QueryResult } from "pg";
+import e from "express";
 
 export const getAllUsers = async () => {
   try {
@@ -166,7 +167,10 @@ export const decreaseHolidayCountForUser = async (employeeIds: string[]) => {
   }
 };
 
-export const getAllEmployeesByCompanyIdAndGender = async (companyId: string, gender: string) => {
+export const getAllEmployeesByCompanyIdAndGender = async (
+  companyId: string,
+  gender: string
+) => {
   try {
     let query = `
       SELECT u.*, g.group_name, g.company_id
@@ -176,20 +180,26 @@ export const getAllEmployeesByCompanyIdAndGender = async (companyId: string, gen
       AND u.user_level = 1
     `;
 
-    if(gender !== "Both") {
+    if (gender !== "Both") {
       query += ` AND u.gender = $2`;
     }
 
-    const { rows } = await db.query(query, gender === 'Both' ? [companyId] : [companyId, gender]);
+    const { rows } = await db.query(
+      query,
+      gender === "Both" ? [companyId] : [companyId, gender]
+    );
     console.log("get all employees by company id success:", rows);
     return rows;
   } catch (err) {
     console.error("Error getting employees by company id:", err);
     throw err;
   }
-}
+};
 
-export const increaseBalancePointsForUsers = async (employeeIds: string[], balancePoints: number) => {
+export const increaseBalancePointsForUsers = async (
+  employeeIds: string[],
+  balancePoints: number
+) => {
   try {
     const query = `UPDATE users SET balance_points = balance_points + $1 WHERE user_id = $2 RETURNING *`;
 
@@ -206,13 +216,14 @@ export const increaseBalancePointsForUsers = async (employeeIds: string[], balan
     console.error("Error raising balance points for user:", err);
     throw err;
   }
-}
+};
 
 export const getUserBalancePointsById = async (employeeId: string) => {
   try {
-    const result = await db.query("SELECT balance_points FROM users WHERE user_id = $1", [
-      employeeId,
-    ]);
+    const result = await db.query(
+      "SELECT balance_points FROM users WHERE user_id = $1",
+      [employeeId]
+    );
     if (result.rows.length === 0) {
       throw new Error("User not found 1");
     }
@@ -222,7 +233,7 @@ export const getUserBalancePointsById = async (employeeId: string) => {
     console.error(err);
     throw new Error("User not found 2");
   }
-}
+};
 
 export const getAvgBalancePointsByCompany = async (companyId: number) => {
   try {
@@ -241,5 +252,65 @@ export const getAvgBalancePointsByCompany = async (companyId: number) => {
     return companyAvg;
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const getAllCompanyEmployeesData = async (companyId: number) => {
+  try {
+    const result = await db.query(
+      `SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email, g.group_name, u.balance_points, t.start_time AS last_task_date
+       FROM public.users as u
+       INNER JOIN public.groups as g
+       ON u.group_id = g.group_id
+       LEFT JOIN public.r_tasks_users as ru
+       ON ru.user_id = u.user_id
+       LEFT JOIN public.tasks as t
+       ON t.task_id = ru.task_id
+       AND t.start_time = 
+        (SELECT MAX(start_time) FROM public.tasks AS t2
+         INNER JOIN public.r_tasks_users as ru2
+         ON ru2.user_id = u.user_id
+         AND ru2.task_id = t2.task_id)`
+    );
+
+    const emplyeesData: employeeData[] = result.rows;
+    return emplyeesData.filter(
+      (employee, index, self) =>
+        index === self.findIndex((e) => e.user_id === employee.user_id)
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const removeUserById = async (id: string) => {
+  try {
+    const result = await db.query(
+      `UPDATE public.users SET group_id = NULL WHERE user_id = $1 RETURNING *`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    await db.query(
+      `DELETE FROM public.swap_requests AS s
+      USING public.r_tasks_users AS r
+      WHERE r.user_id = $1
+      AND (s.first_r_task_user = r.id OR s.second_r_task_user = r.id);`,
+      [id]
+    );
+
+    await db.query(
+      `DELETE FROM public.r_tasks_users AS r
+       USING public.tasks AS t
+       WHERE r.task_id = t.task_id
+       AND r.user_id = $1
+       AND t.start_time > NOW() - INTERVAL '1 hour';`,
+      [id]
+    );
+  } catch (err) {
+    console.error(err);
+    throw new Error("User not found");
   }
 };
