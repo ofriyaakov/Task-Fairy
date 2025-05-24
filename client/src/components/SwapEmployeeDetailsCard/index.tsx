@@ -5,8 +5,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import StarIcon from '@mui/icons-material/Star';
 import Badge from '@mui/material/Badge';
 import WcIcon from '@mui/icons-material/Wc';
+import BusinessIcon from '@mui/icons-material/Business';
 
 import { employeeDatailsCard } from '../../types/employee';
+import { APP_COLOR } from '../../theme';
 
 interface SwapEmployeeDetailsCardProps {
     employee: employeeDatailsCard;
@@ -51,7 +53,7 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
                   height: "24px",
                   borderRadius: "12px",
                   padding: "0 6px",
-                  backgroundColor: "red",
+                  backgroundColor: '#87B7FF',//`${APP_COLOR.ROYAL_BLUE}`,
                   boxShadow: "0 0 6px rgba(0, 0, 0, 0.2)",
 
                   '&:hover': {
@@ -80,7 +82,7 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
                                 <Grid item xs={12}>
                                     <Box display="flex" alignItems="center">
                                         <PersonIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
-                                        <Typography variant="body1">{employee.first_name} {employee.last_name}, {employee.group_name}</Typography>
+                                        <Typography variant="body1">{employee.first_name} {employee.last_name}, {employee.user_id}</Typography>
                                     </Box>
                                 </Grid>
             
@@ -103,6 +105,12 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
                                     <Box display="flex" alignItems="center">
                                         <WcIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
                                         <Typography variant="body1">{employee.gender}</Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Box display="flex" alignItems="center">
+                                        <BusinessIcon sx={{ fontSize: 24, color: 'black', mr: 1 }} />
+                                        <Typography variant="body1">{employee.group_name}, {employee.company_name}</Typography>
                                     </Box>
                                 </Grid>
                             </Grid>

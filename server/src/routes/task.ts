@@ -8,7 +8,8 @@ import {
   getBalancePointsByGroupForCurrentMonth,
   getTasksByEmployeeId,
   assignEmployees,
-  getSuggestedEmployees
+  getSuggestedEmployees,
+  getAssignedEmployees
 } from "../controllers/task";
 
 const router = express.Router();
@@ -374,5 +375,48 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
     res.status(400).send(err);
   }
 })
+
+
+/**
+ * @swagger
+ * /task/assingedEmployees/{taskId}:
+ *   get:
+ *       summary: Retrieve a list of assigned employees for a specific task
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: path
+ *             name: taskId
+ *             required: true
+ *             description: ID of the task
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: A list of assigned employees
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                  name:
+ *                                      type: string
+ */
+
+router.get("/assingedEmployees", async (req: Request, res: Response) => {
+  const taskId = req.query.taskId as string;
+  try {
+    const assignedEmployees = await getAssignedEmployees(taskId);
+    res.status(200).send(assignedEmployees);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
 
 export default router;

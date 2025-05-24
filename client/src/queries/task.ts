@@ -105,3 +105,17 @@ export const getSuggestedEmployees = async (taskId: string) => {
     );
   }
 };
+
+export const getAssignedEmployeesPerTask = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assingedEmployees?taskId=${taskId}`
+    );
+    return response.data;
+  }
+  catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch assigned employees failed"
+    );
+  }
+};

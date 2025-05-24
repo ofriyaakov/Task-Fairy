@@ -481,3 +481,25 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
   return topEmployees;
 };
+
+export const getAssignedEmployees = async (taskId: string) => {
+  try {
+    const result = await db.query(
+      `SELECT users.*, groups.group_name, companies.company_name
+       FROM public.users as users
+       JOIN public.r_tasks_users AS userTask
+        ON users.user_id = userTask.user_id
+       JOIN public.tasks AS tasks 
+        ON userTask.task_id = tasks.task_id
+       JOIN public.groups as groups
+        ON users.group_id = groups.group_id
+       JOIN public.companies as companies
+        ON groups.company_id = companies.company_id
+       WHERE userTask.task_id = $1`,
+      [taskId] 
+    );
+    return result.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}

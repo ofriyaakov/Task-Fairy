@@ -67,8 +67,8 @@ const EmployeeSwapsPage: React.FC = () => {
             handleCellClick={handleCellClick}
             isManagerView={false} />
           }
-          {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} height='52vh'/></div>}
-          <button onClick={() => handleTaskCardClick("9e504d6c-08b7-4273-a6ef-0ab794c47aef", new Date(), 3)}>click</button>
+          {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}>
+            <TasksList title={'Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleTaskCardClick}/></div>}
         {isModalOpen && 
             <TaskEmployeesDialog 
             open={isModalOpen} 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,13 +11,13 @@ import {
   Box,
 } from "@mui/material";
 import { employeeDatailsCard } from "./../../types/employee";
-import { getSuggestedEmployees } from "./../../queries/task";
+import { getAssignedEmployeesPerTask } from "./../../queries/task";
 import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import SwapEmployeeDetailsCard from "../SwapEmployeeDetailsCard";
 
-interface SuggestionsDialogProps {
+interface AssigneesDialogProps {
   open: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
@@ -27,7 +27,7 @@ interface SuggestionsDialogProps {
   taskBalancePoints: number;
 }
 
-const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
+const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   open,
   setIsModalOpen,
   // employeesSuggestions,
@@ -37,27 +37,25 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   taskBalancePoints,
 }) => {
   const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([]);
-  const [suggestedEmployees, setSuggestedEmployees] = useState<
-    employeeDatailsCard[]
-  >([]);
+  const [assignedEmployees, setAssignedEmployees] = useState<employeeDatailsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchSuggestedEmployees = async () => {
-      try {
-        const response = await getSuggestedEmployees(taskId);
-        setSuggestedEmployees(response);
+  const fetchAssignedEmployees = async () => {
+    try {
+        const response = await getAssignedEmployeesPerTask(taskId);
+        setAssignedEmployees(response);
         setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching suggested employees:", error);
+    } catch (error) {
+        console.error("Error fetching assigned employees:", error);
         toast.error("Oops! Something went wrong");
-      }
-    };
+    }
+  }
 
+  useEffect(() => {
     if (open) {
       setIsLoading(true);
       setApprovedEmployeeIds([]);
-      fetchSuggestedEmployees();
+      fetchAssignedEmployees();
     }
   }, [open]);
    
@@ -115,12 +113,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
               minHeight: "200px",
               flexDirection: "column",
             }}>
-            <h4>Our smart algorithm is loading suggestions for you...</h4>
             <BeatLoader />
           </Box>
         ) : (
           <Grid container spacing={2}>
-            {suggestedEmployees.map((employee: employeeDatailsCard, index) => (
+            {assignedEmployees.map((employee: employeeDatailsCard, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <SwapEmployeeDetailsCard
                   employee={employee}
@@ -161,4 +158,4 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   );
 };
 
-export default SuggestionsDialog;
+export default AssigneesDialog;
