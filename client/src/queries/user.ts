@@ -1,5 +1,6 @@
 import axiosInstance from "../axiosInstance";
 import { employeeData } from "../types/employee";
+import { newEmployee } from "../types/employee";
 
 const USER_ROUTE = "/user";
 
@@ -52,8 +53,23 @@ export const deleteUserById = async (userId: string): Promise<void> => {
   try {
     await axiosInstance.delete(`${USER_ROUTE}/${userId}`);
   } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Deleting user failed");
+  }
+};
+
+export const addNewEmployees = async (
+  employees: newEmployee[],
+  company_id: number
+): Promise<any> => {
+  try {
+    const response = await axiosInstance.post(`${USER_ROUTE}/addNewEmployees`, {
+      employees,
+      company_id,
+    });
+    return response.data;
+  } catch (error: any) {
     throw new Error(
-      error.response?.data?.message || "Deleting user failed"
+      error.response?.data?.message || "Adding new employees failed"
     );
   }
 };

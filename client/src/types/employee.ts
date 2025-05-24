@@ -19,3 +19,13 @@ export interface employeeData {
     balance_points: number;
     last_task_date: Date | string | null;
 }
+
+export interface newEmployee {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: string;
+  group_name: string;
+  phone_number: string;
+}

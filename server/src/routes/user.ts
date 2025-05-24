@@ -1,13 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import {
-  getAllCompanyEmployeesData,
-  getAllUsers,
-  getAvgBalancePointsByCompany,
-  getUserBalancePointsById,
-  getUserById,
-  removeUserById,
-  updateUserById,
-} from "../controllers/user";
+import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById, updateUserById } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
 
@@ -289,88 +281,5 @@ router.get(
 //     next(err);
 //   }
 // });
-
-/**
- * @swagger
- * /user/employees/{company_id}:
- *   get:
- *     summary: Retrieve all employees of a company
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: company_id
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: A list of employees
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       400:
- *         description: Bad request
- *       404:
- *         description: Not Found
- */
-
-router.get(
-  "/employees/:company_id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const companyId = req.params.company_id;
-
-    try {
-      const employeeData = await getAllCompanyEmployeesData(Number(companyId));
-      if (!employeeData)
-        res.status(404).json({ message: "Couldn't fetch data" });
-      else res.status(200).send(employeeData);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-/**
- * @swagger
- * /user/{user_id}:
- *   delete:
- *     summary: Delete a user by id
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: user_id
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User deleted
- *       400:
- *         description: Bad request
- *       404:
- *         description: Not Found
- *       500:
- *         description: Internal Server Error
- */
-router.delete(
-  "/:user_id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.user_id;
-
-    try {
-      await removeUserById(id);
-      res.status(200).send({ message: "User deleted" });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 export default router;

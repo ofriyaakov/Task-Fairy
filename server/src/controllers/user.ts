@@ -2,6 +2,17 @@ import userModel, { IUser, User, employeeData } from "../models/user";
 import db from "../config/db";
 import { QueryResult } from "pg";
 import e from "express";
+import { getGroupByNameAndCompany, addNewGroup } from "./group";
+import { employeeUserLevel } from "../../consts";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_HOST,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 export const getAllUsers = async () => {
   try {
@@ -312,5 +323,73 @@ export const removeUserById = async (id: string) => {
   } catch (err) {
     console.error(err);
     throw new Error("User not found");
+  }
+};
+export const addNewEmployees = async (
+  employees: User[],
+  company_id: number
+) => {
+  try {
+    const query = `
+      INSERT INTO users (user_id, first_name, last_name, email, gender, group_id, phone_number, user_level, password, balance_points)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *
+    `;
+
+    const success: any[] = [];
+    const failed: { employee: User; reason: string }[] = [];
+
+    for (const employee of employees) {
+      try {
+        console.log("Adding employee:", employee);
+
+        const group = await getGroupByNameAndCompany(
+          employee.group_name,
+          company_id
+        );
+
+        const group_id = group
+          ? group.group_id
+          : (await addNewGroup(employee.group_name, company_id)).group_id;
+
+        console.log("Group added:", group_id);
+
+        employee.group_id = group_id;
+        const firstPassword =
+          employee.email.split("@")[0] + Math.floor(Math.random() * 100);
+
+        const { rows } = await db.query(query, [
+          employee.user_id,
+          employee.first_name,
+          employee.last_name,
+          employee.email,
+          employee.gender,
+          employee.group_id,
+          employee.phone_number,
+          employeeUserLevel,
+          firstPassword,
+          0,
+        ]);
+
+        const insertedUser = rows[0];
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_HOST,
+          to: employee.email,
+          subject: "Welcome to TaskFairy!",
+          text: `Hi ${employee.first_name},\n\nYour account has been successfully created by your manager.\n\nYour temporary password: ${firstPassword}\n\nPlease log in and change your password at taskfairy.todotada.co.il\n\nBest regards,\nTaskFairy Team- Turning your to-dos into ta-das!`,
+        });
+
+        success.push(insertedUser);
+      } catch (err) {
+        console.error(`❌ Failed for ${employee.email}:`, err.message);
+        failed.push({ employee, reason: err.message });
+      }
+    }
+
+    return { success, failed };
+  } catch (err) {
+    console.error("🔥 Fatal error during employee import:", err.message);
+    throw err;
   }
 };

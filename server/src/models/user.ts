@@ -20,6 +20,7 @@ export type User = {
   group_name?: string;
   company_name?: string;
   company_id?: number;
+  gender?: string;
 }
 
 export interface IUser {
