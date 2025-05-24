@@ -4,6 +4,7 @@ import RectangleData from './../../components/RectangleData';
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { getAssignedEmployeesAmount } from './../../queries/user';
 import { getUnassignedTasksAmount, getAvgTasksPerWeek } from './../../queries/task';
+import { getSwapRequestAmount } from './../../queries/swapRequests';
 
 const DashboardPage: React.FC = () => {
 
@@ -14,6 +15,7 @@ const DashboardPage: React.FC = () => {
   const [assignedEmployeesAmount, setAssignedEmployeesAmount] = useState(0);
   const [unassignedTasksAmount, setUnassignedTasksAmount] = useState(0);
   const [avgTasksPerWeek, setAvgTasksPerWeek] = useState(0);
+  const [swapRequestAmount, setSwapRequestAmount] = useState(0);
 
   const fetchAssignedEmployeesAmount = async () => {
       try {
@@ -44,11 +46,22 @@ const DashboardPage: React.FC = () => {
         console.error(err.message);
       }
     };
+
+    const fetchSwapRequestAmount = async () => {
+      try {
+        const fetchedAmount: number = await getSwapRequestAmount(companyId, month);
+        setSwapRequestAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
   
     useEffect(() => {
       fetchAssignedEmployeesAmount();
       fetchUnassignedTasksAmount();
-      fetchAvgTasksPerWeek()
+      fetchAvgTasksPerWeek();
+      fetchSwapRequestAmount();
     }, [companyId, month]);
 
   return (
@@ -82,7 +95,7 @@ const DashboardPage: React.FC = () => {
         <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="260px"/>
         <RectangleData title="Tasks need to be assigned" value={unassignedTasksAmount} color="#FFFFFF" width="260px"/>
         <RectangleData title="Avg task per week" value={avgTasksPerWeek} color="#FFFFFF" width="260px"/>
-        <div className="stat-card">Swap requests</div>
+        <RectangleData title="Swap requests" value={swapRequestAmount} color="#FFFFFF" width="260px"/>
       </div>
 
       {/* Main Charts Section */}

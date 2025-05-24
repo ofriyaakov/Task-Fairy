@@ -12,3 +12,12 @@ export const getAllPendingSwapRequests = async (companyId: number) => {
         );
     }
 };
+
+export const getSwapRequestAmount = async (companyId: number, month: number): Promise<number> => {
+    try {
+      const response = await axiosInstance.get(`${SWAP_REQUESTS_ROUTE}/amount/company/${companyId}/month/${month}`);
+      return response.data.amount || 0;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || "Recieving swap request amount failed");
+    }
+  };
