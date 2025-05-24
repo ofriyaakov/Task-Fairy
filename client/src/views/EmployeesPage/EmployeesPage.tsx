@@ -8,11 +8,10 @@ import {
   DialogTitle,
   Divider,
   IconButton,
-  Table,
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,6 +28,7 @@ import ExcelUploadModal from "../../components/UploadEmployeesModal";
 import * as XLSX from "xlsx";
 import { addNewEmployees } from "../../queries/user";
 import { newEmployee } from "../../types/employee";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const EmployeesPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -42,8 +42,7 @@ const EmployeesPage: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(7);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
   const [selectedEmployee, setSelectedEmployee] = useState<employeeData | null>(
     null
   );
@@ -75,7 +74,6 @@ const EmployeesPage: React.FC = () => {
       );
       setEmployeesData(employeesData);
       setVisibleEmployeesData(employeesData);
-      setTotalPages(Math.ceil(employeesData.length / rowsPerPage));
     } catch (err: any) {
       console.error(err.message);
     }
@@ -115,69 +113,6 @@ const EmployeesPage: React.FC = () => {
     } finally {
       fetchEmployeesData();
     }
-  };
-
-  const getPageButtons = () => {
-    const buttons = [];
-
-    // Always show first page
-    buttons.push(
-      <button
-        key={1}
-        className={`page ${currentPage === 1 ? "active" : ""}`}
-        onClick={() => setCurrentPage(1)}
-      >
-        01
-      </button>
-    );
-
-    // Show some pages, then ellipsis if needed
-    if (currentPage > 3) {
-      buttons.push(
-        <span key="ellipsis1" className="ellipsis">
-          ...
-        </span>
-      );
-    }
-
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(totalPages - 1, currentPage + 1);
-      i++
-    ) {
-      buttons.push(
-        <button
-          key={i}
-          className={`page ${currentPage === i ? "active" : ""}`}
-          onClick={() => setCurrentPage(i)}
-        >
-          {String(i).padStart(2, "0")}
-        </button>
-      );
-    }
-
-    if (currentPage < totalPages - 2) {
-      buttons.push(
-        <span key="ellipsis2" className="ellipsis">
-          ...
-        </span>
-      );
-    }
-
-    // Always show last page if it's not already included
-    if (totalPages > 1) {
-      buttons.push(
-        <button
-          key={totalPages}
-          className={`page ${currentPage === totalPages ? "active" : ""}`}
-          onClick={() => setCurrentPage(totalPages)}
-        >
-          {String(totalPages).padStart(2, "0")}
-        </button>
-      );
-    }
-
-    return buttons;
   };
 
   const onFileUpload = (file: File, company_id: number) => {
@@ -240,7 +175,6 @@ const EmployeesPage: React.FC = () => {
       );
     });
     setVisibleEmployeesData(filteredData);
-    setTotalPages(Math.ceil(filteredData.length / rowsPerPage));
     setCurrentPage(1);
   };
 
@@ -248,7 +182,7 @@ const EmployeesPage: React.FC = () => {
     setLoading(true);
     fetchCompanyAvgBalancePoints();
     fetchEmployeesData();
-  }, []);
+  }, [company_id]);
 
   const DeletePopup: React.FC = () => (
     <Dialog
@@ -368,6 +302,98 @@ const EmployeesPage: React.FC = () => {
     </Dialog>
   );
 
+  const columns: GridColDef<employeeData>[] = [
+    {
+      field: "id",
+      headerName: "#",
+      width: 90,
+      renderCell: (params) => {
+        const rowIndex =
+          params.api.getRowIndexRelativeToVisibleRows(params.id) +
+          rowsPerPage * (currentPage - 1);
+        return rowIndex + 1; // +1 to start from 1
+      },
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: "name",
+      headerName: "name",
+      width: 200,
+      renderCell: (params) => {
+        return `${params.row.first_name} ${params.row.last_name}`;
+      },
+    },
+    {
+      field: "email",
+      headerName: "email",
+      width: 200,
+    },
+    {
+      field: "group_name",
+      headerName: "Association",
+      width: 200,
+    },
+    {
+      field: "balance_points",
+      headerName: "Balance Points",
+      width: 150,
+      renderCell: (params) => (
+        <Chip
+          label={`● ` + (params.row.balance_points ?? 0)}
+          style={{
+            fontWeight: "bold",
+            backgroundColor:
+              params.row.balance_points === avgBalancePoints
+                ? "#E4E4E4"
+                : params.row.balance_points > avgBalancePoints
+                ? "#E9FFEF"
+                : "#FFDFDF",
+            color:
+              params.row.balance_points === avgBalancePoints
+                ? "#3F3748"
+                : params.row.balance_points > avgBalancePoints
+                ? "#409261"
+                : "#FF6969",
+          }}
+        />
+      ),
+    },
+    {
+      field: "last_task_date",
+      headerName: "Last Task",
+      width: 200,
+      renderCell: (params) =>
+        params.row.last_task_date
+          ? new Date(params.row.last_task_date).toLocaleDateString("de-CH")
+          : "-",
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 100,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+
+      renderCell: (params: { row: SetStateAction<employeeData | null> }) => (
+        <img
+          src="/delete.svg"
+          alt="Delete"
+          onClick={() => {
+            setSelectedEmployee(params.row);
+            setDeletePopupOpen(true);
+          }}
+          style={{
+            cursor: "pointer",
+            marginTop: "2vh",
+          }}
+        />
+      ),
+    },
+  ];
+
   return (
     <div className="page-container">
       {loading ? (
@@ -398,9 +424,7 @@ const EmployeesPage: React.FC = () => {
                 color="primary"
                 endIcon={<FileUploadOutlinedIcon />}
                 style={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
+                  marginLeft: "1rem",
                   textTransform: "none",
                   borderRadius: "0.5rem",
                   backgroundColor: "#DDEEFB",
@@ -421,75 +445,23 @@ const EmployeesPage: React.FC = () => {
               />
             </div>
 
-            <Table className="employee-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Association</th>
-                  <th>Balance Points</th>
-                  <th>Last Task</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleEmployeesData
-                  .slice(
-                    (currentPage - 1) * rowsPerPage,
-                    (currentPage - 1) * rowsPerPage + rowsPerPage
-                  )
-                  .map((row, index) => (
-                    <tr key={row.user_id}>
-                      <td>{index + 1 + (currentPage - 1) * rowsPerPage}</td>
-                      <td>{`${row.first_name} ${row.last_name}`}</td>
-                      <td>{row.email}</td>
-                      <td>{row.group_name}</td>
-                      <td>
-                        <Chip
-                          label={`● ` + (row.balance_points ?? 0)}
-                          style={{
-                            fontWeight: "bold",
-                            backgroundColor:
-                              row.balance_points === avgBalancePoints
-                                ? "#E4E4E4"
-                                : row.balance_points > avgBalancePoints
-                                ? "#E9FFEF"
-                                : "#FFDFDF",
-                            color:
-                              row.balance_points === avgBalancePoints
-                                ? "#3F3748"
-                                : row.balance_points > avgBalancePoints
-                                ? "#409261"
-                                : "#FF6969",
-                          }}
-                        />
-                      </td>
-                      <td>
-                        {row.last_task_date
-                          ? new Date(row.last_task_date).toLocaleDateString(
-                              "de-CH"
-                            )
-                          : "-"}
-                      </td>
-                      <td>
-                        <img
-                          src="/delete.svg"
-                          alt="Delete"
-                          onClick={() => {
-                            setSelectedEmployee(row);
-                            setDeletePopupOpen(true);
-                          }}
-                          style={{
-                            cursor: "pointer",
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            <div className="pagination">{getPageButtons()}</div>
+            <DataGrid
+              className="employee-table"
+              rows={visibleEmployeesData}
+              columns={columns}
+              pagination
+              paginationMode="client"
+              rowCount={visibleEmployeesData.length}
+              getRowId={(row) => row.user_id}
+              paginationModel={{
+                page: currentPage - 1,
+                pageSize: rowsPerPage,
+              }}
+              onPaginationModelChange={({ page, pageSize }) => {
+                setCurrentPage(page + 1);
+                setRowsPerPage(pageSize);
+              }}
+            />
           </div>
           <DeletePopup />
         </>

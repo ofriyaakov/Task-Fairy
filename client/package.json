@@ -8,10 +8,12 @@
     "@fontsource/montserrat": "^5.2.5",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
+    "@mui/x-data-grid": "^8.4.0",
     "@mui/x-date-pickers": "^7.29.0",
     "axios": "^1.7.9",
     "country-state-city": "^3.2.1",
     "cra-template-typescript": "1.2.0",
+    "craco": "^0.0.3",
     "date-fns": "^4.1.0",
     "date-holidays": "^3.24.2",
     "dayjs": "^1.11.13",
@@ -29,7 +31,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "craco start react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
