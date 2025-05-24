@@ -281,9 +281,8 @@ export const addNewEmployees = async (
 
     for (const employee of employees) {
       try {
-
         console.log("Adding employee:", employee);
-        
+
         const group = await getGroupByNameAndCompany(
           employee.group_name,
           company_id
@@ -293,8 +292,7 @@ export const addNewEmployees = async (
           ? group.group_id
           : (await addNewGroup(employee.group_name, company_id)).group_id;
 
-          console.log("Group added:", group_id);
-          
+        console.log("Group added:", group_id);
 
         employee.group_id = group_id;
         const firstPassword =
@@ -332,6 +330,31 @@ export const addNewEmployees = async (
     return { success, failed };
   } catch (err) {
     console.error("🔥 Fatal error during employee import:", err.message);
+    throw err;
+  }
+};
+
+export const updateUserFirstLogin = async (userId: string, password: string, city: string) => {
+  try {
+    const result = await db.query(
+      `UPDATE users
+        SET
+          first_login = false,
+          password = $2,
+          city = $3
+        WHERE user_id = $1
+        RETURNING *`,
+      [userId, password, city]
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+    const updatedUser: User = result.rows[0];
+    console.log("User first login updated:", updatedUser);
+    return updatedUser;
+  } catch (err) {
+    console.error("Error updating user first login:", err);
     throw err;
   }
 };

@@ -40,6 +40,7 @@ export const login = async (
     userLevel: user.user_level,
     companyId: user.company_id,
     groupName: user.group_name,
+    firstLogin: user.first_login,
   };
 };
 

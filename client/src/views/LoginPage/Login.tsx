@@ -23,6 +23,7 @@ const Login: React.FC = () => {
         userLevel: response.userLevel,
         groupId: response.groupId,
         groupName: response.groupName,
+        firstLogin: response.firstLogin,
       });
 
       navigate(response.userLevel == 2 ? "/dashboard" : "/profile");

@@ -29,3 +29,21 @@ export const addNewEmployees = async (employees: newEmployee[], company_id: numb
     throw new Error(error.response?.data?.message || "Adding new employees failed");
   }
 }
+
+export const updateUserFirstLogin = async (
+  userId: string,
+  password: string,
+  city: string
+): Promise<any> => {
+  try {
+    const response = await axiosInstance.put(`${USER_ROUTE}/${userId}/first-login`, {
+      password,
+      city,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "First login setup failed"
+    );
+  }
+};

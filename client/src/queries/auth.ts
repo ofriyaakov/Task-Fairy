@@ -16,6 +16,7 @@ interface AuthResponse {
   userLevel: number;
   groupId: number;
   groupName: string;
+  firstLogin: boolean;
 }
 
 const AUTH_ROUTE = "/auth";
