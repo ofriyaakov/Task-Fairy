@@ -290,7 +290,7 @@ router.post("/addNewEmployees", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /assignedAmount:
+ * /assignedAmount/company/:companyId/month/:month:
  *   get:
  *       summary: Retrieve amount of assigned empployees by company and month
  *       tags: [Users]

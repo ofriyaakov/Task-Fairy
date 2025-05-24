@@ -92,10 +92,10 @@ const DashboardPage: React.FC = () => {
           flexGrow: 0,
         }}
       >
-        <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="260px"/>
-        <RectangleData title="Tasks need to be assigned" value={unassignedTasksAmount} color="#FFFFFF" width="260px"/>
-        <RectangleData title="Avg task per week" value={avgTasksPerWeek} color="#FFFFFF" width="260px"/>
-        <RectangleData title="Swap requests" value={swapRequestAmount} color="#FFFFFF" width="260px"/>
+        <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Tasks need to be assigned" value={unassignedTasksAmount} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Avg task per week" value={avgTasksPerWeek} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Swap requests" value={swapRequestAmount} color="#FFFFFF" width="25%"/>
       </div>
 
       {/* Main Charts Section */}
