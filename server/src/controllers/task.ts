@@ -481,3 +481,45 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
   return topEmployees;
 };
+
+export const getUnassignedTasksAmount = async (companyId: number) => {
+  try {
+    const result = await db.query(`
+      SELECT (
+        SELECT SUM(employees_amount)
+        FROM public.tasks
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+        ) - (
+        SELECT COUNT(r_tasks_users.id)
+        FROM public.r_tasks_users
+        JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+      ) as amount 
+      `, [companyId]
+    );
+    const amount: number = result.rows[0];
+    return amount;
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getAvgTasksPerWeek = async (companyId: number) => {
+  try {
+    const result = await db.query(`
+      SELECT AVG(tasks_amount_by_week)
+      FROM (
+        SELECT COUNT(task_id) AS tasks_amount_by_week
+        FROM public.tasks
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+        GROUP BY DATE_TRUNC('week', start_time)
+      )`, [companyId]
+    );
+    const avg: number = result.rows[0];
+    return avg;
+
+  } catch (err) {
+    console.error(err);
+  }
+};
