@@ -21,6 +21,7 @@ export type User = {
   company_name?: string;
   company_id?: number;
   gender?: string;
+  first_login?: boolean;
 }
 
 export interface IUser {
