@@ -8,6 +8,7 @@ interface User {
   userLevel: number;
   groupId: number;
   groupName: string;
+  firstLogin: boolean;
 }
 
 interface GlobalContextType {
