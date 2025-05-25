@@ -59,7 +59,7 @@ router.get("/pending", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * //amount/company/:companyId/month/:month:
+ * /amount/company/{companyId}:
  *   get:
  *       summary: Retrieve a number of swap request amount by company id and month
  *       tags: [swap-requests]
@@ -80,11 +80,11 @@ router.get("/pending", async (req: Request, res: Response) => {
  *              description: Unauthorized - invalid or missing token
  */
 
-router.get("/amount/company/:companyId/month/:month", async (req: Request, res: Response) => {
+router.get("/amount/company/:companyId", async (req: Request, res: Response) => {
     const companyId = req.params.companyId
     const month = req.params.month
     try {
-        res.status(200).send(await getSwapRequestAmount(+companyId, +month));
+        res.status(200).send(await getSwapRequestAmount(+companyId));
     } catch (err) {
         res.status(400).send(err);
     }

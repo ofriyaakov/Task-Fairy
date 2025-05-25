@@ -30,9 +30,9 @@ export const addNewEmployees = async (employees: newEmployee[], company_id: numb
   }
 }
 
-export const getAssignedEmployeesAmount = async (companyId: number, month: number): Promise<number> => {
+export const getAssignedEmployeesAmount = async (companyId: number): Promise<number> => {
   try {
-    const response = await axiosInstance.get(`${USER_ROUTE}/assignedAmount/company/${companyId}/month/${month}`);
+    const response = await axiosInstance.get(`${USER_ROUTE}/assignedAmount/company/${companyId}`);
     return response.data.amount || 0;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Recieving assigned employees amount failed");

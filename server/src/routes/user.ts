@@ -290,7 +290,7 @@ router.post("/addNewEmployees", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /assignedAmount/company/:companyId/month/:month:
+ * /assignedAmount/company/:companyId:
  *   get:
  *       summary: Retrieve amount of assigned empployees by company and month
  *       tags: [Users]
@@ -320,11 +320,10 @@ router.post("/addNewEmployees", async (req: Request, res: Response) => {
  *              description: Not Found
  */
 
-router.get("/assignedAmount/company/:companyId/month/:month", async (req: Request, res: Response) => {
+router.get("/assignedAmount/company/:companyId", async (req: Request, res: Response) => {
     const companyId = req.params.companyId
-    const month = req.params.month
       try {
-        const assignedAmount = await getAssignedEmployeesAmount(+companyId, +month);
+        const assignedAmount = await getAssignedEmployeesAmount(+companyId);
         res.status(200).send(assignedAmount);
       } catch (err) {
         console.error(err);

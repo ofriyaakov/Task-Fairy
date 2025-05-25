@@ -10,7 +10,6 @@ const DashboardPage: React.FC = () => {
 
   const { connectedUser } = useGlobalContext();
   const companyId = connectedUser?.companyId || 0
-  const month = (new Date()).getMonth() + 1
 
   const [assignedEmployeesAmount, setAssignedEmployeesAmount] = useState(0);
   const [unassignedTasksAmount, setUnassignedTasksAmount] = useState(0);
@@ -19,7 +18,7 @@ const DashboardPage: React.FC = () => {
 
   const fetchAssignedEmployeesAmount = async () => {
       try {
-        const fetchedAmount: number = await getAssignedEmployeesAmount(companyId, month);
+        const fetchedAmount: number = await getAssignedEmployeesAmount(companyId);
         setAssignedEmployeesAmount(fetchedAmount)
         return fetchedAmount
       } catch (err: any) {
@@ -29,7 +28,7 @@ const DashboardPage: React.FC = () => {
 
     const fetchUnassignedTasksAmount = async () => {
       try {
-        const fetchedAmount: number = await getUnassignedTasksAmount(companyId, month);
+        const fetchedAmount: number = await getUnassignedTasksAmount(companyId);
         setUnassignedTasksAmount(fetchedAmount)
         return fetchedAmount
       } catch (err: any) {
@@ -39,7 +38,7 @@ const DashboardPage: React.FC = () => {
 
     const fetchAvgTasksPerWeek = async () => {
       try {
-        const fetchedAmount: number = await getAvgTasksPerWeek(companyId, month);
+        const fetchedAmount: number = await getAvgTasksPerWeek(companyId);
         setAvgTasksPerWeek(Math.round(fetchedAmount))
         return fetchedAmount
       } catch (err: any) {
@@ -49,7 +48,7 @@ const DashboardPage: React.FC = () => {
 
     const fetchSwapRequestAmount = async () => {
       try {
-        const fetchedAmount: number = await getSwapRequestAmount(companyId, month);
+        const fetchedAmount: number = await getSwapRequestAmount(companyId);
         setSwapRequestAmount(fetchedAmount)
         return fetchedAmount
       } catch (err: any) {
@@ -62,7 +61,7 @@ const DashboardPage: React.FC = () => {
       fetchUnassignedTasksAmount();
       fetchAvgTasksPerWeek();
       fetchSwapRequestAmount();
-    }, [companyId, month]);
+    }, [companyId]);
 
   return (
     <div

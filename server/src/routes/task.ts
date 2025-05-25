@@ -379,7 +379,7 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /unassignedTasks/company/{companyId}/month/{month}:
+ * /unassignedTasks/company/{companyId}:
  *   get:
  *       summary: Retrieve a number of unassigned tasks
  *       tags: [Task]
@@ -409,11 +409,10 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
  *              description: Not Found
  */
 
-router.get("/unassignedTasks/company/:companyId/month/:month", async (req: Request, res: Response) => {
+router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Response) => {
   const companyId = req.params.companyId
-  const month = req.params.month
   try {
-    const amount = await getUnassignedTasksAmount(+companyId, +month);
+    const amount = await getUnassignedTasksAmount(+companyId);
     res.status(200).send(amount);
   } catch (err) {
     res.status(400).send(err);
@@ -422,7 +421,7 @@ router.get("/unassignedTasks/company/:companyId/month/:month", async (req: Reque
 
 /**
  * @swagger
- * /avgPerWeek/company/{companyId}/month/{month}:
+ * /avgPerWeek/company/{companyId}:
  *   get:
  *       summary: Retrieve a number avg tasks amount per week
  *       tags: [Task]
@@ -452,11 +451,10 @@ router.get("/unassignedTasks/company/:companyId/month/:month", async (req: Reque
  *              description: Not Found
  */
 
-router.get("/avgPerWeek/company/:companyId/month/:month", async (req: Request, res: Response) => {
+router.get("/avgPerWeek/company/:companyId", async (req: Request, res: Response) => {
   const companyId = req.params.companyId
-  const month = req.params.month
   try {
-    const avg = await getAvgTasksPerWeek(+companyId, +month);
+    const avg = await getAvgTasksPerWeek(+companyId);
     res.status(200).send(avg);
   } catch (err) {
     res.status(400).send(err);

@@ -106,18 +106,18 @@ export const getSuggestedEmployees = async (taskId: string) => {
   }
 };
 
-export const getUnassignedTasksAmount = async (companyId: number, month: number): Promise<number> => {
+export const getUnassignedTasksAmount = async (companyId: number): Promise<number> => {
   try {
-    const response = await axiosInstance.get(`${TASK_ROUTE}/unassignedTasks/company/${companyId}/month/${month}`);
+    const response = await axiosInstance.get(`${TASK_ROUTE}/unassignedTasks/company/${companyId}`);
     return response.data.amount || 0;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Recieving unassigned tasks amount failed");
   }
 };
 
-export const getAvgTasksPerWeek = async (companyId: number, month: number): Promise<number> => {
+export const getAvgTasksPerWeek = async (companyId: number): Promise<number> => {
   try {
-    const response = await axiosInstance.get(`${TASK_ROUTE}/avgPerWeek/company/${companyId}/month/${month}`);
+    const response = await axiosInstance.get(`${TASK_ROUTE}/avgPerWeek/company/${companyId}`);
     return response.data.avg || 0;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Recieving avg tasks amount per week failed");

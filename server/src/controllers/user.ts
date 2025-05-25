@@ -336,14 +336,14 @@ export const addNewEmployees = async (
   }
 };
 
-export const getAssignedEmployeesAmount = async (companyId: number, month: number) => {
+export const getAssignedEmployeesAmount = async (companyId: number) => {
   try {
     const result = await db.query(`
         SELECT COUNT(DISTINCT r_tasks_users.user_id) as amount
         FROM public.r_tasks_users
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
-        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = $2
-      `, [companyId, month]
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+      `, [companyId]
     );
     const amount: number = result.rows[0];
     return amount;

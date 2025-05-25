@@ -482,20 +482,20 @@ export const getSuggestedEmployees = async (taskId: string) => {
   return topEmployees;
 };
 
-export const getUnassignedTasksAmount = async (companyId: number, month: number) => {
+export const getUnassignedTasksAmount = async (companyId: number) => {
   try {
     const result = await db.query(`
       SELECT (
         SELECT SUM(employees_amount)
         FROM public.tasks
-        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
         ) - (
         SELECT COUNT(r_tasks_users.id)
         FROM public.r_tasks_users
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
-        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = $2
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
       ) as amount 
-      `, [companyId, month]
+      `, [companyId]
     );
     const amount: number = result.rows[0];
     return amount;
@@ -505,16 +505,16 @@ export const getUnassignedTasksAmount = async (companyId: number, month: number)
   }
 };
 
-export const getAvgTasksPerWeek = async (companyId: number, month: number) => {
+export const getAvgTasksPerWeek = async (companyId: number) => {
   try {
     const result = await db.query(`
       SELECT AVG(tasks_amount_by_week)
       FROM (
         SELECT COUNT(task_id) AS tasks_amount_by_week
         FROM public.tasks
-        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
+        WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
         GROUP BY DATE_TRUNC('week', start_time)
-      )`, [companyId, month]
+      )`, [companyId]
     );
     const avg: number = result.rows[0];
     return avg;
