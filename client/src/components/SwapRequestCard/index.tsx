@@ -66,7 +66,6 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         width: "92%",
         border: "1px solid rgb(229 229 229)",
       }}>
-      {/* Header with status */}
       <Box
         sx={{
           display: "flex",
@@ -134,7 +133,6 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
           </Grid>
         </Grid>
 
-        {/* Manager action buttons */}
         {onApprove && onReject && (
           <Stack
             direction='column'

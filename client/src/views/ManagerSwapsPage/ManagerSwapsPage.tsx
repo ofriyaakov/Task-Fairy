@@ -1,9 +1,13 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import SwapRequestCard from "../../components/SwapRequestCard";
 import { SwapRequest, SwapRequestStatus } from "./../../types/Swap";
-import { getAllPendingSwapRequests } from "./../../queries/swapRequests";
+import {
+  getAllPendingSwapRequests,
+  updateSwapRequestStatus,
+} from "./../../queries/swapRequests";
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
+import { toast } from "react-toastify";
 
 const ManagerSwapsPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -15,7 +19,14 @@ const ManagerSwapsPage: React.FC = () => {
     swapRequestId: string,
     status: SwapRequestStatus
   ) => {
-    console.log(status, swapRequestId);
+    try {
+      await updateSwapRequestStatus(swapRequestId, status);
+      await fetchPendingSwapRequests();
+      toast.success("Swap updated successfully!");
+    } catch (err: any) {
+      console.error(err.message);
+      toast.error("Failed to update swap");
+    }
   };
 
   const fetchPendingSwapRequests = async () => {
