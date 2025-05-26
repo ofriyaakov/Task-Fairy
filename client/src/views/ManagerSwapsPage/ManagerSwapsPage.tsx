@@ -1,19 +1,29 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import SwapRequestCard from "../../components/SwapRequestCard";
-import { SwapRequest } from './../../types/Swap';
-import { getAllPendingSwapRequests } from './../../queries/swapRequests'
+import { SwapRequest, SwapRequestStatus } from "./../../types/Swap";
+import { getAllPendingSwapRequests } from "./../../queries/swapRequests";
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
 const ManagerSwapsPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
-  const [pendingSwapRequests, setPendingSwapRequest] = useState<SwapRequest[]>([])
+  const [pendingSwapRequests, setPendingSwapRequest] = useState<SwapRequest[]>(
+    []
+  );
+
+  const updateSwapStatus = async (
+    swapRequestId: string,
+    status: SwapRequestStatus
+  ) => {
+    console.log(status, swapRequestId);
+  };
 
   const fetchPendingSwapRequests = async () => {
     try {
-      const companyId = connectedUser?.companyId || 0
-      const fetchedPendingSwapRequests: SwapRequest[] = await getAllPendingSwapRequests(+companyId);
-      setPendingSwapRequest(fetchedPendingSwapRequests)
+      const companyId = connectedUser?.companyId || 0;
+      const fetchedPendingSwapRequests: SwapRequest[] =
+        await getAllPendingSwapRequests(+companyId);
+      setPendingSwapRequest(fetchedPendingSwapRequests);
     } catch (err: any) {
       console.error(err.message);
     }
@@ -36,20 +46,28 @@ const ManagerSwapsPage: React.FC = () => {
           bgcolor: "rgb(250 250 250)",
           height: "80vh",
           borderRadius: "24px",
-          overflowY: 'scroll'
+          overflowY: "scroll",
         }}>
         <Grid container spacing={2}>
-            {pendingSwapRequests.map((swapRequest, index) => (
-              <Grid item xs={12} md={6} key={index}>
-                <SwapRequestCard 
-                  leftDetails={swapRequest.leftDetails} 
-                  rightDetails={swapRequest.rightDetails} 
-                />
-              </Grid>
-            ))}
-          </Grid>
+          {pendingSwapRequests.map((swapRequest, index) => (
+            <Grid item xs={12} md={6} key={index}>
+              <SwapRequestCard
+                leftDetails={swapRequest.leftDetails}
+                rightDetails={swapRequest.rightDetails}
+                swapRequestId={swapRequest.swapRequestId}
+                onApprove={() =>
+                  updateSwapStatus(swapRequest.swapRequestId, "1")
+                }
+                onReject={() =>
+                  updateSwapStatus(swapRequest.swapRequestId, "3")
+                }
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Box>
-    </div>)
+    </div>
+  );
 };
 
 export default ManagerSwapsPage;
