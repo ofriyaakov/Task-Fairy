@@ -1,5 +1,5 @@
 import db from "../config/db";
-import { RawSwapRequest } from './../models/swap'
+import { RawSwapRequest, SwapRequestPayload } from './../models/swap'
 
 export const getPendingSwapRequests = async (companyId: number) => {
     try {
@@ -60,5 +60,35 @@ export const getPendingSwapRequests = async (companyId: number) => {
         return formatedSwapRequests;
     } catch (err) {
         console.error(err);
+    }
+};
+
+
+export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
+    try {
+        const { requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date } = swapRequest;
+
+        const result = await db.query(
+            `INSERT INTO swap_requests
+            (first_r_task_user,second_r_task_user, status_id, creation_date)
+            SELECT (SELECT rtu.id 
+		            FROM r_tasks_users as rtu
+		            WHERE task_id = $1 AND user_id = $2),
+		            (SELECT rtu.id 
+		            FROM r_tasks_users as rtu
+		            WHERE task_id = $3 AND user_id = $4),
+		            2, $5
+            RETURNING *`,
+        [requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date]
+        )
+
+        if (result.rows.length === 0) {
+            throw new Error("An error occurred while adding the swap request");
+        }
+
+        return result.rows[0];
+    } catch (err) {
+        console.error(err);
+        throw err;
     }
 };

@@ -15,6 +15,7 @@ import RectangleData from "../../components/RectangleData";
 import { APP_COLOR } from "../../theme";
 import { getCompanyAvgBalancePoints, getUserBalancePoints } from "../../queries/user";
 import { BeatLoader } from "react-spinners";
+import { CalendarPages } from "../../components/Calendar/CalendarSetup";
 
 const ProfilePage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -37,6 +38,7 @@ const ProfilePage: React.FC = () => {
           date: new Date(task.startTime).toISOString().split("T")[0],
           employeesAmount: -1,
           assignedEmployeesAmount: -1,
+          isAssignedToCurrentUser: true,
         };
       })
       .filter(
@@ -128,7 +130,7 @@ const ProfilePage: React.FC = () => {
                 taskSummary={calendarTasks}
                 date={currentMonthDate}
                 navigateMonth={navigateMonth}
-                isManagerView={false}
+                page={CalendarPages.PROFILE}
                 handleCellClick={() => {}} />
             </div>
           </div>

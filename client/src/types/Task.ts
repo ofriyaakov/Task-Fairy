@@ -36,6 +36,7 @@ export type TaskSummaryCard = ShortenedTaskDetails & {
 export interface CalendarTask extends ShortenedTaskDetails {
   date: string;
   employeesAmount: number;
+  isAssignedToCurrentUser: boolean;
   assignedEmployeesAmount: number;
 }
 

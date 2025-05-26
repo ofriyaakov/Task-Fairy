@@ -16,29 +16,28 @@ import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import SwapEmployeeDetailsCard from "../SwapEmployeeDetailsCard";
+import { useGlobalContext } from "../../contexts/GlobalContext";
+import { SwapRequestPayload } from "../../types/Swap";
+import { createNewSwapRequest } from "../../queries/swapRequests";
 
 interface AssigneesDialogProps {
   open: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
   taskId: string;
-  employeesAmount: number;
-  taskDate: Date;
-  taskBalancePoints: number;
+  taskIdToSwap: string;
 }
 
 const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   open,
   setIsModalOpen,
-  // employeesSuggestions,
   taskId,
-  employeesAmount,
-  taskDate,
-  taskBalancePoints,
+  taskIdToSwap
 }) => {
-  const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([]);
   const [assignedEmployees, setAssignedEmployees] = useState<employeeDatailsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  console.log("Task ID to swap:", taskIdToSwap);
+  const { connectedUser } = useGlobalContext();
 
   const fetchAssignedEmployees = async () => {
     try {
@@ -54,25 +53,31 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   useEffect(() => {
     if (open) {
       setIsLoading(true);
-      setApprovedEmployeeIds([]);
       fetchAssignedEmployees();
     }
   }, [open]);
    
   const handleCancel = () => {
-    setApprovedEmployeeIds([]);
     setIsModalOpen(false);
   };
 
-  const handleApproveEmployee = (employeeId: string) => {
-    setApprovedEmployeeIds([...approvedEmployeeIds, employeeId]);
-  };
+  const createSwapRequest = async (userId: string) => {
+    try {
+        const swapRequest: SwapRequestPayload = {
+            requestingUserId: connectedUser?.id!!,
+            requestingTaskId: taskIdToSwap,
+            requestedUserId: userId,
+            requestedTaskId: taskId,
+            date: new Date(),
+        };
 
-  const handleRemoveEmployee = (deletedEmployeeId: string) => {
-    const removeEmployee = approvedEmployeeIds?.filter(
-      (employeeId) => employeeId !== deletedEmployeeId
-    );
-    setApprovedEmployeeIds(removeEmployee);
+        await createNewSwapRequest(swapRequest);
+        toast.success("Swap request created successfully");
+        setIsModalOpen(false);
+    } catch (err: any) {
+        console.error(err.message);
+        toast.error("Oops! Something went wrong");
+    }
   };
 
   return (
@@ -121,9 +126,7 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
               <Grid item xs={12} md={6} key={index}>
                 <SwapEmployeeDetailsCard
                   employee={employee}
-                  handleApproveEmployee={handleApproveEmployee}
-                  handleRemoveEmployee={handleRemoveEmployee}
-                  isDisable={false}
+                  createSwapRequest={createSwapRequest}
                 />
               </Grid>
             ))}

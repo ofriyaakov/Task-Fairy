@@ -12,3 +12,11 @@ export interface RawSwapRequest {
     second_task_start_time: string,
     second_task_end_time: string
 }
+
+export interface SwapRequestPayload {
+    requestingUserId: string;
+    requestingTaskId: string;
+    requestedUserId: string;
+    requestedTaskId: string;
+    date: Date;
+}

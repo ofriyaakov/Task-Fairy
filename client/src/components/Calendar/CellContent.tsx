@@ -1,7 +1,7 @@
 import React from 'react'
 import { format } from 'date-fns'
 import { CellDateHeader } from './CellDateHeader'
-import { TaskOccupancy, TaskSummary } from './CalendarSetup'
+import { CalendarPages, TaskOccupancy, TaskSummary } from './CalendarSetup'
 import {calendarFnsDateFormat } from '../../consts'
 import { APP_COLOR } from '../../theme'
 import { CellEvent } from './CellEvent'
@@ -12,10 +12,10 @@ type CellContentProps = {
     currentMonthDate: Date,
     taskSummary: TaskSummary,
     handleCellClick: (date: string) => void,
-    isManagerView: boolean
+    page: CalendarPages
 }
 
-export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick, isManagerView}) => {
+export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSummary, currentMonthDate, handleCellClick, page}) => {
     const dateStr = format(date, calendarFnsDateFormat);
     const dayData = taskSummary && taskSummary[dateStr];
     const isDateOutOfMonth = date.getMonth() !== currentMonthDate.getMonth();
@@ -34,7 +34,7 @@ export const CellContent: React.FC<CellContentProps> = ({ children, date, taskSu
             {children}
             {dayData && dayData.map((data: TaskOccupancy, index: number) => {
               return (
-                <CellEvent key={index} data={data} date={date} isManagerView={isManagerView} />
+                <CellEvent key={index} data={data} date={date} page={page} />
               );
             })}
           </div>

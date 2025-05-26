@@ -6,41 +6,25 @@ import StarIcon from '@mui/icons-material/Star';
 import Badge from '@mui/material/Badge';
 import WcIcon from '@mui/icons-material/Wc';
 import BusinessIcon from '@mui/icons-material/Business';
-
 import { employeeDatailsCard } from '../../types/employee';
 import { APP_COLOR } from '../../theme';
 
 interface SwapEmployeeDetailsCardProps {
     employee: employeeDatailsCard;
-    handleApproveEmployee: (employeeId: string) => void
-    handleRemoveEmployee: (employeeId: string) => void
-    isDisable: boolean;
+    createSwapRequest: (userId: string) => void;
 }
 
 const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
     employee,
-    handleApproveEmployee,
-    handleRemoveEmployee,
-    isDisable
+    createSwapRequest,
 }) => {
-
-    const [cardBackgroundColor, setCardBackgroundColor] = useState<string>('#f5f5f5')
-
-    const createSwapRequest = () => {
-        if (isDisable) {
-            console.log("Swap request is disabled");
-            return;
-        }
-        // Logic to create a swap request
-        console.log("Swap request created for employee:", employee.user_id);
-    }
 
     return (
         <Badge
             badgeContent="Request Swap" 
             overlap="rectangular" 
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            onClick={createSwapRequest}
+            onClick={() => createSwapRequest(employee.user_id)}
             sx={{
                 display: "inline-block",
                 "& .MuiBadge-badge": {
@@ -69,11 +53,10 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
                     width: '356px',
                     border: '2px solid rgb(229 229 229)',
                     borderRadius: '8px',
-                    backgroundColor: cardBackgroundColor,
+                    backgroundColor: '#f5f5f5',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    transition: 'background-color 0.2s ease-in-out',
                 }}>
                 <Grid container direction="column" alignItems="center" >
                     <Grid item xs={6} md={6}>

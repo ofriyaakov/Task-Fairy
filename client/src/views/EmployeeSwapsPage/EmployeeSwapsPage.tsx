@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import TaskEmployeesDialog from "../../components/SwapEmployeeModal";
+import { CalendarPages } from '../../components/Calendar/CalendarSetup';
 
 const EmployeeSwapsPage: React.FC = () => {
 
@@ -16,16 +17,13 @@ const EmployeeSwapsPage: React.FC = () => {
     const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [currentTaskId, setCurrentTaskId] = useState<string>('');
-    const [currentTaskDate, setCurrentTaskDate] = useState<Date>(new Date());
-    const [currentBalancePoints, setCurrentBalancePoints] = useState<number>(0);
+    const [selectedTaskToSwap, setSelectedTaskToSwap] = useState<string>("");
       
     const { connectedUser } = useGlobalContext();
 
-    const handleTaskCardClick = (taskId: string, taskDate: Date, balancePoints: number) => {
+    const handleTaskCardClick = (taskId: string) => {
         setCurrentTaskId(taskId)
         setIsModalOpen(true)
-        setCurrentTaskDate(taskDate)
-        setCurrentBalancePoints(balancePoints)
     };
     
     const handleCellClick = (date: string) => {
@@ -41,8 +39,11 @@ const EmployeeSwapsPage: React.FC = () => {
     const fetchTasks = async () => {
         try {
             const companyId = connectedUser?.companyId || 0;
-            const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1, companyId)
+            const userId = connectedUser?.id || "";
+            const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1, companyId, userId)
             setTaskSummary(fetchedTasks)
+            const myTasks = fetchedTasks.filter(task => task.isAssignedToCurrentUser === true);
+            myTasks?.length > 0 && setSelectedTaskToSwap(myTasks[0]?.taskId); 
             setLoadingTasks(false);
         } catch (err: any) {
             console.error(err.message);
@@ -65,18 +66,19 @@ const EmployeeSwapsPage: React.FC = () => {
             date={currentMonthDate}
             navigateMonth={navigateMonth}
             handleCellClick={handleCellClick}
-            isManagerView={false} />
+            page={CalendarPages.SWAP} />
           }
-          {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}>
-            <TasksList title={'Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleTaskCardClick}/></div>}
-        {isModalOpen && 
+          {taskListByDate.length !== 0 && 
+            <div style={{marginLeft:"1vw"}}>
+                <TasksList title={'Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleTaskCardClick}/>
+            </div>}
+          {isModalOpen && 
             <TaskEmployeesDialog 
-            open={isModalOpen} 
-            setIsModalOpen={setIsModalOpen} 
-            taskId={currentTaskId} 
-            employeesAmount={4} 
-            taskDate={currentTaskDate} taskBalancePoints={currentBalancePoints} />
-        }
+                open={isModalOpen} 
+                setIsModalOpen={setIsModalOpen} 
+                taskId={currentTaskId}
+                taskIdToSwap={selectedTaskToSwap}  />
+          }
         </div>
       );
 };
