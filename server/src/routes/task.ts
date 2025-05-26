@@ -8,7 +8,10 @@ import {
   getBalancePointsByGroupForCurrentMonth,
   getTasksByEmployeeId,
   assignEmployees,
-  getSuggestedEmployees
+  getSuggestedEmployees,
+  getTaskById,
+  getUnassignedTasksAmount,
+  getAvgTasksPerWeek
 } from "../controllers/task";
 
 const router = express.Router();
@@ -162,10 +165,60 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
   const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
 
   try {
-    const newAssiments = await assignEmployees(taskId, taskDate, taskBalancePoints, employeeIds);
+    const newAssiments = await assignEmployees(
+      taskId,
+      taskDate,
+      taskBalancePoints,
+      employeeIds
+    );
     res.status(200).send(newAssiments);
   } catch (err) {
     console.error(err);
+  }
+});
+
+/**
+ * @swagger
+ * /{id}:
+ *   get:
+ *     summary: Retrieve a specific task by ID
+ *     tags: [Task]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the task to retrieve
+ *     responses:
+ *       200:
+ *         description: Task found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: Task not found
+ */
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const taskId = req.query.taskId as string;
+    const task = await getTaskById(taskId);
+
+    if (!task) {
+      return res.status(404).send({ message: "Task not found" });
+    }
+
+    res.status(200).send(task);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: "Failed to retrieve task", error: err });
   }
 });
 
@@ -328,11 +381,13 @@ router.get("/month/", async (req: Request, res: Response) => {
   const { companyId, month } = req.query;
 
   try {
-    res.status(200).send(await getAllTasksByMonth(Number(month), Number(companyId)));
+    res
+      .status(200)
+      .send(await getAllTasksByMonth(Number(month), Number(companyId)));
   } catch (err) {
     res.status(400).send(err);
   }
-})
+});
 
 /**
  * @swagger
@@ -370,6 +425,90 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
   try {
     const suggestedEmployees = await getSuggestedEmployees(taskId);
     res.status(200).send(suggestedEmployees);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+/**
+ * @swagger
+ * /unassignedTasks/company/{companyId}:
+ *   get:
+ *       summary: Retrieve a number of unassigned tasks
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: companyId
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A number
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           404:
+ *              description: Not Found
+ */
+
+router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Response) => {
+  const companyId = req.params.companyId
+  try {
+    const amount = await getUnassignedTasksAmount(+companyId);
+    res.status(200).send(amount);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
+/**
+ * @swagger
+ * /avgPerWeek/company/{companyId}:
+ *   get:
+ *       summary: Retrieve a number avg tasks amount per week
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: companyId
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A number
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           404:
+ *              description: Not Found
+ */
+
+router.get("/avgPerWeek/company/:companyId", async (req: Request, res: Response) => {
+  const companyId = req.params.companyId
+  try {
+    const avg = await getAvgTasksPerWeek(+companyId);
+    res.status(200).send(avg);
   } catch (err) {
     res.status(400).send(err);
   }

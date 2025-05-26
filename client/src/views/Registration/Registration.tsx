@@ -23,6 +23,7 @@ export const Registration: React.FC = () => {
         userLevel: response.userLevel,
         groupId: response.groupId,
         groupName: response.groupName,
+        firstLogin: response.firstLogin,
       });
       navigate("/dashboard");
     } catch (err: any) {
