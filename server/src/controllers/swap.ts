@@ -62,3 +62,23 @@ export const getPendingSwapRequests = async (companyId: number) => {
         console.error(err);
     }
 };
+
+export const getSwapRequestAmount = async (companyId: number) => {
+    try {
+      const result = await db.query(`
+       SELECT COUNT(swap_requests.id) as amount
+        FROM public.swap_requests
+        JOIN public.r_tasks_users ON (r_tasks_users.id = swap_requests.first_r_task_user OR
+            r_tasks_users.id = swap_requests.second_r_task_user)
+        JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+        `, [companyId]
+      );
+
+      const amount: number = result.rows[0];
+      return amount;
+  
+    } catch (err) {
+      console.error(err);
+    }
+  };

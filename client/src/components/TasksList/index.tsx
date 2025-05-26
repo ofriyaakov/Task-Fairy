@@ -10,9 +10,10 @@ interface TaskListProps {
   title: string;
   tasks: TaskDetailsCardType[];
   handleCardClick?: (taskId: string, taskDate?: Date, balancePoints?: number) => void 
+  height?: string;
 }
 
-const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick }) => {
+const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, height='77vh' }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredTasks = tasks.filter((task) =>
@@ -37,7 +38,7 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick }) =
           px: 2,
           pb: 2,
           bgcolor: "rgb(250 250 250)",
-          height: "77vh",
+          height: height,
         }}>
         <TextField
           variant="outlined"

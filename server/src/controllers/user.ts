@@ -1,6 +1,17 @@
 import userModel, { IUser, User } from "../models/user";
 import db from "../config/db";
 import { QueryResult } from "pg";
+import { getGroupByNameAndCompany, addNewGroup } from "./group";
+import { employeeUserLevel } from "../../consts";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_HOST,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 export const getAllUsers = async () => {
   try {
@@ -166,7 +177,10 @@ export const decreaseHolidayCountForUser = async (employeeIds: string[]) => {
   }
 };
 
-export const getAllEmployeesByCompanyIdAndGender = async (companyId: string, gender: string) => {
+export const getAllEmployeesByCompanyIdAndGender = async (
+  companyId: string,
+  gender: string
+) => {
   try {
     let query = `
       SELECT u.*, g.group_name, g.company_id
@@ -176,20 +190,26 @@ export const getAllEmployeesByCompanyIdAndGender = async (companyId: string, gen
       AND u.user_level = 1
     `;
 
-    if(gender !== "Both") {
+    if (gender !== "Both") {
       query += ` AND u.gender = $2`;
     }
 
-    const { rows } = await db.query(query, gender === 'Both' ? [companyId] : [companyId, gender]);
+    const { rows } = await db.query(
+      query,
+      gender === "Both" ? [companyId] : [companyId, gender]
+    );
     console.log("get all employees by company id success:", rows);
     return rows;
   } catch (err) {
     console.error("Error getting employees by company id:", err);
     throw err;
   }
-}
+};
 
-export const increaseBalancePointsForUsers = async (employeeIds: string[], balancePoints: number) => {
+export const increaseBalancePointsForUsers = async (
+  employeeIds: string[],
+  balancePoints: number
+) => {
   try {
     const query = `UPDATE users SET balance_points = balance_points + $1 WHERE user_id = $2 RETURNING *`;
 
@@ -206,13 +226,14 @@ export const increaseBalancePointsForUsers = async (employeeIds: string[], balan
     console.error("Error raising balance points for user:", err);
     throw err;
   }
-}
+};
 
 export const getUserBalancePointsById = async (employeeId: string) => {
   try {
-    const result = await db.query("SELECT balance_points FROM users WHERE user_id = $1", [
-      employeeId,
-    ]);
+    const result = await db.query(
+      "SELECT balance_points FROM users WHERE user_id = $1",
+      [employeeId]
+    );
     if (result.rows.length === 0) {
       throw new Error("User not found 1");
     }
@@ -222,7 +243,7 @@ export const getUserBalancePointsById = async (employeeId: string) => {
     console.error(err);
     throw new Error("User not found 2");
   }
-}
+};
 
 export const getAvgBalancePointsByCompany = async (companyId: number) => {
   try {
@@ -239,6 +260,116 @@ export const getAvgBalancePointsByCompany = async (companyId: number) => {
 
     const companyAvg: number = result.rows[0];
     return companyAvg;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const addNewEmployees = async (
+  employees: User[],
+  company_id: number
+) => {
+  try {
+    const query = `
+      INSERT INTO users (user_id, first_name, last_name, email, gender, group_id, phone_number, user_level, password, balance_points)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *
+    `;
+
+    const success: any[] = [];
+    const failed: { employee: User; reason: string }[] = [];
+
+    for (const employee of employees) {
+      try {
+        console.log("Adding employee:", employee);
+
+        const group = await getGroupByNameAndCompany(
+          employee.group_name,
+          company_id
+        );
+
+        const group_id = group
+          ? group.group_id
+          : (await addNewGroup(employee.group_name, company_id)).group_id;
+
+        console.log("Group added:", group_id);
+
+        employee.group_id = group_id;
+        const firstPassword =
+          employee.email.split("@")[0] + Math.floor(Math.random() * 100);
+
+        const { rows } = await db.query(query, [
+          employee.user_id,
+          employee.first_name,
+          employee.last_name,
+          employee.email,
+          employee.gender,
+          employee.group_id,
+          employee.phone_number,
+          employeeUserLevel,
+          firstPassword,
+          0,
+        ]);
+
+        const insertedUser = rows[0];
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_HOST,
+          to: employee.email,
+          subject: "Welcome to TaskFairy!",
+          text: `Hi ${employee.first_name},\n\nYour account has been successfully created by your manager.\n\nYour temporary password: ${firstPassword}\n\nPlease log in and change your password at taskfairy.todotada.co.il\n\nBest regards,\nTaskFairy Team- Turning your to-dos into ta-das!`,
+        });
+
+        success.push(insertedUser);
+      } catch (err) {
+        console.error(`❌ Failed for ${employee.email}:`, err.message);
+        failed.push({ employee, reason: err.message });
+      }
+    }
+
+    return { success, failed };
+  } catch (err) {
+    console.error("🔥 Fatal error during employee import:", err.message);
+    throw err;
+  }
+};
+
+export const updateUserFirstLogin = async (userId: string, password: string, city: string) => {
+  try {
+    const result = await db.query(
+      `UPDATE users
+        SET
+          first_login = false,
+          password = $2,
+          city = $3
+        WHERE user_id = $1
+        RETURNING *`,
+      [userId, password, city]
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+    const updatedUser: User = result.rows[0];
+    console.log("User first login updated:", updatedUser);
+    return updatedUser;
+  } catch (err) {
+    console.error("Error updating user first login:", err);
+    throw err;
+  }
+};
+
+export const getAssignedEmployeesAmount = async (companyId: number) => {
+  try {
+    const result = await db.query(`
+        SELECT COUNT(DISTINCT r_tasks_users.user_id) as amount
+        FROM public.r_tasks_users
+        JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+      `, [companyId]
+    );
+    const amount: number = result.rows[0];
+    return amount;
   } catch (err) {
     console.error(err);
   }

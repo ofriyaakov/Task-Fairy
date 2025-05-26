@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
-import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById, updateUserById } from "../controllers/user";
+import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById,
+        updateUserById, addNewEmployees, updateUserFirstLogin, getAssignedEmployeesAmount } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
 
@@ -274,5 +275,150 @@ router.get("/points/company/:company_id", async (req: Request, res: Response, ne
 //     next(err);
 //   }
 // });
+
+/**
+ * @swagger
+ * /user/addNewEmployees:
+ *   post:
+ *     summary: Register multiple new employees to a company
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               company_id:
+ *                 type: number
+ *               employees:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/NewEmployee'
+ *     responses:
+ *       200:
+ *         description: Employees added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request or insertion failed
+ */
+
+router.post("/addNewEmployees", async (req: Request, res: Response) => {
+  const { employees, company_id } = req.body;
+
+  try {
+    res.status(200).send(await addNewEmployees(employees, company_id));
+  } catch (err) {
+    console.error("Registration of new employees error:", err);
+
+    res.status(400).json({ message: err.message || "Something went wrong" });
+  }
+});
+
+/**
+ * @swagger
+ * /user/{user_id}/first-login:
+ *   put:
+ *     summary: Complete first login by updating password and city
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: user_id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Missing fields or validation error
+ *       500:
+ *         description: Internal server error
+ */
+
+router.put("/:user_id/first-login", async (req, res) => {
+  try {
+    const userId = req.params.user_id;
+    const { password, city } = req.body;
+
+    if (!password || !city) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const updatedUser = await updateUserFirstLogin(userId, password, city);
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error in first login update", error);
+    res.status(500).json({ message: "Failed to update user info" });
+  }
+});
+
+/**
+ * @swagger
+ * /assignedAmount/company/:companyId:
+ *   get:
+ *       summary: Retrieve amount of assigned empployees by company and month
+ *       tags: [Users]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *          - name: companyId
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *       responses:
+ *           200:
+ *               description: A number
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *           400:
+ *              description: Bad request
+ *           404:
+ *              description: Not Found
+ */
+
+router.get("/assignedAmount/company/:companyId", async (req: Request, res: Response) => {
+    const companyId = req.params.companyId
+      try {
+        const assignedAmount = await getAssignedEmployeesAmount(+companyId);
+        res.status(200).send(assignedAmount);
+      } catch (err) {
+        console.error(err);
+      }
+  }
+);
 
 export default router;
