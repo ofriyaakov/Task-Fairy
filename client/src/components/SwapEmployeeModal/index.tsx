@@ -121,16 +121,29 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
             <BeatLoader />
           </Box>
         ) : (
-          <Grid container spacing={2}>
-            {assignedEmployees.map((employee: employeeDatailsCard, index) => (
-              <Grid item xs={12} md={6} key={index}>
-                <SwapEmployeeDetailsCard
-                  employee={employee}
-                  createSwapRequest={createSwapRequest}
-                />
+          <>            
+            {assignedEmployees.length === 0 ? (
+              <Box sx={{
+                display: "flex",
+                alignItems: "center",
+                minHeight: "200px",
+                flexDirection: "column",
+              }}>
+                <Typography>Couldn't find people assigned to this task</Typography>
+            </Box>
+            ) : (
+              <Grid container spacing={2}>
+                {assignedEmployees.map((employee: employeeDatailsCard, index) => (
+                  <Grid item xs={12} md={6} key={index}>
+                    <SwapEmployeeDetailsCard
+                      employee={employee}
+                      createSwapRequest={createSwapRequest}
+                    />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            )}
+          </>
         )}
       </DialogContent>
 
