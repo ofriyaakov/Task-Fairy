@@ -15,6 +15,8 @@ import RectangleData from "../../components/RectangleData";
 import { APP_COLOR } from "../../theme";
 import { getCompanyAvgBalancePoints, getUserBalancePoints } from "../../queries/user";
 import { BeatLoader } from "react-spinners";
+import FirstLoginPopup from "../../components/FirstLoginPopup";
+import { updateUserFirstLogin } from "../../queries/user";
 import { CalendarPages } from "../../components/Calendar/CalendarSetup";
 
 const ProfilePage: React.FC = () => {
@@ -26,7 +28,8 @@ const ProfilePage: React.FC = () => {
   const [userBalancePoints, setUserBalancePoints] = useState<number>(0);
   const [avgBalancePoints, setAvgBalancePoints] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [firstLoginPopupOpen, setFirstLoginPopupOpen] = useState<boolean>(connectedUser?.firstLogin || false);
+  
   const mapTasksAndfilterByMonth = (
     tasks: TaskDetailsCardType[],
     date: Date
@@ -103,8 +106,30 @@ const ProfilePage: React.FC = () => {
     fetchCompanyAvgBalancePoints();
   }, []);
 
+  const onSubmitFirstLoginPopup = async (user_id: string, password: string, city: string) => {
+    try {
+      if (!connectedUser?.id) throw new Error("User ID not found in context");
+      await updateUserFirstLogin(
+        user_id,
+        password,
+        city,
+      );
+      setFirstLoginPopupOpen(false);
+      toast.success("First login setup completed successfully!");
+    } catch (err: any) {
+      console.error("Error in first login setup:", err.message);
+      toast.error(err.message || "First login setup failed");
+    }
+  };
+
   return (
     <div className= "page-container">
+      {connectedUser?.firstLogin && (
+        <FirstLoginPopup
+          open={firstLoginPopupOpen}
+          onSubmit={onSubmitFirstLoginPopup}
+        />
+      )}
       {loading ?
         <div className="loader-container">
           <BeatLoader color="#36d7b7" loading={loading} size={20} /> 
@@ -130,8 +155,7 @@ const ProfilePage: React.FC = () => {
                 taskSummary={calendarTasks}
                 date={currentMonthDate}
                 navigateMonth={navigateMonth}
-                page={CalendarPages.PROFILE}
-                handleCellClick={() => {}} />
+                page={CalendarPages.PROFILE} />
             </div>
           </div>
 

@@ -1,7 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BalancePoints from "../../components/Dashboard/BalancePoints";
+import RectangleData from './../../components/RectangleData';
+import { useGlobalContext } from "../../contexts/GlobalContext";
+import { getAssignedEmployeesAmount } from './../../queries/user';
+import { getUnassignedTasksAmount, getAvgTasksPerWeek } from './../../queries/task';
+import { getSwapRequestAmount } from './../../queries/swapRequests';
 
 const DashboardPage: React.FC = () => {
+
+  const { connectedUser } = useGlobalContext();
+  const companyId = connectedUser?.companyId || 0
+
+  const [assignedEmployeesAmount, setAssignedEmployeesAmount] = useState(0);
+  const [unassignedTasksAmount, setUnassignedTasksAmount] = useState(0);
+  const [avgTasksPerWeek, setAvgTasksPerWeek] = useState(0);
+  const [swapRequestAmount, setSwapRequestAmount] = useState(0);
+
+  const fetchAssignedEmployeesAmount = async () => {
+      try {
+        const fetchedAmount: number = await getAssignedEmployeesAmount(companyId);
+        setAssignedEmployeesAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
+
+    const fetchUnassignedTasksAmount = async () => {
+      try {
+        const fetchedAmount: number = await getUnassignedTasksAmount(companyId);
+        setUnassignedTasksAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
+
+    const fetchAvgTasksPerWeek = async () => {
+      try {
+        const fetchedAmount: number = await getAvgTasksPerWeek(companyId);
+        setAvgTasksPerWeek(Math.round(fetchedAmount))
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
+
+    const fetchSwapRequestAmount = async () => {
+      try {
+        const fetchedAmount: number = await getSwapRequestAmount(companyId);
+        setSwapRequestAmount(fetchedAmount)
+        return fetchedAmount
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    };
+  
+    useEffect(() => {
+      fetchAssignedEmployeesAmount();
+      fetchUnassignedTasksAmount();
+      fetchAvgTasksPerWeek();
+      fetchSwapRequestAmount();
+    }, [companyId]);
+
   return (
     <div
       className="dashboard-page"
@@ -30,10 +91,10 @@ const DashboardPage: React.FC = () => {
           flexGrow: 0,
         }}
       >
-        <div className="stat-card">Employees have tasks</div>
-        <div className="stat-card">Tasks need to be assigned</div>
-        <div className="stat-card">Avg task per week</div>
-        <div className="stat-card">Swap requests</div>
+        <RectangleData title="Employees have tasks" value={assignedEmployeesAmount} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Tasks need to be assigned" value={unassignedTasksAmount} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Avg task per week" value={avgTasksPerWeek} color="#FFFFFF" width="25%"/>
+        <RectangleData title="Swap requests" value={swapRequestAmount} color="#FFFFFF" width="25%"/>
       </div>
 
       {/* Main Charts Section */}

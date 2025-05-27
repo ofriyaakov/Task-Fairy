@@ -1,6 +1,7 @@
-import userModel, { IUser, User } from "../models/user";
+import userModel, { IUser, User, employeeData } from "../models/user";
 import db from "../config/db";
 import { QueryResult } from "pg";
+import e from "express";
 import { getGroupByNameAndCompany, addNewGroup } from "./group";
 import { employeeUserLevel } from "../../consts";
 import nodemailer from "nodemailer";
@@ -265,6 +266,65 @@ export const getAvgBalancePointsByCompany = async (companyId: number) => {
   }
 };
 
+export const getAllCompanyEmployeesData = async (companyId: number) => {
+  try {
+    const result = await db.query(
+      `SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email, g.group_name, u.balance_points, t.start_time AS last_task_date
+       FROM public.users as u
+       INNER JOIN public.groups as g
+       ON u.group_id = g.group_id
+       LEFT JOIN public.r_tasks_users as ru
+       ON ru.user_id = u.user_id
+       LEFT JOIN public.tasks as t
+       ON t.task_id = ru.task_id
+       AND t.start_time = 
+        (SELECT MAX(start_time) FROM public.tasks AS t2
+         INNER JOIN public.r_tasks_users as ru2
+         ON ru2.user_id = u.user_id
+         AND ru2.task_id = t2.task_id)`
+    );
+
+    const emplyeesData: employeeData[] = result.rows;
+    return emplyeesData.filter(
+      (employee, index, self) =>
+        index === self.findIndex((e) => e.user_id === employee.user_id)
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const removeUserById = async (id: string) => {
+  try {
+    const result = await db.query(
+      `UPDATE public.users SET group_id = NULL WHERE user_id = $1 RETURNING *`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    await db.query(
+      `DELETE FROM public.swap_requests AS s
+      USING public.r_tasks_users AS r
+      WHERE r.user_id = $1
+      AND (s.first_r_task_user = r.id OR s.second_r_task_user = r.id);`,
+      [id]
+    );
+
+    await db.query(
+      `DELETE FROM public.r_tasks_users AS r
+       USING public.tasks AS t
+       WHERE r.task_id = t.task_id
+       AND r.user_id = $1
+       AND t.start_time > NOW() - INTERVAL '1 hour';`,
+      [id]
+    );
+  } catch (err) {
+    console.error(err);
+    throw new Error("User not found");
+  }
+};
 export const addNewEmployees = async (
   employees: User[],
   company_id: number
@@ -281,9 +341,8 @@ export const addNewEmployees = async (
 
     for (const employee of employees) {
       try {
-
         console.log("Adding employee:", employee);
-        
+
         const group = await getGroupByNameAndCompany(
           employee.group_name,
           company_id
@@ -293,8 +352,7 @@ export const addNewEmployees = async (
           ? group.group_id
           : (await addNewGroup(employee.group_name, company_id)).group_id;
 
-          console.log("Group added:", group_id);
-          
+        console.log("Group added:", group_id);
 
         employee.group_id = group_id;
         const firstPassword =
@@ -333,5 +391,46 @@ export const addNewEmployees = async (
   } catch (err) {
     console.error("🔥 Fatal error during employee import:", err.message);
     throw err;
+  }
+};
+
+export const updateUserFirstLogin = async (userId: string, password: string, city: string) => {
+  try {
+    const result = await db.query(
+      `UPDATE users
+        SET
+          first_login = false,
+          password = $2,
+          city = $3
+        WHERE user_id = $1
+        RETURNING *`,
+      [userId, password, city]
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+    const updatedUser: User = result.rows[0];
+    console.log("User first login updated:", updatedUser);
+    return updatedUser;
+  } catch (err) {
+    console.error("Error updating user first login:", err);
+    throw err;
+  }
+};
+
+export const getAssignedEmployeesAmount = async (companyId: number) => {
+  try {
+    const result = await db.query(`
+        SELECT COUNT(DISTINCT r_tasks_users.user_id) as amount
+        FROM public.r_tasks_users
+        JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
+        WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
+      `, [companyId]
+    );
+    const amount: number = result.rows[0];
+    return amount;
+  } catch (err) {
+    console.error(err);
   }
 };

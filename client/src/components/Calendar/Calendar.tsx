@@ -12,7 +12,7 @@ import { calendarMonthView } from "../../consts";
     taskSummary: CalendarTask[],
     date: Date,
     navigateMonth: (date: Date) => void,
-    handleCellClick: (date: string) => void,
+    handleCellClick?: (date: string) => void,
     page: CalendarPages,
   }
 
@@ -37,6 +37,15 @@ export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary =
 export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, page}: MyCalendarProps) => {
   const calendarTasks = taskToCalendarEvents(taskSummary);
 
+  const [selectedDate, setSelectedDate] = React.useState<string>("");
+
+  const handleClick = (date: string) => {
+    if (handleCellClick) {
+      setSelectedDate(date);
+      handleCellClick(date);
+    }
+  };
+
   return (
     <Calendar
       localizer={localizer}
@@ -52,8 +61,9 @@ export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, p
           date={value}
           taskSummary={calendarTasks!!}
           currentMonthDate={date}
-          handleCellClick={handleCellClick}
-          page={page}></CellContent>
+          handleCellClick={handleClick}
+          page={page}
+          selectedDate={selectedDate}></CellContent>
         },
         month: {
           dateHeader: () => null

@@ -21,6 +21,7 @@ export type User = {
   company_name?: string;
   company_id?: number;
   gender?: string;
+  first_login?: boolean;
 }
 
 export interface IUser {
@@ -29,6 +30,16 @@ export interface IUser {
   name: string;
   password: string;
   tokens: string[];
+}
+
+export interface employeeData {
+  user_id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  group_name?: string;
+  balance_points?: number;
+  last_task_date?: string;
 }
 
 export type tUser = Document<unknown, {}, IUser> &
