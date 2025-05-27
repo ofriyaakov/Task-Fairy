@@ -67,10 +67,16 @@ const ManagerSwapsPage: React.FC = () => {
                 rightDetails={swapRequest.rightDetails}
                 swapRequestId={swapRequest.swapRequestId}
                 onApprove={() =>
-                  updateSwapStatus(swapRequest.swapRequestId, "1")
+                  updateSwapStatus(
+                    swapRequest.swapRequestId,
+                    SwapRequestStatus.Approved
+                  )
                 }
                 onReject={() =>
-                  updateSwapStatus(swapRequest.swapRequestId, "3")
+                  updateSwapStatus(
+                    swapRequest.swapRequestId,
+                    SwapRequestStatus.Denied
+                  )
                 }
               />
             </Grid>

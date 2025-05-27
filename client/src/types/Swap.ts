@@ -6,7 +6,11 @@ export interface SwapCardDetails {
   taskStartTime: string;
   taskEndTime: string;
 }
-export type SwapRequestStatus = "1" | "2" | "3";
+export enum SwapRequestStatus {
+    Approved = "1",
+    Pending = "2",
+    Denied = "3",
+  }
 
 export interface SwapRequest {
   leftDetails: SwapCardDetails;
