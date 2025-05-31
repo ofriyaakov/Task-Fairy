@@ -5,15 +5,16 @@ import WcIcon from "@mui/icons-material/Wc";
 import WorkIcon from "@mui/icons-material/Work";
 import StarIcon from "@mui/icons-material/Star";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { TaskSummaryCard as TaskDetailsCardType } from "../../types/Task";
 import dayjs from "dayjs";
+import { ShortenedTaskDetails } from "../../types/Task";
 
 interface TaskDetailsCardProps {
-  task: TaskDetailsCardType;
+  task: ShortenedTaskDetails;
+  isSelected?: boolean;
   handleCardClick?: (taskId: string, taskDate: Date, balancePoints: number) => void 
 }
 
-const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, handleCardClick }) => {
+const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = false, handleCardClick }) => {
   return (
     <Paper
       elevation={0}
@@ -23,7 +24,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, handleCardClick
         borderRadius: 2,
         mb: 2,
         maxWidth: "340px",
-        border: "1px solid rgb(229 229 229)",
+        border: isSelected ? "2px solid black" : "1px solid rgb(229 229 229)",
         height: "130px",
       }}>
       <Grid container>

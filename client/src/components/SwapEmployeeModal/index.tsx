@@ -42,7 +42,9 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   const fetchAssignedEmployees = async () => {
     try {
         const response = await getAssignedEmployeesPerTask(taskId);
-        setAssignedEmployees(response);
+        //TODO - After merging "my swaps" part, add filter to exclude employees the connected user has swap request with
+        const filteredAssignees = response.filter((employee: employeeDatailsCard) => employee.user_id !== connectedUser?.id);
+        setAssignedEmployees(filteredAssignees);
         setIsLoading(false);
     } catch (error) {
         console.error("Error fetching assigned employees:", error);

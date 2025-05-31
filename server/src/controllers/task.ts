@@ -179,6 +179,7 @@ export const getTasksByEmployeeId = async (employeeId: string) => {
       endTime: task.end_time,
       balancePoints: task.balance_points,
       gender: task.gender,
+      taskId: task.task_id,
     }));
 
     return formattedTasks;

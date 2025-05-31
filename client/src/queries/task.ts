@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
+import { ShortenedTaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -46,7 +46,7 @@ export const getAllSavedTasks = async () => {
 
 export const getEmployeeTasks = async (employeeId: string) => {
   try {
-    const employeeTasks = (
+    const employeeTasks: ShortenedTaskDetails[] = (
       await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
     ).data;
     return employeeTasks;

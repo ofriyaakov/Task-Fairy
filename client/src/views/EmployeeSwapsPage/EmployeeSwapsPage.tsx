@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MyCalendar } from '../../components/Calendar/Calendar';
-import { CalendarTask } from '../../types/Task';
-import { getAllTasksByMonth } from '../../queries/task';
+import { CalendarTask, ShortenedTaskDetails } from '../../types/Task';
+import { getAllTasksByMonth, getEmployeeTasks } from '../../queries/task';
 import TasksList from './../../components/TasksList'
 import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
@@ -13,6 +13,7 @@ const EmployeeSwapsPage: React.FC = () => {
 
     const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
     const [taskSummary, setTaskSummary] = useState<CalendarTask[]>([]);
+    const [myTasks, setMyTasks] = useState<ShortenedTaskDetails[]>([]);
     const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
     const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -21,9 +22,13 @@ const EmployeeSwapsPage: React.FC = () => {
       
     const { connectedUser } = useGlobalContext();
 
-    const handleTaskCardClick = (taskId: string) => {
+    const handleOtherTaskCardClick = (taskId: string) => {
         setCurrentTaskId(taskId)
         setIsModalOpen(true)
+    };
+
+    const handleMyTaskCardClick = (taskId: string) => {
+        setSelectedTaskToSwap(taskId)
     };
     
     const handleCellClick = (date: string) => {
@@ -42,8 +47,6 @@ const EmployeeSwapsPage: React.FC = () => {
             const userId = connectedUser?.id || "";
             const fetchedTasks: CalendarTask[] = await getAllTasksByMonth(currentMonthDate.getMonth() + 1, companyId, userId)
             setTaskSummary(fetchedTasks)
-            const myTasks = fetchedTasks.filter(task => task.isAssignedToCurrentUser === true);
-            myTasks?.length > 0 && setSelectedTaskToSwap(myTasks[0]?.taskId); 
             setLoadingTasks(false);
         } catch (err: any) {
             console.error(err.message);
@@ -52,10 +55,25 @@ const EmployeeSwapsPage: React.FC = () => {
             setLoadingTasks(false);
         }
     }
+
+    const fetchMyTasks = async () => {
+        try {
+          const employeeId = connectedUser?.id;
+          if (!employeeId) throw new Error("User ID not found in context");
+    
+          const fetchedemployeeTasks: ShortenedTaskDetails[] = await getEmployeeTasks(employeeId);
+          setMyTasks(fetchedemployeeTasks);
+        } catch (err: any) {
+          console.error(err.message);
+          toast.error("Oops! We couldent fetch your tasks");
+          setMyTasks([]);
+        }
+      };
     
     useEffect(() => {
         setLoadingTasks(true);
         fetchTasks();
+        fetchMyTasks();
     }, [currentMonthDate]);
 
     return (
@@ -68,9 +86,13 @@ const EmployeeSwapsPage: React.FC = () => {
             handleCellClick={handleCellClick}
             page={CalendarPages.SWAP} />
           }
+          {myTasks.length !== 0 && 
+            <div style={{marginLeft:"1vw", height: "100%"}}>
+                <TasksList title={'My Tasks'} tasks={myTasks} height='52vh' handleCardClick={handleMyTaskCardClick}/>
+            </div>}
           {taskListByDate.length !== 0 && 
-            <div style={{marginLeft:"1vw"}}>
-                <TasksList title={'Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleTaskCardClick}/>
+            <div style={{marginLeft:"1vw", height: "100%"}}>
+                <TasksList title={'Others Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleOtherTaskCardClick}/>
             </div>}
           {isModalOpen && 
             <TaskEmployeesDialog 

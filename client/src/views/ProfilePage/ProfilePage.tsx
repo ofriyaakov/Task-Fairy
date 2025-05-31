@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import TasksList from "../../components/TasksList";
 import {
   CalendarTask,
-  TaskSummaryCard as TaskDetailsCardType,
+  ShortenedTaskDetails,
 } from "../../types/Task";
 import { useEffect, useState } from "react";
 import { getEmployeeTasks } from "../../queries/task";
@@ -22,7 +22,7 @@ import { CalendarPages } from "../../components/Calendar/CalendarSetup";
 const ProfilePage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
 
-  const [employeeTasks, setemployeeTasks] = useState<TaskDetailsCardType[]>([]);
+  const [employeeTasks, setemployeeTasks] = useState<ShortenedTaskDetails[]>([]);
   const [calendarTasks, setCalendarTasks] = useState<CalendarTask[]>([]);
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
   const [userBalancePoints, setUserBalancePoints] = useState<number>(0);
@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
   const [firstLoginPopupOpen, setFirstLoginPopupOpen] = useState<boolean>(connectedUser?.firstLogin || false);
   
   const mapTasksAndfilterByMonth = (
-    tasks: TaskDetailsCardType[],
+    tasks: ShortenedTaskDetails[],
     date: Date
   ) => {
     const calendarTask: CalendarTask[] = tasks
@@ -56,7 +56,7 @@ const ProfilePage: React.FC = () => {
       const employeeId = connectedUser?.id;
       if (!employeeId) throw new Error("User ID not found in context");
 
-      const fetchedemployeeTasks: TaskDetailsCardType[] =
+      const fetchedemployeeTasks: ShortenedTaskDetails[] =
         await getEmployeeTasks(employeeId);
       setemployeeTasks(fetchedemployeeTasks);
       mapTasksAndfilterByMonth(fetchedemployeeTasks, currentMonthDate);
