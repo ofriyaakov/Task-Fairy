@@ -2,9 +2,11 @@ import db from "../config/db";
 import { RawSwapRequest, SwapRequestPayload } from './../models/swap'
 
 export const getPendingSwapRequests = async (companyId: number) => {
-    try {
-        const result = await db.query(`
-        SELECT first_swap_info.first_user_id,
+  try {
+    const result = await db.query(
+      `
+        SELECT first_swap_info.id as swap_request_id,
+            first_swap_info.first_user_id,
             first_swap_info.first_user_first_name,
             first_swap_info.first_user_last_name,
             first_swap_info.first_task_name,
@@ -17,7 +19,8 @@ export const getPendingSwapRequests = async (companyId: number) => {
             tasks.start_time second_task_start_time,
             tasks.end_time second_task_end_time
         FROM (
-            SELECT swap_requests.first_r_task_user,
+            SELECT  swap_requests.id,
+                swap_requests.first_r_task_user,
                 users.user_id first_user_id, 
                 users.first_name first_user_first_name,
                 users.last_name first_user_last_name,
@@ -34,46 +37,51 @@ export const getPendingSwapRequests = async (companyId: number) => {
         JOIN public.swap_requests second_swap ON second_swap.second_r_task_user = first_swap_info.second_r_task_user
         JOIN public.users ON users.user_id = r_tasks_users.user_id
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
-        `, [companyId]);
+        `,
+      [companyId]
+    );
 
-        const swapRequests: RawSwapRequest[] = result.rows;
-        const formatedSwapRequests = swapRequests.map((rawSwapRequest) => {
-            return {
-                leftDetails: {
-                    employeeId: rawSwapRequest.first_user_id,
-                    employeeFirstName: rawSwapRequest.first_user_first_name,
-                    employeeLastName: rawSwapRequest.first_user_last_name,
-                    taskName: rawSwapRequest.first_task_name,
-                    taskStartTime: rawSwapRequest.first_task_start_time,
-                    taskEndTime: rawSwapRequest.first_task_end_time,
-                },
-                rightDetails: {
-                    employeeId: rawSwapRequest.second_user_id,
-                    employeeFirstName: rawSwapRequest.second_user_first_name,
-                    employeeLastName: rawSwapRequest.second_user_last_name,
-                    taskName: rawSwapRequest.second_task_name,
-                    taskStartTime: rawSwapRequest.second_task_start_time,
-                    taskEndTime: rawSwapRequest.second_task_end_time,
-                }
-            };
-        });
-        return formatedSwapRequests;
-    } catch (err) {
-        console.error(err);
-    }
+    const swapRequests: RawSwapRequest[] = result.rows;
+    const formatedSwapRequests = swapRequests.map((rawSwapRequest) => {
+      return {
+        leftDetails: {
+          employeeId: rawSwapRequest.first_user_id,
+          employeeFirstName: rawSwapRequest.first_user_first_name,
+          employeeLastName: rawSwapRequest.first_user_last_name,
+          taskName: rawSwapRequest.first_task_name,
+          taskStartTime: rawSwapRequest.first_task_start_time,
+          taskEndTime: rawSwapRequest.first_task_end_time,
+        },
+        rightDetails: {
+          employeeId: rawSwapRequest.second_user_id,
+          employeeFirstName: rawSwapRequest.second_user_first_name,
+          employeeLastName: rawSwapRequest.second_user_last_name,
+          taskName: rawSwapRequest.second_task_name,
+          taskStartTime: rawSwapRequest.second_task_start_time,
+          taskEndTime: rawSwapRequest.second_task_end_time,
+        },
+        swapRequestId: rawSwapRequest.swap_request_id,
+      };
+    });
+    return formatedSwapRequests;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const getSwapRequestAmount = async (companyId: number) => {
-    try {
-      const result = await db.query(`
+  try {
+    const result = await db.query(
+      `
        SELECT COUNT(swap_requests.id) as amount
         FROM public.swap_requests
         JOIN public.r_tasks_users ON (r_tasks_users.id = swap_requests.first_r_task_user OR
             r_tasks_users.id = swap_requests.second_r_task_user)
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
-        `, [companyId]
-      );
+        `,
+      [companyId]
+    );
 
       const amount: number = result.rows[0];
       return amount;
