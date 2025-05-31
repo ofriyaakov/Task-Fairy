@@ -62,7 +62,11 @@ const EmployeeSwapsPage: React.FC = () => {
           if (!employeeId) throw new Error("User ID not found in context");
     
           const fetchedemployeeTasks: ShortenedTaskDetails[] = await getEmployeeTasks(employeeId);
-          setMyTasks(fetchedemployeeTasks);
+          const futureTasks = fetchedemployeeTasks.filter((task: ShortenedTaskDetails) => {
+            const taskStartTime = new Date(task.startTime);
+            return taskStartTime >= new Date();
+          })
+          setMyTasks(futureTasks);
         } catch (err: any) {
           console.error(err.message);
           toast.error("Oops! We couldent fetch your tasks");
@@ -73,8 +77,11 @@ const EmployeeSwapsPage: React.FC = () => {
     useEffect(() => {
         setLoadingTasks(true);
         fetchTasks();
-        fetchMyTasks();
     }, [currentMonthDate]);
+
+    useEffect(() => {
+        fetchMyTasks();
+    }, []);
 
     return (
         <div className='App' style={{ height: "60vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>

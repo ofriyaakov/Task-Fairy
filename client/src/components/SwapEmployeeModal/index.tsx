@@ -36,7 +36,6 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   const [assignedEmployees, setAssignedEmployees] = useState<employeeDatailsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log("Task ID to swap:", taskIdToSwap);
   const { connectedUser } = useGlobalContext();
 
   const fetchAssignedEmployees = async () => {

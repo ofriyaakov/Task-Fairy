@@ -89,8 +89,7 @@ export const getSwapRequestAmount = async (companyId: number) => {
     } catch (err) {
       console.error(err);
     }
-  };
-
+};
 
 export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
     try {
@@ -119,4 +118,23 @@ export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
         console.error(err);
         throw err;
     }
+};
+
+export const updateSwapRequestStatus = async (
+  swapId: string,
+  status: number
+) => {
+  try {
+    const result = await db.query(
+      `
+        UPDATE public.swap_requests 
+        SET status_id = $1
+        WHERE id = $2;`,
+      [status, swapId]
+    );
+
+    return result.rows[0];
+  } catch (err) {
+    console.error(err);
+  }
 };
