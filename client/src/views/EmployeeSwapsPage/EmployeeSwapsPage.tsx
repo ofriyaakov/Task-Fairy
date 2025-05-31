@@ -106,7 +106,8 @@ const EmployeeSwapsPage: React.FC = () => {
                 open={isModalOpen} 
                 setIsModalOpen={setIsModalOpen} 
                 taskId={currentTaskId}
-                taskIdToSwap={selectedTaskToSwap}  />
+                taskIdToSwap={selectedTaskToSwap}
+                isSwapDisabled={!selectedTaskToSwap} />
           }
         </div>
       );

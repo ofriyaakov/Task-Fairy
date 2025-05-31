@@ -25,13 +25,15 @@ interface AssigneesDialogProps {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   taskId: string;
   taskIdToSwap: string;
+  isSwapDisabled: boolean;
 }
 
 const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   open,
   setIsModalOpen,
   taskId,
-  taskIdToSwap
+  taskIdToSwap,
+  isSwapDisabled
 }) => {
   const [assignedEmployees, setAssignedEmployees] = useState<employeeDatailsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -63,21 +65,25 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   };
 
   const createSwapRequest = async (userId: string) => {
-    try {
-        const swapRequest: SwapRequestPayload = {
-            requestingUserId: connectedUser?.id!!,
-            requestingTaskId: taskIdToSwap,
-            requestedUserId: userId,
-            requestedTaskId: taskId,
-            date: new Date(),
-        };
+    if (isSwapDisabled) {
+      toast.error("You need to choose task to swap first")
+    } else {
+        try {
+            const swapRequest: SwapRequestPayload = {
+                requestingUserId: connectedUser?.id!!,
+                requestingTaskId: taskIdToSwap,
+                requestedUserId: userId,
+                requestedTaskId: taskId,
+                date: new Date(),
+            };
 
-        await createNewSwapRequest(swapRequest);
-        toast.success("Swap request created successfully");
-        setIsModalOpen(false);
-    } catch (err: any) {
-        console.error(err.message);
-        toast.error("Oops! Something went wrong");
+            await createNewSwapRequest(swapRequest);
+            toast.success("Swap request created successfully");
+            setIsModalOpen(false);
+        } catch (err: any) {
+            console.error(err.message);
+            toast.error("Oops! Something went wrong");
+        }
     }
   };
 
@@ -88,7 +94,7 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
       fullWidth
       PaperProps={{
         style: {
-          backgroundColor: "white",
+          backgroundColor: APP_COLOR.WHITE,
           borderRadius: "12px",
           padding: "16px",
           width: "860px",
@@ -109,7 +115,18 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
       </DialogTitle>
 
       <Divider sx={{ mb: 3 }} style={{ backgroundColor: "rgb(251 251 251)" }} />
-
+      {isSwapDisabled &&
+        <Typography
+          variant='h5'
+          align='center'
+          sx={{
+            fontWeight: 400,
+            fontSize: 20,
+            mb: 1,
+          }}>
+            Select one of your tasks that you would like to swap
+        </Typography>
+      }
       <DialogContent>
         {isLoading ? (
           <Box
@@ -139,6 +156,7 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
                     <SwapEmployeeDetailsCard
                       employee={employee}
                       createSwapRequest={createSwapRequest}
+                      isSwapDisabled={isSwapDisabled}
                     />
                   </Grid>
                 ))}
@@ -161,9 +179,9 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
           style={{
             width: "150px",
             height: "40.8px",
-            backgroundColor: "white",
-            color: "rgb(69 123 157)",
-            border: "1px solid rgb(69 123 157)",
+            backgroundColor: APP_COLOR.WHITE,
+            color: APP_COLOR.CERULEAN_BLUE,
+            border: `1px solid ${APP_COLOR.CERULEAN_BLUE}`,
             marginRight: "20px",
             marginLeft: "20px",
             textTransform: "none",

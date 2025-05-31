@@ -11,11 +11,13 @@ import { APP_COLOR } from '../../theme';
 
 interface SwapEmployeeDetailsCardProps {
     employee: employeeDatailsCard;
+    isSwapDisabled: boolean;
     createSwapRequest: (userId: string) => void;
 }
 
 const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
     employee,
+    isSwapDisabled,
     createSwapRequest,
 }) => {
 
@@ -24,7 +26,7 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
             badgeContent="Request Swap" 
             overlap="rectangular" 
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            onClick={() => createSwapRequest(employee.user_id)}
+            onClick={() => !isSwapDisabled && createSwapRequest(employee.user_id)}
             sx={{
                 display: "inline-block",
                 "& .MuiBadge-badge": {
@@ -36,12 +38,13 @@ const SwapEmployeeDetailsCard: React.FC<SwapEmployeeDetailsCardProps> = ({
                   minWidth: "24px",
                   height: "24px",
                   borderRadius: "12px",
-                  padding: "0 6px",
-                  backgroundColor: '#87B7FF',//`${APP_COLOR.ROYAL_BLUE}`,
+                  padding: "10px 10px",
+                  color: isSwapDisabled ? APP_COLOR.BLACK : APP_COLOR.WHITE,
+                  backgroundColor: isSwapDisabled ? APP_COLOR.PLATINUM_GREY : APP_COLOR.CERULEAN_BLUE,
                   boxShadow: "0 0 6px rgba(0, 0, 0, 0.2)",
 
                   '&:hover': {
-                    backgroundColor: 'rgba(88, 145, 211, 0.27)',
+                    backgroundColor: isSwapDisabled ? APP_COLOR.PLATINUM_GREY :'#7B9DB9',
                     cursor: 'pointer'
                   }
                 }
