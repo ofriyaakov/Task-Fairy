@@ -330,37 +330,4 @@ router.post("/:swapId/status", async (req: Request, res: Response) => {
   }
 });
 
-
-/**
- * @swagger
- * /:
- *   post:
- *       summary: Create a new swap request
- *       tags: [swap-requests]
- *       security:
- *           - bearerAuth: []
- *       responses:
- *           201:
- *               description: An object of swap request
- *               content:
- *                   application/json:
- *                      schema:
- *                          type: array
- *                          items:
- *                              $ref: '#/components/schemas/swap-requests'
- *           400:
- *              description: Bad request
- *           401:
- *              description: Unauthorized - invalid or missing token
- */
-
-router.post("/", async (req: Request, res: Response) => {
-    const { swapRequest } = req.body;
-    try {
-        res.status(201).send(await addSwapRequest(swapRequest));
-    } catch (err) {
-        res.status(400).send(err);
-    }
-});
-
 export default router;

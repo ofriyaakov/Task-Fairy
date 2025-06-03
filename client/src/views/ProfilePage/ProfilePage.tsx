@@ -39,8 +39,6 @@ const ProfilePage: React.FC = () => {
         return {
           ...task,
           date: new Date(task.startTime).toISOString().split("T")[0],
-          employeesAmount: -1,
-          assignedEmployeesAmount: -1,
           isAssignedToCurrentUser: true,
         };
       })

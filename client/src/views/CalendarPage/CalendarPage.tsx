@@ -27,11 +27,11 @@ const CalendarPage: React.FC = () => {
     setTaskListByDate(tasksByDate)
   };
 
-  const handleTaskCardClick = (taskId: string, taskDate: Date, balancePoints: number) => {
+  const handleTaskCardClick = (taskId: string, taskDate?: Date, balancePoints?: number) => {
     setCurrentTaskId(taskId)
     setIsModalOpen(true)
-    setCurrentTaskDate(taskDate)
-    setCurrentBalancePoints(balancePoints)
+    setCurrentTaskDate(taskDate!!)
+    setCurrentBalancePoints(balancePoints!!)
   };
 
   const navigateMonth = (date: Date) => {
