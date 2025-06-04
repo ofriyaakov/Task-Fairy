@@ -397,8 +397,6 @@ router.delete(
     }
   }
 );
- *         description: Bad request or insertion failed
- */
 
 router.post("/addNewEmployees", async (req: Request, res: Response) => {
   const { employees, company_id } = req.body;

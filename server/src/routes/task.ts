@@ -173,7 +173,7 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
     );
     res.status(200).send(newAssiments);
   } catch (err) {
-    console.error(err);
+    res.status(400).send(err);
   }
 });
 
