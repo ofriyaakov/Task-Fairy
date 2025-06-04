@@ -145,10 +145,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
             {suggestedEmployees.map((employee: employeeDatailsCard, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <EmployeeDetailsCard
+                  mode="suggestion"
                   employee={employee}
                   handleApproveEmployee={handleApproveEmployee}
                   handleRemoveEmployee={handleRemoveEmployee}
-                  isDisable={isEnoughEmployees}
+                  isDisabled={isEnoughEmployees}
                 />
               </Grid>
             ))}

@@ -15,10 +15,10 @@ import { getAssignedEmployeesPerTask } from "./../../queries/task";
 import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
-import SwapEmployeeDetailsCard from "../SwapEmployeeDetailsCard";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { SwapRequestPayload } from "../../types/Swap";
 import { createNewSwapRequest } from "../../queries/swapRequests";
+import EmployeeDetailsCard from "../EmployeeDetailsCard";
 
 interface AssigneesDialogProps {
   open: boolean;
@@ -153,10 +153,11 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
               <Grid container spacing={2}>
                 {assignedEmployees.map((employee: employeeDatailsCard, index) => (
                   <Grid item xs={12} md={6} key={index}>
-                    <SwapEmployeeDetailsCard
+                    <EmployeeDetailsCard
+                      mode="swap"
                       employee={employee}
                       createSwapRequest={createSwapRequest}
-                      isSwapDisabled={isSwapDisabled}
+                      isDisabled={isSwapDisabled}
                     />
                   </Grid>
                 ))}
