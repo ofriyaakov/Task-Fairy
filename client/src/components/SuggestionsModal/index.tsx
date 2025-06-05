@@ -214,7 +214,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
               justifyContent: "center",
             }}
           >
-            <h4>Loading assigned employees and...</h4>
+            <h4>Loading assigned employees and suggestions...</h4>
             <BeatLoader />
           </Box>
         ) : (
