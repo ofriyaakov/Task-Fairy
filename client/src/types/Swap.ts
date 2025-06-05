@@ -11,3 +11,7 @@ export interface SwapRequest {
     leftDetails: SwapCardDetails;
     rightDetails: SwapCardDetails;
 }
+
+export interface FullSwapRequest extends SwapRequest {
+    status: string
+}

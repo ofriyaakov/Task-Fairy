@@ -11,6 +11,7 @@ interface SwapDetailsProps {
 interface SwapRequestCardProps {
   leftDetails: SwapCardDetails;
   rightDetails: SwapCardDetails;
+  backgroundColor?: string;
 }
 
 const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask }) => {
@@ -48,6 +49,7 @@ const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask }) => {
 const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
   leftDetails,
   rightDetails,
+  backgroundColor = 'rgb(255 255 255)'
 }) => {
   const isSameTask = leftDetails.taskName === rightDetails.taskName;
 
@@ -60,6 +62,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         width: "92%",
         border: "1px solid rgb(229 229 229)",
         height: "135px",
+        backgroundColor: backgroundColor
       }}
     >
       {isSameTask ? (
