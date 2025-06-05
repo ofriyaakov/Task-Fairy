@@ -397,8 +397,40 @@ router.delete(
     }
   }
 );
+/**
+ * @swagger
+ * /user/addNewEmployees:
+ *   post:
+ *     summary: Register multiple new employees to a company
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               company_id:
+ *                 type: number
+ *               employees:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/NewEmployee'
+ *     responses:
+ *       200:
+ *         description: Employees added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
  *         description: Bad request or insertion failed
  */
+
 
 router.post("/addNewEmployees", async (req: Request, res: Response) => {
   const { employees, company_id } = req.body;
