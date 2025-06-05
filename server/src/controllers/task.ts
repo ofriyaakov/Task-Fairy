@@ -6,12 +6,16 @@ import {
   RawTaskWithUserId,
 } from "../models/task";
 import { User } from "../models/user";
-import { getAllEmployeesByCompanyIdAndGender } from "./user";
+import {
+  decreaseHolidayCountForUser,
+  getAllEmployeesByCompanyIdAndGender,
+} from "./user";
 import { City } from "country-state-city";
 import haversine from "haversine-distance";
 import {
   increaseHolidayCountForUser,
   increaseBalancePointsForUsers,
+  decreaseBalancePointsForUsers,
 } from "./user";
 import { isHolidayOrSaturday } from "../utils/help";
 import { officeTitle } from "../../consts";
@@ -89,6 +93,40 @@ export const assignEmployees = async (
 
     // Increase balance points for each employee assigned to the task
     await increaseBalancePointsForUsers(employeeIds, taskBalancePoints);
+
+    employeeIds.forEach(async (id) => {
+      const { rows } = await db.query(query, [taskId, id]);
+      returnRows.push(rows);
+    });
+
+    return returnRows;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const unassignEmployees = async (
+  taskId: string,
+  taskDate: Date,
+  taskBalancePoints: number,
+  employeeIds: string[]
+) => {
+  try {
+    const query = `
+        DELETE FROM public.r_tasks_users
+        WHERE task_id = $1 AND user_id = $2
+        RETURNING *
+      `;
+
+    const returnRows = [];
+
+    // Increase holiday count for each employee assigned to the task
+    if (isHolidayOrSaturday(taskDate)) {
+      await decreaseHolidayCountForUser(employeeIds);
+    }
+
+    // Increase balance points for each employee assigned to the task
+    await decreaseBalancePointsForUsers(employeeIds, taskBalancePoints);
 
     employeeIds.forEach(async (id) => {
       const { rows } = await db.query(query, [taskId, id]);
@@ -396,6 +434,9 @@ export const getSuggestedEmployees = async (taskId: string) => {
   };
 
   const taskDetails = await getTaskDetails(taskId);
+  const assignedEmployees = await getAssignedEmployees(taskId);
+  const assignedUserIds = new Set(assignedEmployees.map((e) => e.user_id));
+
   const taskDate = new Date(taskDetails.start_time);
   const taskGender = taskDetails.gender;
   const taskLocation = taskDetails.location;
@@ -409,12 +450,16 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
   let balancePointsByGroup = allEmployees.reduce(
     (acc: { [key: string]: number }, employee) => {
-      if (employee.group_id) {
-        if (!acc[employee.group_id]) {
-          acc[employee.group_id] = 1;
-        }
-        acc[employee.group_id] += employee.balance_points;
-      }
+      const groupId = employee.group_id;
+      if (!groupId) return acc;
+
+      const adjustedPoints =
+        employee.balance_points -
+        (assignedUserIds.has(employee.user_id)
+          ? taskDetails.balance_points
+          : 0);
+
+      acc[groupId] = (acc[groupId] || 0) + adjustedPoints;
       return acc;
     },
     {}
@@ -422,7 +467,13 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
   let employeeBalancePointValues = allEmployees.reduce(
     (acc: { [key: string]: number }, employee) => {
-      acc[employee.user_id] = 1 + employee.balance_points;
+      const adjustedPoints =
+        employee.balance_points -
+        (assignedUserIds.has(employee.user_id)
+          ? taskDetails.balance_points
+          : 0);
+
+      acc[employee.user_id] = 1 + adjustedPoints;
       return acc;
     },
     {}
@@ -547,12 +598,22 @@ export const getSuggestedEmployees = async (taskId: string) => {
     };
   });
 
-  return topEmployees;
+  const topEmployeeIds = new Set(topEmployees.map((e) => e.user_id));
+
+  const otherEmployees = allEmployees
+    .filter((e) => !topEmployeeIds.has(e.user_id))
+    .map((e) => ({
+      ...e,
+      score: null,
+    }));
+
+  return [...topEmployees, ...otherEmployees];
 };
 
 export const getUnassignedTasksAmount = async (companyId: number) => {
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT (
         SELECT SUM(employees_amount)
         FROM public.tasks
@@ -563,11 +624,11 @@ export const getUnassignedTasksAmount = async (companyId: number) => {
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
       ) as amount 
-      `, [companyId]
+      `,
+      [companyId]
     );
     const amount: number = result.rows[0];
     return amount;
-
   } catch (err) {
     console.error(err);
   }
@@ -575,18 +636,47 @@ export const getUnassignedTasksAmount = async (companyId: number) => {
 
 export const getAvgTasksPerWeek = async (companyId: number) => {
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT AVG(tasks_amount_by_week)
       FROM (
         SELECT COUNT(task_id) AS tasks_amount_by_week
         FROM public.tasks
         WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
         GROUP BY DATE_TRUNC('week', start_time)
-      )`, [companyId]
+      )`,
+      [companyId]
     );
     const avg: number = result.rows[0];
     return avg;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
+export const getAssignedEmployees = async (taskId: string) => {
+  try {
+    const result = await db.query(
+      `SELECT u.user_id, u.first_name, u.last_name, u.email, g.group_name, u.balance_points, u.city, u.gender
+       FROM public.r_tasks_users rtu
+       JOIN public.users u ON rtu.user_id = u.user_id
+       JOIN public.groups g ON u.group_id = g.group_id
+       WHERE rtu.task_id = $1`,
+      [taskId]
+    );
+
+    const assignedEmployees: User[] = result.rows;
+
+    return assignedEmployees.map((employee) => ({
+      user_id: employee.user_id,
+      first_name: employee.first_name,
+      last_name: employee.last_name,
+      email: employee.email,
+      group_name: employee.group_name,
+      balance_points: employee.balance_points,
+      city: employee.city,
+      gender: employee.gender,
+    }));
   } catch (err) {
     console.error(err);
   }

@@ -33,6 +33,27 @@ export const assignEmployees = async (
   }
 };
 
+export const unassignEmployees = async (
+  taskId: string,
+  employeeIds: string[],
+  taskDate: Date,
+  taskBalancePoints: number
+) => {
+  try {
+    const response = await axiosInstance.post(`${TASK_ROUTE}/unassignEmployees`, {
+      taskId,
+      employeeIds,
+      taskDate,
+      taskBalancePoints,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "failed to unassign employees"
+    );
+  }
+};
+
 export const getAllSavedTasks = async () => {
   try {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
@@ -107,6 +128,19 @@ export const getSuggestedEmployees = async (taskId: string) => {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch suggested employees failed"
+    );
+  }
+};
+
+export const getAssignedEmployees = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assignedEmployees/?taskId=${taskId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch assigned employees failed"
     );
   }
 };
