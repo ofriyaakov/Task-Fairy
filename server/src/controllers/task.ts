@@ -112,14 +112,6 @@ export const unassignEmployees = async (
   employeeIds: string[]
 ) => {
   try {
-    const query = `
-        DELETE FROM public.r_tasks_users
-        WHERE task_id = $1 AND user_id = $2
-        RETURNING *
-      `;
-
-    const returnRows = [];
-
     // Increase holiday count for each employee assigned to the task
     if (isHolidayOrSaturday(taskDate)) {
       await decreaseHolidayCountForUser(employeeIds);
@@ -128,12 +120,17 @@ export const unassignEmployees = async (
     // Increase balance points for each employee assigned to the task
     await decreaseBalancePointsForUsers(employeeIds, taskBalancePoints);
 
-    employeeIds.forEach(async (id) => {
-      const { rows } = await db.query(query, [taskId, id]);
-      returnRows.push(rows);
-    });
+    // Delete all in a single query
+    const { rows } = await db.query(
+      `
+      DELETE FROM public.r_tasks_users
+      WHERE task_id = $1 AND user_id = ANY($2)
+      RETURNING *
+      `,
+      [taskId, employeeIds]
+    );
 
-    return returnRows;
+    return rows;
   } catch (e) {
     console.error(e);
   }
@@ -667,16 +664,7 @@ export const getAssignedEmployees = async (taskId: string) => {
 
     const assignedEmployees: User[] = result.rows;
 
-    return assignedEmployees.map((employee) => ({
-      user_id: employee.user_id,
-      first_name: employee.first_name,
-      last_name: employee.last_name,
-      email: employee.email,
-      group_name: employee.group_name,
-      balance_points: employee.balance_points,
-      city: employee.city,
-      gender: employee.gender,
-    }));
+    return assignedEmployees;
   } catch (err) {
     console.error(err);
   }

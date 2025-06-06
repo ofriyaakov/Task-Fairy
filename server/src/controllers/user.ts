@@ -234,14 +234,20 @@ export const decreaseBalancePointsForUsers = async (
   balancePoints: number
 ) => {
   try {
-    const query = `UPDATE users SET balance_points = balance_points - $1 WHERE user_id = $2 RETURNING *`;
+    const query = `
+      UPDATE users
+      SET balance_points = balance_points - $1
+      WHERE user_id = $2
+      RETURNING *
+    `;
 
-    const returnRows = [];
+    const results = await Promise.all(
+      employeeIds.map((id) =>
+        db.query(query, [balancePoints, id])
+      )
+    );
 
-    employeeIds.forEach(async (id) => {
-      const { rows } = await db.query(query, [balancePoints, id]);
-      returnRows.push(rows);
-    });
+    const returnRows = results.flatMap(({ rows }) => rows);
 
     console.log("User balance points decreased:", returnRows);
     return returnRows;
