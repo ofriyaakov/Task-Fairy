@@ -90,14 +90,15 @@ export const assignEmployees = async (
     // Increase balance points for each employee assigned to the task
     await increaseBalancePointsForUsers(employeeIds, taskBalancePoints);
 
-    employeeIds.forEach(async (id) => {
+    for (const id of employeeIds) {
       const { rows } = await db.query(query, [taskId, id]);
       returnRows.push(rows);
-    });
+    };
 
     return returnRows;
   } catch (e) {
     console.error(e);
+    throw e;
   }
 };
 
