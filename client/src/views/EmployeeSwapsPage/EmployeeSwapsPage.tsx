@@ -94,11 +94,11 @@ const EmployeeSwapsPage: React.FC = () => {
             page={CalendarPages.SWAP} />
           }
           {myTasks.length !== 0 && 
-            <div style={{marginLeft:"1vw", height: "100%"}}>
+            <div style={{marginLeft:"1vw", height: "100%",width: "500px"}}>
                 <TasksList title={'My Tasks'} tasks={myTasks} height='52vh' handleCardClick={handleMyTaskCardClick}/>
             </div>}
           {taskListByDate.length !== 0 && 
-            <div style={{marginLeft:"1vw", height: "100%"}}>
+            <div style={{marginLeft:"1vw", height: "100%",width: "500px"}}>
                 <TasksList title={'Others Tasks'} tasks={taskListByDate} height='52vh' handleCardClick={handleOtherTaskCardClick}/>
             </div>}
           {isModalOpen && 

@@ -69,7 +69,7 @@ const CalendarPage: React.FC = () => {
         handleCellClick={handleCellClick}
         page={CalendarPages.MANAGER} />
       }
-      {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
+      {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw", width: "35%"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
       {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} taskDate={currentTaskDate} taskBalancePoints={currentBalancePoints} />}
     </div>
   );

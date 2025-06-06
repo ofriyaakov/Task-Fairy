@@ -45,10 +45,13 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, hei
           pb: 2,
           bgcolor: "rgb(250 250 250)",
           height: height,
+          display: "flex",
+          flexDirection: "column",
         }}>
         <TextField
           variant="outlined"
           placeholder="Search..."
+          fullWidth
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -60,7 +63,6 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, hei
             sx: {
               borderRadius: 2,
               mb: 2,
-              width: '356px',
               mt: 2,
             },
           }}
@@ -68,7 +70,7 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, hei
 
         <Stack
           spacing={2}
-          sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: "65vh" }}>
+          sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: height}}>
           {filteredTasks.map((task, index) => (
             <TaskDetailsCard key={index} task={task} handleCardClick={handleClick} isSelected={task.taskId === selectedTaskId}/>
           ))}
