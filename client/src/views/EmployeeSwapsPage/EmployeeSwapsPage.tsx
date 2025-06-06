@@ -63,8 +63,7 @@ const EmployeeSwapsPage: React.FC = () => {
     
           const fetchedemployeeTasks: ShortenedTaskDetails[] = await getEmployeeTasks(employeeId);
           const futureTasks = fetchedemployeeTasks.filter((task: ShortenedTaskDetails) => {
-            const taskStartTime = new Date(task.startTime);
-            return taskStartTime >= new Date();
+            return task.startTime >= new Date();
           })
           setMyTasks(futureTasks);
         } catch (err: any) {

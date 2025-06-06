@@ -4,6 +4,7 @@ import {
   RawTask,
   RawEmployeedTask,
   RawTaskWithUserId,
+  ShortenedTaskDetails,
 } from "../models/task";
 import { User } from "../models/user";
 import { getAllEmployeesByCompanyIdAndGender } from "./user";
@@ -170,9 +171,9 @@ export const getTasksByEmployeeId = async (employeeId: string) => {
       [employeeId]
     );
 
-    const savedTasks = result.rows;
+    const savedTasks: RawTask[] = result.rows;
 
-    const formattedTasks = savedTasks.map((task) => ({
+    const formattedTasks: ShortenedTaskDetails[] = savedTasks.map((task) => ({
       name: task.name,
       location: task.location,
       startTime: task.start_time,

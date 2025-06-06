@@ -33,6 +33,15 @@ export interface RawTask {
   task_id: string;
   company_id: string;
 }
+export interface ShortenedTaskDetails {
+  name: string;
+  startTime: Date;
+  endTime: Date;
+  gender: Gender;
+  location: string;
+  balancePoints: number;
+  taskId: string;
+}
 
 export interface RawEmployeedTask extends RawTask {
   date: string;

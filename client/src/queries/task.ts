@@ -49,7 +49,14 @@ export const getEmployeeTasks = async (employeeId: string) => {
     const employeeTasks: ShortenedTaskDetails[] = (
       await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
     ).data;
-    return employeeTasks;
+    const formattedTasks: ShortenedTaskDetails[] = employeeTasks.map((task) => {
+      return {
+        ...task,
+        startTime: new Date(task.startTime),
+        endTime: new Date(task.endTime)
+      };
+    })
+    return formattedTasks;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch employee tasks failed"
