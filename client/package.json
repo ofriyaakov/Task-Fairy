@@ -27,6 +27,7 @@
     "react-spinners": "^0.17.0",
     "react-time-picker": "^7.0.0",
     "react-toastify": "^11.0.5",
+    "recharts": "^2.15.3",
     "typeface-nunito-sans": "^1.1.13",
     "xlsx": "^0.18.5"
   },

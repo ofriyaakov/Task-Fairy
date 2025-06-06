@@ -94,14 +94,15 @@ export const assignEmployees = async (
     // Increase balance points for each employee assigned to the task
     await increaseBalancePointsForUsers(employeeIds, taskBalancePoints);
 
-    employeeIds.forEach(async (id) => {
+    for (const id of employeeIds) {
       const { rows } = await db.query(query, [taskId, id]);
       returnRows.push(rows);
-    });
+    };
 
     return returnRows;
   } catch (e) {
     console.error(e);
+    throw e;
   }
 };
 
@@ -336,6 +337,54 @@ export const getBalancePointsByGroupForCurrentMonth = async (
       min: minBalancePoints,
       avg: avgBalancePoints,
     };
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getTaskPercentageByGroupForCurrentMonth = async (
+  companyId: number
+) => {
+  try {
+    const groupTaskCounts = await db.query(
+      `SELECT
+  g.group_id,
+  g.group_name,
+  COUNT(t.task_id) AS task_count
+FROM public.groups g
+LEFT JOIN public.users u ON u.group_id = g.group_id
+LEFT JOIN public.r_tasks_users rtu ON rtu.user_id = u.user_id
+LEFT JOIN public.tasks t ON t.task_id = rtu.task_id
+  AND t.start_time >= date_trunc('month', current_date)
+  AND t.start_time < date_trunc('month', current_date) + interval '1 month'
+WHERE g.company_id = $1
+GROUP BY g.group_id, g.group_name;`,
+      [companyId]
+    );
+
+    const companyTaskCount = await db.query(
+      `SELECT
+  t.task_id
+FROM public.tasks t
+JOIN public.r_tasks_users rtu ON rtu.task_id = t.task_id
+JOIN public.users u ON rtu.user_id = u.user_id
+JOIN public.groups g ON u.group_id = g.group_id
+WHERE g.company_id = $1
+  AND t.start_time >= date_trunc('month', current_date)
+  AND t.start_time < date_trunc('month', current_date) + interval '1 month';`,
+      [companyId]
+    );
+
+    if (companyTaskCount.rowCount === 0) return groupTaskCounts.rows;
+
+    const result = groupTaskCounts.rows.map((group) => ({
+      group: group.group_name,
+      percentage: parseFloat(
+        ((group.task_count / companyTaskCount.rowCount) * 100).toFixed(2)
+      ),
+    }));
+
+    return result;
   } catch (err) {
     console.error(err);
   }

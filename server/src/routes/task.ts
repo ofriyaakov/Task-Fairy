@@ -14,6 +14,7 @@ import {
   getAvgTasksPerWeek,
   getAssignedEmployees,
   unassignEmployees
+  getTaskPercentageByGroupForCurrentMonth,
 } from "../controllers/task";
 
 const router = express.Router();
@@ -175,7 +176,7 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
     );
     res.status(200).send(newAssiments);
   } catch (err) {
-    console.error(err);
+    res.status(400).send(err);
   }
 });
 
@@ -337,6 +338,55 @@ router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
     console.error(err);
   }
 });
+
+/**
+ * @swagger
+ * /getTaskPercentageByGroup:
+ *   get:
+ *     summary: Get the percentage of tasks per group for a given company
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: query
+ *         name: companyId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the company to retrieve task percentages for
+ *     responses:
+ *       200:
+ *         description: List of groups and their task percentage
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   group:
+ *                     type: string
+ *                     example: "managers"
+ *                   percentage:
+ *                     type: number
+ *                     format: float
+ *                     example: 34.5
+ *       400:
+ *         description: Invalid or missing companyId
+ *       500:
+ *         description: Server error
+ */
+
+router.get("/getTaskPercentageByGroup", async (req: Request, res: Response) => {
+  const { companyId } = req.query;
+  try {
+    const PercentageByGroup = await getTaskPercentageByGroupForCurrentMonth(
+      Number(companyId)
+    );
+    res.status(200).send(PercentageByGroup);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 /**
  * @swagger
  * /employee/{employeeId}:
@@ -545,15 +595,18 @@ router.get("/assignedEmployees", async (req: Request, res: Response) => {
  *              description: Not Found
  */
 
-router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Response) => {
-  const companyId = req.params.companyId
-  try {
-    const amount = await getUnassignedTasksAmount(+companyId);
-    res.status(200).send(amount);
-  } catch (err) {
-    res.status(400).send(err);
+router.get(
+  "/unassignedTasks/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const amount = await getUnassignedTasksAmount(+companyId);
+      res.status(200).send(amount);
+    } catch (err) {
+      res.status(400).send(err);
+    }
   }
-})
+);
 
 /**
  * @swagger
@@ -587,14 +640,17 @@ router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Resp
  *              description: Not Found
  */
 
-router.get("/avgPerWeek/company/:companyId", async (req: Request, res: Response) => {
-  const companyId = req.params.companyId
-  try {
-    const avg = await getAvgTasksPerWeek(+companyId);
-    res.status(200).send(avg);
-  } catch (err) {
-    res.status(400).send(err);
+router.get(
+  "/avgPerWeek/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const avg = await getAvgTasksPerWeek(+companyId);
+      res.status(200).send(avg);
+    } catch (err) {
+      res.status(400).send(err);
+    }
   }
-})
+);
 
 export default router;
