@@ -123,7 +123,7 @@ const DashboardPage: React.FC = () => {
           width='25%'
         />
         <RectangleData
-          title='Avg task per week'
+          title='average task per week'
           value={avgTasksPerWeek}
           color='#FFFFFF'
           width='25%'
