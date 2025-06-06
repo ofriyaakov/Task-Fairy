@@ -98,6 +98,19 @@ export const getBalancePointsByGroup = async (companyId: number) => {
   }
 };
 
+export const getTaskPercentageByGroup = async (companyId: number) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/getTaskPercentageByGroup/?companyId=${companyId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch balance points failed"
+    );
+  }
+};
+
 export const getSuggestedEmployees = async (taskId: string) => {
   try {
     const response = await axiosInstance.get(
