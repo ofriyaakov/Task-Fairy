@@ -615,7 +615,7 @@ router.get(
  *       security:
  *           - bearerAuth: []
  *       parameters:
- *           - name: companyId
+ *          - name: companyId
  *            in: path
  *            required: true
  *            schema:
