@@ -12,3 +12,7 @@ export interface RawSwapRequest {
     second_task_start_time: string,
     second_task_end_time: string
 }
+
+export interface RawFullSwapRequest extends RawSwapRequest {
+    status: string
+}

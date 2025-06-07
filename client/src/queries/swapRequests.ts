@@ -21,3 +21,12 @@ export const getSwapRequestAmount = async (companyId: number): Promise<number> =
       throw new Error(error.response?.data?.message || "Recieving swap request amount failed");
     }
   };
+
+export const getSwapRequestsByEmployee = async (employeeId: string) => {
+    try {
+      const response = (await axiosInstance.get(`${SWAP_REQUESTS_ROUTE}/${employeeId}`)).data;
+      return response;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || "Recieving swap requests by employee failed");
+    }
+};

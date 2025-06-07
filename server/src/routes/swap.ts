@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { getPendingSwapRequests, getSwapRequestAmount } from "../controllers/swap";
+import { getPendingSwapRequests, getSwapRequestAmount, getSwapRequestsByEmployee } from "../controllers/swap";
 
 const router = express.Router();
 
@@ -85,6 +85,38 @@ router.get("/amount/company/:companyId", async (req: Request, res: Response) => 
     const month = req.params.month
     try {
         res.status(200).send(await getSwapRequestAmount(+companyId));
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+/**
+ * @swagger
+ * /{employeeId}:
+ *   get:
+ *       summary: Retrieve a list of all swap requests by employee id
+ *       tags: [swap-requests]
+ *       security:
+ *           - bearerAuth: []
+ *       responses:
+ *           200:
+ *               description: A list of swap requests
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/swap-requests'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.get("/:employeeId", async (req: Request, res: Response) => {
+    const employeeId = req.params.employeeId;
+    try {
+        res.status(200).send(await getSwapRequestsByEmployee(employeeId));
     } catch (err) {
         res.status(400).send(err);
     }
