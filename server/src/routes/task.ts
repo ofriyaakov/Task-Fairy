@@ -182,9 +182,9 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /task/assignEmployees:
+ * /task/unassignEmployees:
  *   post:
- *       summary: Assign employees to a task
+ *       summary: Unassign employees to a task
  *       tags: [Task, Users]
  *       requestBody:
  *           required: true
@@ -608,33 +608,34 @@ router.get(
 
 /**
  * @swagger
- * /task/assingedEmployees/{taskId}:
+ * /avgPerWeek/company/{companyId}:
  *   get:
- *       summary: Retrieve a list of assigned employees for a specific task
+ *       summary: Retrieve a number avg tasks amount per week
  *       tags: [Task]
  *       security:
  *           - bearerAuth: []
  *       parameters:
- *           - in: path
- *             name: taskId
- *             required: true
- *             description: ID of the task
- *             schema:
- *                 type: integer
+ *           - name: companyId
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: month
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
  *       responses:
  *           200:
- *               description: A list of assigned employees
+ *               description: A number
  *               content:
  *                   application/json:
  *                      schema:
- *                          type: array
- *                          items:
- *                              type: object
- *                              properties:
- *                                  id:
- *                                      type: integer
- *                                  name:
- *                                      type: string
+ *                          $ref: '#/components/schemas/Task'
+ *           400:
+ *              description: Bad request
+ *           404:
+ *              description: Not Found
  */
 
 router.get(
