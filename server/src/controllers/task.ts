@@ -4,6 +4,7 @@ import {
   RawTask,
   RawEmployeedTask,
   RawTaskWithUserId,
+  ShortenedTaskDetails,
 } from "../models/task";
 import { User } from "../models/user";
 import {
@@ -206,15 +207,16 @@ export const getTasksByEmployeeId = async (employeeId: string) => {
       [employeeId]
     );
 
-    const savedTasks = result.rows;
+    const savedTasks: RawTask[] = result.rows;
 
-    const formattedTasks = savedTasks.map((task) => ({
+    const formattedTasks: ShortenedTaskDetails[] = savedTasks.map((task) => ({
       name: task.name,
       location: task.location,
       startTime: task.start_time,
       endTime: task.end_time,
       balancePoints: task.balance_points,
       gender: task.gender,
+      taskId: task.task_id,
     }));
 
     return formattedTasks;
@@ -245,21 +247,21 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number, companyId: number) => {
+export const getAllTasksByMonth = async (userId: string, month: number, companyId: number) => {
   try {
     const result = await db.query(
       `
       SELECT tasks.*,
        TO_CHAR(start_time AT TIME ZONE 'Asia/Jerusalem', 'YYYY-MM-DD') as date,
+       MAX(CASE WHEN userTask.user_id = $1 THEN 1 ELSE 0 END) as is_me_assigned,
        COUNT(userTask.user_id) as assigned_employees_amount
       FROM public.tasks as tasks
       Left Join public.r_tasks_users as userTask
 	      ON userTask.task_id = tasks.task_id
-      WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $1
-      AND company_id = $2
-      GROUP BY tasks.task_id`,
-      [month, companyId]
-    );
+      WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
+      AND company_id = $3
+      GROUP BY tasks.task_id`, 
+      [userId, month, companyId]);
 
     const tasks: RawEmployeedTask[] = result.rows;
 
@@ -273,6 +275,7 @@ export const getAllTasksByMonth = async (month: number, companyId: number) => {
         gender: task.gender,
         taskId: task.task_id,
         date: task.date,
+        isAssignedToCurrentUser: task.is_me_assigned === 1 ? true : false,
         employeesAmount: task.employees_amount,
         assignedEmployeesAmount: Number(task.assigned_employees_amount),
       };

@@ -1,5 +1,6 @@
 import axiosInstance from "../axiosInstance";
 import { SwapRequestStatus } from "../types/Swap";
+import { SwapRequestPayload } from "../types/Swap";
 
 const SWAP_REQUESTS_ROUTE = "/swap-requests";
 
@@ -49,3 +50,15 @@ export const updateSwapRequestStatus = async (
     );
   }
 };
+
+
+export const createNewSwapRequest = async (swapRequest: SwapRequestPayload) => {
+    try {
+        const newSwapRequest = (await axiosInstance.post(`${SWAP_REQUESTS_ROUTE}`, { swapRequest })).data;
+        return newSwapRequest;
+    } catch (error: any) {
+        throw new Error(
+            error.response?.data?.message || "create swap request failed"
+        );
+    }
+}

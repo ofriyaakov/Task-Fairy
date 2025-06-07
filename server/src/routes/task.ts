@@ -182,9 +182,9 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /task/assignEmployees:
+ * /task/unassignEmployees:
  *   post:
- *       summary: Assign employees to a task
+ *       summary: Unassign employees to a task
  *       tags: [Task, Users]
  *       requestBody:
  *           required: true
@@ -470,12 +470,10 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
  */
 
 router.get("/month/", async (req: Request, res: Response) => {
-  const { companyId, month } = req.query;
+  const { userId, companyId, month } = req.query;
 
   try {
-    res
-      .status(200)
-      .send(await getAllTasksByMonth(Number(month), Number(companyId)));
+    res.status(200).send(await getAllTasksByMonth(String(userId), Number(month), Number(companyId)));
   } catch (err) {
     res.status(400).send(err);
   }

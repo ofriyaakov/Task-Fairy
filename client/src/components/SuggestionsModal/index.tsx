@@ -238,6 +238,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                   <Grid item xs={12} key={index}>
                     <EmployeeDetailsCard
                       employee={employee}
+                      mode = "suggestion"
                       handleApproveEmployee={handleApproveEmployee}
                       handleRemoveEmployee={handleRemoveEmployee}
                       isDisable={approvedEmployees.includes(employee)}
@@ -275,6 +276,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                   (employee, index) => (
                     <Grid item xs={12} key={index}>
                       <EmployeeDetailsCard
+                        mode="suggestion"
                         employee={employee}
                         isDisable={true}
                         isSuggestion={false}
