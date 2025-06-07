@@ -22,6 +22,8 @@ export type User = {
   company_id?: number;
   gender?: string;
   first_login?: boolean;
+  city?: string;
+  balance_points?: number;
 }
 
 export interface IUser {
