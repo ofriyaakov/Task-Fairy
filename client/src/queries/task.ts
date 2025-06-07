@@ -195,7 +195,7 @@ export const getAvgTasksPerWeek = async (
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Recieving avg tasks amount per week failed"
+        "Recieving average tasks amount per week failed"
     );
   }
 };

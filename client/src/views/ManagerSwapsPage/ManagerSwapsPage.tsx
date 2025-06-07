@@ -57,7 +57,7 @@ const ManagerSwapsPage: React.FC = () => {
           bgcolor: "rgb(250 250 250)",
           height: "80vh",
           borderRadius: "24px",
-          overflowY: "scroll",
+          overflowY: "auto",
         }}>
         <Grid container spacing={2}>
           {pendingSwapRequests.map((swapRequest, index) => (

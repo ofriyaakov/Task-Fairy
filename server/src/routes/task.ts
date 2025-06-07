@@ -13,7 +13,7 @@ import {
   getUnassignedTasksAmount,
   getAvgTasksPerWeek,
   getAssignedEmployees,
-  unassignEmployees
+  unassignEmployees,
   getTaskPercentageByGroupForCurrentMonth,
 } from "../controllers/task";
 
