@@ -3,8 +3,8 @@ import { Box, TextField, Paper, Stack } from "@mui/material";
 import { ShortenedTaskDetails } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface TaskListProps {
   title: string;
@@ -13,7 +13,12 @@ interface TaskListProps {
   height?: string;
 }
 
-const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, height='77vh' }) => {
+const TasksList: React.FC<TaskListProps> = ({
+  title,
+  tasks,
+  handleCardClick,
+  height = "77vh",
+}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string>("");
 
@@ -49,14 +54,14 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, hei
           flexDirection: "column",
         }}>
         <TextField
-          variant="outlined"
-          placeholder="Search..."
+          variant='outlined'
+          placeholder='Search...'
           fullWidth
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment position='start'>
                 <SearchIcon />
               </InputAdornment>
             ),
@@ -67,14 +72,28 @@ const TasksList: React.FC<TaskListProps> = ({ title, tasks, handleCardClick, hei
             },
           }}
         />
-
-        <Stack
-          spacing={2}
-          sx={{ overflowY: "auto", overflowX: "hidden", maxHeight: height}}>
-          {filteredTasks.map((task, index) => (
-            <TaskDetailsCard key={index} task={task} handleCardClick={handleClick} isSelected={task.taskId === selectedTaskId}/>
-          ))}
-        </Stack>
+        {filteredTasks.length === 0 ? (
+          <p>No tasks to display.</p>
+        ) : (
+          <>
+            <Stack
+              spacing={2}
+              sx={{
+                overflowY: "auto",
+                overflowX: "hidden",
+                maxHeight: height,
+              }}>
+              {filteredTasks.map((task, index) => (
+                <TaskDetailsCard
+                  key={index}
+                  task={task}
+                  handleCardClick={handleClick}
+                  isSelected={task.taskId === selectedTaskId}
+                />
+              ))}
+            </Stack>
+          </>
+        )}
       </Box>
     </Paper>
   );

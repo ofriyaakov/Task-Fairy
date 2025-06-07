@@ -18,7 +18,10 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = fa
   return (
     <Paper
       elevation={0}
-      onClick={()=> handleCardClick && handleCardClick(task.taskId || "", task.startTime, task.balancePoints)}
+      onClick={() =>
+        handleCardClick &&
+        handleCardClick(task.taskId || "", task.startTime, task.balancePoints)
+      }
       sx={{
         p: 2,
         borderRadius: 2,
@@ -26,6 +29,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = fa
         maxWidth: "340px",
         border: isSelected ? "2px solid black" : "1px solid rgb(229 229 229)",
         height: "130px",
+        cursor: "pointer",
       }}>
       <Grid container>
         <Grid item xs={12}>

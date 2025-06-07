@@ -187,7 +187,7 @@ const EmployeesPage: React.FC = () => {
   const DeletePopup: React.FC = () => (
     <Dialog
       open={deletePopupOpen}
-      maxWidth="lg"
+      maxWidth='lg'
       fullWidth
       PaperProps={{
         style: {
@@ -196,8 +196,7 @@ const EmployeesPage: React.FC = () => {
           padding: "16px",
           width: "25vw",
         },
-      }}
-    >
+      }}>
       <IconButton
         sx={{
           position: "absolute",
@@ -207,21 +206,19 @@ const EmployeesPage: React.FC = () => {
         }}
         onClick={() => {
           handleDialogClose();
-        }}
-      >
+        }}>
         <CloseIcon />
       </IconButton>
 
       <DialogTitle>
         <Typography
-          variant="h5"
-          align="center"
+          variant='h5'
+          align='center'
           sx={{
             fontWeight: 600,
             fontSize: 24,
             mb: 1,
-          }}
-        >
+          }}>
           Are you sure you want to delete this employee?
         </Typography>
       </DialogTitle>
@@ -230,23 +227,21 @@ const EmployeesPage: React.FC = () => {
 
       <DialogContent>
         <Typography
-          variant="h4"
-          align="center"
+          variant='h4'
+          align='center'
           sx={{
             fontWeight: 600,
             fontSize: 24,
-          }}
-        >
+          }}>
           {selectedEmployee?.first_name} {selectedEmployee?.last_name}
         </Typography>
         <Typography
-          variant="h3"
-          align="center"
+          variant='h3'
+          align='center'
           sx={{
             fontWeight: 600,
             fontSize: 20,
-          }}
-        >
+          }}>
           {selectedEmployee?.group_name}
         </Typography>
       </DialogContent>
@@ -256,10 +251,9 @@ const EmployeesPage: React.FC = () => {
           justifyContent: "center",
           mt: 2,
           pb: 3,
-        }}
-      >
+        }}>
         <Button
-          variant="outlined"
+          variant='outlined'
           onClick={() => {
             handleDialogClose();
           }}
@@ -272,13 +266,12 @@ const EmployeesPage: React.FC = () => {
             marginRight: "20px",
             marginLeft: "20px",
             textTransform: "none",
-          }}
-        >
+          }}>
           Cancel
         </Button>
 
         <Button
-          variant="contained"
+          variant='contained'
           onClick={() => {
             handleDeleteEmployee();
           }}
@@ -294,8 +287,7 @@ const EmployeesPage: React.FC = () => {
               bgcolor: "rgba(69, 123, 157, 0.5)",
               color: "rgba(255, 255, 255, 0.7)",
             },
-          }}
-        >
+          }}>
           Delete
         </Button>
       </DialogActions>
@@ -318,8 +310,8 @@ const EmployeesPage: React.FC = () => {
       disableColumnMenu: true,
     },
     {
-      field: "name",
-      headerName: "name",
+      field: "ame",
+      headerName: "Name",
       width: 200,
       renderCell: (params) => {
         return `${params.row.first_name} ${params.row.last_name}`;
@@ -327,7 +319,7 @@ const EmployeesPage: React.FC = () => {
     },
     {
       field: "email",
-      headerName: "email",
+      headerName: "Email",
       width: 200,
     },
     {
@@ -379,8 +371,8 @@ const EmployeesPage: React.FC = () => {
 
       renderCell: (params: { row: SetStateAction<employeeData | null> }) => (
         <img
-          src="/delete.svg"
-          alt="Delete"
+          src='/delete.svg'
+          alt='Delete'
           onClick={() => {
             setSelectedEmployee(params.row);
             setDeletePopupOpen(true);
@@ -395,33 +387,32 @@ const EmployeesPage: React.FC = () => {
   ];
 
   return (
-    <div className="page-container">
+    <div className='page-container'>
       {loading ? (
-        <div className="loader-container">
-          <BeatLoader color="#36d7b7" loading={loading} size={20} />
+        <div className='loader-container'>
+          <BeatLoader color='#36d7b7' loading={loading} size={20} />
         </div>
       ) : (
         <>
-          <div className="table-container">
+          <div className='table-container'>
             <div
               style={{
                 display: "flex",
                 justifyContent: "flex-end",
                 marginBottom: "12px",
-              }}
-            >
+              }}>
               <TextField
-                label="Search employee"
-                variant="outlined"
-                size="small"
+                label='Search employee'
+                variant='outlined'
+                size='small'
                 onChange={(e) => {
                   handleSerachQueryChange(e.target.value);
                 }}
                 style={{ width: 250 }}
               />
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 endIcon={<FileUploadOutlinedIcon />}
                 style={{
                   marginLeft: "1rem",
@@ -431,8 +422,7 @@ const EmployeesPage: React.FC = () => {
                   color: "#87B7FF",
                   border: "1px solid #87B7FF",
                 }}
-                onClick={() => setModalOpen(true)}
-              >
+                onClick={() => setModalOpen(true)}>
                 Upload employees
               </Button>
 
@@ -446,11 +436,11 @@ const EmployeesPage: React.FC = () => {
             </div>
 
             <DataGrid
-              className="employee-table"
+              className='employee-table'
               rows={visibleEmployeesData}
               columns={columns}
               pagination
-              paginationMode="client"
+              paginationMode='client'
               rowCount={visibleEmployeesData.length}
               getRowId={(row) => row.user_id}
               paginationModel={{
