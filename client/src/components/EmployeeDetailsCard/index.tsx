@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography, IconButton, Badge } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
 import StarIcon from "@mui/icons-material/Star";
-import Badge from "@mui/material/Badge";
 import WcIcon from "@mui/icons-material/Wc";
 import BusinessIcon from '@mui/icons-material/Business';
-import { INDICATION_COLOR, APP_COLOR } from "../../theme";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";import { employeeDatailsCard } from "../../types/employee";
+import { employeeDatailsCard } from "../../types/employee";
+import { INDICATION_COLOR, APP_COLOR } from "../../theme";
 
 type Mode = 'suggestion' | 'swap';
 
@@ -36,7 +35,6 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
   isAssigned = false,
   disableAdd = false,
 }) => {
-  const [isApproved, setIsApproved] = useState<boolean>(false);
 
   const handleSwapClick = () => {
     if (!isDisable) {
@@ -47,12 +45,10 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
   const approveEmployee = () => {
     if (disableAdd) return; // Prevent action if disabled
     handleApproveEmployee?.(employee);
-    setIsApproved(true);
   };
 
   const removeEmployee = () => {
     handleRemoveEmployee?.(employee);
-    setIsApproved(false);
   };
 
   const score = Math.round(employee.score);
