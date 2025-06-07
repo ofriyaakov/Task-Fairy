@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import { refreshAxiosInstance } from "../axiosInstance";
 import { accessTokenKey, refreshTokenKey } from "../consts";
 
@@ -9,7 +10,7 @@ export const refreshToken = async (): Promise<void> => {
       Authorization: "Bearer " + localStorage.getItem(refreshTokenKey),
     },
   });
-
+  console.log("refreshToken", data);
   const { accessToken, refreshToken } = res.data;
 
   if (accessToken) {

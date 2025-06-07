@@ -17,6 +17,8 @@ interface AuthResponse {
   groupId: number;
   groupName: string;
   firstLogin: boolean;
+  accessToken: string;
+  refreshToken: string;
 }
 
 const AUTH_ROUTE = "/auth";
@@ -26,6 +28,7 @@ export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
     const response = await axiosInstance.post(`${AUTH_ROUTE}/login`, payload);
     localStorage.setItem(loggedUserIdKey, response.data.id);
     localStorage.setItem(accessTokenKey, response.data.accessToken);
+    console.log("login", response.data);
 
     return response.data;
   } catch (error: any) {
