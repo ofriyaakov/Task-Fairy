@@ -552,7 +552,8 @@ export const getSuggestedEmployees = async (taskId: string) => {
 
 export const getUnassignedTasksAmount = async (companyId: number) => {
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT (
         SELECT SUM(employees_amount)
         FROM public.tasks
@@ -563,11 +564,11 @@ export const getUnassignedTasksAmount = async (companyId: number) => {
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         WHERE tasks.company_id = $1 AND EXTRACT(MONTH FROM CAST(tasks.start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
       ) as amount 
-      `, [companyId]
+      `,
+      [companyId]
     );
     const amount: number = result.rows[0];
     return amount;
-
   } catch (err) {
     console.error(err);
   }
@@ -575,19 +576,59 @@ export const getUnassignedTasksAmount = async (companyId: number) => {
 
 export const getAvgTasksPerWeek = async (companyId: number) => {
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT AVG(tasks_amount_by_week)
       FROM (
         SELECT COUNT(task_id) AS tasks_amount_by_week
         FROM public.tasks
         WHERE company_id = $1 AND EXTRACT(MONTH FROM CAST(start_time as DATE)) = EXTRACT(MONTH FROM CAST(current_date as DATE))
         GROUP BY DATE_TRUNC('week', start_time)
-      )`, [companyId]
+      )`,
+      [companyId]
     );
     const avg: number = result.rows[0];
     return avg;
-
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const getAssignStats = async (companyId: number) => {
+  try {
+    const result = await db.query(
+      `
+      WITH current_tasks AS (
+        SELECT *
+        FROM public.tasks
+        WHERE company_id = $1
+          AND DATE_TRUNC('month', start_time) = DATE_TRUNC('month', CURRENT_DATE)
+      ),
+      task_assignments AS (
+        SELECT task_id, COUNT(user_id) AS assigned_count
+        FROM public.r_tasks_users
+        GROUP BY task_id
+      ),
+      joined AS (
+        SELECT 
+          ct.task_id,
+          ct.employees_amount,
+          COALESCE(ta.assigned_count, 0) AS assigned_count
+        FROM current_tasks ct
+        LEFT JOIN task_assignments ta ON ct.task_id = ta.task_id
+      )
+      SELECT
+        COUNT(*) FILTER (WHERE assigned_count = 0) AS zero_assigned_tasks,
+        COUNT(*) FILTER (WHERE assigned_count > 0 AND assigned_count < employees_amount) AS under_assigned_tasks,
+        COUNT(*) FILTER (WHERE assigned_count = employees_amount) AS fully_assigned_tasks
+      FROM joined
+      `,
+      [companyId]
+    );
+
+    return result.rows[0];
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 };

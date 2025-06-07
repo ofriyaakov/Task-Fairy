@@ -152,3 +152,18 @@ export const getAvgTasksPerWeek = async (
     );
   }
 };
+
+export const getAssignStats = async (
+  companyId: number
+): Promise<any> => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assignStats/${companyId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Recieving assign stats failed"
+    );
+  }
+}
