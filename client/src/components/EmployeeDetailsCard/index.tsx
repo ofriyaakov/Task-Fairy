@@ -190,7 +190,7 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
         >
             {cardBox}  
         </Badge>
-      ) : isSuggestion ? (
+    ) : isSuggestion ? (
         <Badge
           badgeContent={score && score > 0 ? `${score}%` : "Not suggested"}
           overlap="rectangular"
@@ -214,10 +214,9 @@ const EmployeeDetailsCard: React.FC<EmployeeDetailsCardProps> = ({
         >
           {cardBox}
         </Badge>
-      ) : 
-      (
-        cardBox
-      );
+    ) : (
+      cardBox
+    );
 };
 
 export default EmployeeDetailsCard;
