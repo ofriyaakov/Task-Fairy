@@ -11,7 +11,7 @@ import {
   Box,
 } from "@mui/material";
 import { employeeDatailsCard } from "./../../types/employee";
-import { getAssignedEmployeesPerTask } from "./../../queries/task";
+import { getAssignedEmployees } from "./../../queries/task";
 import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -42,7 +42,7 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
 
   const fetchAssignedEmployees = async () => {
     try {
-        const response = await getAssignedEmployeesPerTask(taskId);
+        const response = await getAssignedEmployees(taskId);
         //TODO - After merging "my swaps" part, add filter to exclude employees the connected user has swap request with
         const filteredAssignees = response.filter((employee: employeeDatailsCard) => employee.user_id !== connectedUser?.id);
         setAssignedEmployees(filteredAssignees);
@@ -157,7 +157,7 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
                       mode="swap"
                       employee={employee}
                       createSwapRequest={createSwapRequest}
-                      isDisabled={isSwapDisabled}
+                      isDisable={isSwapDisabled}
                     />
                   </Grid>
                 ))}
