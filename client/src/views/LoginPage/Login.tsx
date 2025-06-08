@@ -8,7 +8,7 @@ import { APP_COLOR } from "../../theme";
 import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
-  const { setConnectedUser, updateConnectedUser } = useGlobalContext();
+  const { updateConnectedUser } = useGlobalContext();
   const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
@@ -28,17 +28,6 @@ const Login: React.FC = () => {
         response.accessToken,
         response.refreshToken
       );
-
-      setConnectedUser({
-        id: response.id,
-        name: response.name,
-        email: response.email,
-        companyId: response.companyId,
-        userLevel: response.userLevel,
-        groupId: response.groupId,
-        groupName: response.groupName,
-        firstLogin: response.firstLogin,
-      });
 
       navigate(response.userLevel == 2 ? "/dashboard" : "/profile");
     } catch (err: any) {

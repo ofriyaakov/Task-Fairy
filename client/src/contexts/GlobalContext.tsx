@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
+import { accessTokenKey, loggedUserKey, refreshTokenKey } from "../consts";
 
 interface User {
   id: string;
@@ -34,10 +35,8 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [connectedUser, setConnectedUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem(loggedUserKey);
     if (storedUser) {
-      localStorage.setItem("accessToken", JSON.parse(storedUser).accessToken);
-      localStorage.setItem("refreshToken", JSON.parse(storedUser).refreshToken);
       return JSON.parse(storedUser);
     }
     return null;
@@ -46,18 +45,18 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({
   const updateConnectedUser = useCallback(
     (user: User, accessToken: string, refreshToken: string) => {
       setConnectedUser(user);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(accessTokenKey, accessToken);
+      localStorage.setItem(refreshTokenKey, refreshToken);
+      localStorage.setItem(loggedUserKey, JSON.stringify(user));
     },
     []
   );
 
   const resetConnectedUser = useCallback(() => {
     setConnectedUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem(loggedUserKey);
+    localStorage.removeItem(accessTokenKey);
+    localStorage.removeItem(refreshTokenKey);
   }, []);
 
   return (
