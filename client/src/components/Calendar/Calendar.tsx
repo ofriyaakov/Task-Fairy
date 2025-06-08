@@ -1,7 +1,7 @@
 import React  from "react";
 import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { localizer, TaskSummary } from './CalendarSetup'
+import { CalendarPages, localizer, TaskSummary } from './CalendarSetup'
 import './Calendar.css'
 import { CustomToolbar } from "./CustomToolbar";
 import { CellContent } from "./CellContent";
@@ -13,26 +13,28 @@ import { calendarMonthView } from "../../consts";
     date: Date,
     navigateMonth: (date: Date) => void,
     handleCellClick?: (date: string) => void,
-    isManagerView: boolean
+    page: CalendarPages,
   }
 
 export const taskToCalendarEvents = (taskSummary: CalendarTask[]): TaskSummary => {
   const calendarEvents: TaskSummary = {}
 
-  taskSummary.forEach(task => {
-    const dateStr = task.date
-    if (!calendarEvents[dateStr]) {
-      calendarEvents[dateStr] = [{assigned: task.assignedEmployeesAmount, total: task.employeesAmount }]
-    } else {
-      calendarEvents[dateStr].push({assigned: task.assignedEmployeesAmount, total: task.employeesAmount })
-    }
-  })
+  if (taskSummary && taskSummary.length > 0) {
+    taskSummary?.forEach(task => {
+      const dateStr = task.date
+      if (!calendarEvents[dateStr]) {
+        calendarEvents[dateStr] = [{assigned: task.assignedEmployeesAmount, total: task.employeesAmount, isAssignedToCurrentUser: task.isAssignedToCurrentUser}]
+      } else {
+        calendarEvents[dateStr].push({assigned: task.assignedEmployeesAmount, total: task.employeesAmount, isAssignedToCurrentUser: task.isAssignedToCurrentUser})
+      }
+    })
+  }
 
   return calendarEvents
 }
 
 
-export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, isManagerView}: MyCalendarProps) => {
+export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, page}: MyCalendarProps) => {
   const calendarTasks = taskToCalendarEvents(taskSummary);
 
   const [selectedDate, setSelectedDate] = React.useState<string>("");
@@ -60,7 +62,7 @@ export const MyCalendar = ({taskSummary, date, navigateMonth, handleCellClick, i
           taskSummary={calendarTasks!!}
           currentMonthDate={date}
           handleCellClick={handleClick}
-          isManagerView={isManagerView}
+          page={page}
           selectedDate={selectedDate}></CellContent>
         },
         month: {

@@ -12,6 +12,8 @@ import {
   getTaskById,
   getUnassignedTasksAmount,
   getAvgTasksPerWeek,
+  getAssignedEmployees,
+  unassignEmployees,
   getTaskPercentageByGroupForCurrentMonth,
 } from "../controllers/task";
 
@@ -173,6 +175,46 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
       employeeIds
     );
     res.status(200).send(newAssiments);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+/**
+ * @swagger
+ * /task/unassignEmployees:
+ *   post:
+ *       summary: Unassign employees to a task
+ *       tags: [Task, Users]
+ *       requestBody:
+ *           required: true
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/r_tasks_users'
+ *       responses:
+ *           200:
+ *               description: Assigned employees successfully
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/r_tasks_users'
+ *           400:
+ *              description: Bad request - invalid data
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+router.post("/unassignEmployees", async (req: Request, res: Response) => {
+  const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
+
+  try {
+    const unassigments = await unassignEmployees(
+      taskId,
+      taskDate,
+      taskBalancePoints,
+      employeeIds
+    );
+    res.status(200).send(unassigments);
   } catch (err) {
     console.error(err);
   }
@@ -428,12 +470,10 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
  */
 
 router.get("/month/", async (req: Request, res: Response) => {
-  const { companyId, month } = req.query;
+  const { userId, companyId, month } = req.query;
 
   try {
-    res
-      .status(200)
-      .send(await getAllTasksByMonth(Number(month), Number(companyId)));
+    res.status(200).send(await getAllTasksByMonth(String(userId), Number(month), Number(companyId)));
   } catch (err) {
     res.status(400).send(err);
   }
@@ -475,6 +515,47 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
   try {
     const suggestedEmployees = await getSuggestedEmployees(taskId);
     res.status(200).send(suggestedEmployees);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+/**
+ * @swagger
+ * /task/assignedEmployees/{taskId}:
+ *   get:
+ *       summary: Retrieve a list of assigned employees for a specific task
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: path
+ *             name: taskId
+ *             required: true
+ *             description: ID of the task
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: A list of assigned employees
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                  name:
+ *                                      type: string
+ */
+
+router.get("/assignedEmployees", async (req: Request, res: Response) => {
+  const taskId = req.query.taskId as string;
+  try {
+    const assignedEmployees = await getAssignedEmployees(taskId);
+    res.status(200).send(assignedEmployees);
   } catch (err) {
     res.status(400).send(err);
   }

@@ -35,8 +35,9 @@ export type TaskSummaryCard = ShortenedTaskDetails & {
 
 export interface CalendarTask extends ShortenedTaskDetails {
   date: string;
-  employeesAmount: number;
-  assignedEmployeesAmount: number;
+  employeesAmount?: number;
+  isAssignedToCurrentUser: boolean;
+  assignedEmployeesAmount?: number;
 }
 
 export type TaskForAi = Pick<Task, "name" | "description" | "companyId">;

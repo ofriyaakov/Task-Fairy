@@ -13,7 +13,8 @@ export const APP_COLOR = {
   MINT_GREEN: "#E1F7EF",
   LIGHT_RED: "#FFDFDF",
 
-  ROYAL_BLUE : "#5F70C8",
+  ROYAL_BLUE: "#5F70C8",
+  CERULEAN_BLUE: "#457B9D"
 };
 
 export const INDICATION_COLOR = {

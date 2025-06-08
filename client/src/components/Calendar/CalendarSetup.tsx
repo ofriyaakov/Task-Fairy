@@ -3,12 +3,19 @@ import { format, parse, startOfWeek, getDay } from 'date-fns'
 import enUS from 'date-fns/locale/en-US'
 
 export type TaskOccupancy = {
-  assigned: number
-  total: number
+  assigned?: number
+  total?: number
+  isAssignedToCurrentUser: boolean
 }
 
 export type TaskSummary = {
   [date: string]: [TaskOccupancy]
+}
+
+export const enum CalendarPages {
+  MANAGER = 'manager',
+  PROFILE = 'employee',
+  SWAP = 'swap',
 }
 
 const locales = {

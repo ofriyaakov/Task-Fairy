@@ -17,3 +17,11 @@ export interface SwapRequest {
   rightDetails: SwapCardDetails;
   swapRequestId: string;
 }
+
+export interface SwapRequestPayload {
+    requestingUserId: string;
+    requestingTaskId: string;
+    requestedUserId: string;
+    requestedTaskId: string;
+    date: Date;
+}

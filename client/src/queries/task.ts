@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
+import { ShortenedTaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -33,6 +33,27 @@ export const assignEmployees = async (
   }
 };
 
+export const unassignEmployees = async (
+  taskId: string,
+  employeeIds: string[],
+  taskDate: Date,
+  taskBalancePoints: number
+) => {
+  try {
+    const response = await axiosInstance.post(`${TASK_ROUTE}/unassignEmployees`, {
+      taskId,
+      employeeIds,
+      taskDate,
+      taskBalancePoints,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "failed to unassign employees"
+    );
+  }
+};
+
 export const getAllSavedTasks = async () => {
   try {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
@@ -46,10 +67,17 @@ export const getAllSavedTasks = async () => {
 
 export const getEmployeeTasks = async (employeeId: string) => {
   try {
-    const employeeTasks = (
+    const employeeTasks: ShortenedTaskDetails[] = (
       await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
     ).data;
-    return employeeTasks;
+    const formattedTasks: ShortenedTaskDetails[] = employeeTasks.map((task) => {
+      return {
+        ...task,
+        startTime: new Date(task.startTime),
+        endTime: new Date(task.endTime)
+      };
+    })
+    return formattedTasks;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch employee tasks failed"
@@ -69,13 +97,9 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number, companyId: number) => {
+export const getAllTasksByMonth = async (month: number, companyId: number, userId: string) => {
   try {
-    const tasks = (
-      await axiosInstance.get(
-        `${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`
-      )
-    ).data;
+    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}&userId=${userId}`)).data;
     return tasks;
   } catch (error: any) {
     console.error("getAllTasksByMonth error", error);
@@ -120,6 +144,19 @@ export const getSuggestedEmployees = async (taskId: string) => {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch suggested employees failed"
+    );
+  }
+};
+
+export const getAssignedEmployees = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assignedEmployees/?taskId=${taskId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch assigned employees failed"
     );
   }
 };
