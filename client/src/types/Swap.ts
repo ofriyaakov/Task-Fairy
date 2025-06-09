@@ -27,6 +27,6 @@ export interface SwapRequestPayload {
     date: Date;
 }
 
-export interface FullSwapRequest = Pick< SwapRequest, "leftDetails" | "rightDetails" > & {
-  status: string;
-}
+export type FullSwapRequest = Pick<SwapRequest, "leftDetails" | "rightDetails" > & {
+    status: string;
+};
