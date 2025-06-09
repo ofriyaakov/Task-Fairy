@@ -17,7 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { INDICATION_COLOR } from "../../theme";
+import { INDICATION_COLOR, APP_COLOR } from "../../theme";
 
 const DashboardPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -193,7 +193,14 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Right side - Pie Chart */}
-        <div className="pie-chart-card" style={{ minHeight: "100px" }}>
+        <div
+          className="pie-chart-card"
+          style={{
+            minHeight: "100px",
+            fontWeight: "bold",
+            backgroundColor: "#FFFFFF",
+          }}
+        >
           <h2 style={{ marginTop: "-15px", marginBottom: "-10px" }}>
             Task Assignment Status
           </h2>
@@ -212,9 +219,9 @@ const DashboardPage: React.FC = () => {
                   if (entry.name === "Done") {
                     fillColor = INDICATION_COLOR.BEST;
                   } else if (entry.name === "In progress") {
-                    fillColor = INDICATION_COLOR.MID;
+                    fillColor = "#FFC198";
                   } else if (entry.name === "Unassigned") {
-                    fillColor = INDICATION_COLOR.BAD;
+                    fillColor = APP_COLOR.ALICE_BLUE_DARKER;
                   }
 
                   return <Cell key={index} fill={fillColor} />;
