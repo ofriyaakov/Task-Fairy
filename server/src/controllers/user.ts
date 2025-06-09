@@ -229,6 +229,34 @@ export const increaseBalancePointsForUsers = async (
   }
 };
 
+export const decreaseBalancePointsForUsers = async (
+  employeeIds: string[],
+  balancePoints: number
+) => {
+  try {
+    const query = `
+      UPDATE users
+      SET balance_points = balance_points - $1
+      WHERE user_id = $2
+      RETURNING *
+    `;
+
+    const results = await Promise.all(
+      employeeIds.map((id) =>
+        db.query(query, [balancePoints, id])
+      )
+    );
+
+    const returnRows = results.flatMap(({ rows }) => rows);
+
+    console.log("User balance points decreased:", returnRows);
+    return returnRows;
+  } catch (err) {
+    console.error("Error decreasing balance points for user:", err);
+    throw err;
+  }
+};
+
 export const getUserBalancePointsById = async (employeeId: string) => {
   try {
     const result = await db.query(

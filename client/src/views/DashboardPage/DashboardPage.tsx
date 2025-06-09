@@ -7,6 +7,7 @@ import {
   getUnassignedTasksAmount,
   getAvgTasksPerWeek,
   getAssignStats,
+  getTaskPercentageByGroup,
 } from "./../../queries/task";
 import { getSwapRequestAmount } from "./../../queries/swapRequests";
 import {
@@ -18,7 +19,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { INDICATION_COLOR, APP_COLOR } from "../../theme";
+import TasksBarChart from "../../components/Dashboard/TasksBarChart";
+import { toast } from "react-toastify";
 
+export interface TasksBarChartValue {
+  group: string;
+  percentage: number;
+}
 const DashboardPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
   const companyId = connectedUser?.companyId || 0;
@@ -29,6 +36,18 @@ const DashboardPage: React.FC = () => {
   const [swapRequestAmount, setSwapRequestAmount] = useState(0);
   const [tasksChartData, setChartData] = useState<any[]>([]);
   const [totalTasks, setTotal] = useState(0);
+  const [tasksBarChart, setTasksBarChart] = useState<TasksBarChartValue[]>([]);
+
+  const fetchGroupBalancePointsData = async () => {
+    try {
+      const companyId = connectedUser?.companyId || 0;
+      const data = await getTaskPercentageByGroup(companyId);
+      setTasksBarChart(data);
+    } catch (error) {
+      console.error("Error fetching balance points:", error);
+      toast.error("Oops! Something went wrong");
+    }
+  };
 
   const fetchAssignedEmployeesAmount = async () => {
     try {
@@ -98,6 +117,7 @@ const DashboardPage: React.FC = () => {
     fetchAvgTasksPerWeek();
     fetchSwapRequestAmount();
     fetchAssignStatus();
+    fetchGroupBalancePointsData();
   }, [companyId]);
 
   return (
@@ -166,7 +186,7 @@ const DashboardPage: React.FC = () => {
         }}
       >
         <div className="bar-chart-card" style={{ minHeight: "300px" }}>
-          Tasks amount (Bar Chart)
+          <TasksBarChart TasksBarChartValues={tasksBarChart} />
         </div>
       </div>
 

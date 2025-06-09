@@ -9,7 +9,7 @@ import {
   updateUserById,
   addNewEmployees,
   updateUserFirstLogin,
-  getAssignedEmployeesAmount
+  getAssignedEmployeesAmount,
 } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
@@ -398,6 +398,40 @@ router.delete(
   }
 );
 
+/**
+ * @swagger
+ * /user/addNewEmployees:
+ *   post:
+ *     summary: Register multiple new employees to a company
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               company_id:
+ *                 type: number
+ *               employees:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/NewEmployee'
+ *     responses:
+ *       200:
+ *         description: Employees added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request or insertion failed
+ */
+
 router.post("/addNewEmployees", async (req: Request, res: Response) => {
   const { employees, company_id } = req.body;
 
@@ -498,14 +532,16 @@ router.put("/:user_id/first-login", async (req, res) => {
  *              description: Not Found
  */
 
-router.get("/assignedAmount/company/:companyId", async (req: Request, res: Response) => {
-    const companyId = req.params.companyId
-      try {
-        const assignedAmount = await getAssignedEmployeesAmount(+companyId);
-        res.status(200).send(assignedAmount);
-      } catch (err) {
-        console.error(err);
-      }
+router.get(
+  "/assignedAmount/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const assignedAmount = await getAssignedEmployeesAmount(+companyId);
+      res.status(200).send(assignedAmount);
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 

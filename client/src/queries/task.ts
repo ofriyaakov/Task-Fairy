@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { TaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
+import { ShortenedTaskDetails, TaskForAi, TaskPayload } from "./../types/Task";
 
 const TASK_ROUTE = "/task";
 const GAMINI_ROUTE = "/gemini";
@@ -33,6 +33,30 @@ export const assignEmployees = async (
   }
 };
 
+export const unassignEmployees = async (
+  taskId: string,
+  employeeIds: string[],
+  taskDate: Date,
+  taskBalancePoints: number
+) => {
+  try {
+    const response = await axiosInstance.post(
+      `${TASK_ROUTE}/unassignEmployees`,
+      {
+        taskId,
+        employeeIds,
+        taskDate,
+        taskBalancePoints,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "failed to unassign employees"
+    );
+  }
+};
+
 export const getAllSavedTasks = async () => {
   try {
     const savedTasks = (await axiosInstance.get(`${TASK_ROUTE}/saved`)).data;
@@ -46,10 +70,17 @@ export const getAllSavedTasks = async () => {
 
 export const getEmployeeTasks = async (employeeId: string) => {
   try {
-    const employeeTasks = (
+    const employeeTasks: ShortenedTaskDetails[] = (
       await axiosInstance.get(`${TASK_ROUTE}/employee/${employeeId}`)
     ).data;
-    return employeeTasks;
+    const formattedTasks: ShortenedTaskDetails[] = employeeTasks.map((task) => {
+      return {
+        ...task,
+        startTime: new Date(task.startTime),
+        endTime: new Date(task.endTime),
+      };
+    });
+    return formattedTasks;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch employee tasks failed"
@@ -69,11 +100,15 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number, companyId: number) => {
+export const getAllTasksByMonth = async (
+  month: number,
+  companyId: number,
+  userId: string
+) => {
   try {
     const tasks = (
       await axiosInstance.get(
-        `${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}`
+        `${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}&userId=${userId}`
       )
     ).data;
     return tasks;
@@ -98,6 +133,19 @@ export const getBalancePointsByGroup = async (companyId: number) => {
   }
 };
 
+export const getTaskPercentageByGroup = async (companyId: number) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/getTaskPercentageByGroup/?companyId=${companyId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch balance points failed"
+    );
+  }
+};
+
 export const getSuggestedEmployees = async (taskId: string) => {
   try {
     const response = await axiosInstance.get(
@@ -107,6 +155,19 @@ export const getSuggestedEmployees = async (taskId: string) => {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "fetch suggested employees failed"
+    );
+  }
+};
+
+export const getAssignedEmployees = async (taskId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assignedEmployees/?taskId=${taskId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "fetch assigned employees failed"
     );
   }
 };
@@ -148,14 +209,12 @@ export const getAvgTasksPerWeek = async (
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Recieving avg tasks amount per week failed"
+        "Recieving average tasks amount per week failed"
     );
   }
 };
 
-export const getAssignStats = async (
-  companyId: number
-): Promise<any> => {
+export const getAssignStats = async (companyId: number): Promise<any> => {
   try {
     const response = await axiosInstance.get(
       `${TASK_ROUTE}/assignStats/${companyId}`
@@ -166,4 +225,4 @@ export const getAssignStats = async (
       error.response?.data?.message || "Recieving assign stats failed"
     );
   }
-}
+};

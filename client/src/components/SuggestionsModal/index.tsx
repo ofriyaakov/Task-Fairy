@@ -12,8 +12,11 @@ import {
 } from "@mui/material";
 import { employeeDatailsCard } from "./../../types/employee";
 import EmployeeDetailsCard from "./../EmployeeDetailsCard";
-import { assignEmployees } from "./../../queries/task";
-import { getSuggestedEmployees } from "./../../queries/task";
+import { assignEmployees, unassignEmployees } from "./../../queries/task";
+import {
+  getSuggestedEmployees,
+  getAssignedEmployees,
+} from "./../../queries/task";
 import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -37,44 +40,82 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   taskDate,
   taskBalancePoints,
 }) => {
-  const [approvedEmployeeIds, setApprovedEmployeeIds] = useState<string[]>([]);
+  const [approvedEmployees, setApprovedEmployees] = useState<
+    employeeDatailsCard[]
+  >([]);
   const [suggestedEmployees, setSuggestedEmployees] = useState<
     employeeDatailsCard[]
   >([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [assignedEmployees, setAssignedEmployees] = useState<
+    employeeDatailsCard[]
+  >([]);
+  const [removedEmployees, setRemovedEmployees] = useState<
+    employeeDatailsCard[]
+  >([]);
 
   useEffect(() => {
-    const fetchSuggestedEmployees = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getSuggestedEmployees(taskId);
-        setSuggestedEmployees(response);
-        setIsLoading(false);
+        setIsLoading(true);
+        setApprovedEmployees([]);
+
+        const [suggested, assigned] = await Promise.all([
+          getSuggestedEmployees(taskId),
+          getAssignedEmployees(taskId),
+        ]);
+
+        const scoreMap = new Map(
+          suggested.map((emp: employeeDatailsCard) => [emp.user_id, emp.score])
+        );
+
+        const assignedWithScores = assigned.map((emp: employeeDatailsCard) => ({
+          ...emp,
+          score: scoreMap.get(emp.user_id) ?? null,
+        }));
+
+        setAssignedEmployees(assignedWithScores);
+
+        const assignedIds = new Set(
+          assigned.map((emp: employeeDatailsCard) => emp.user_id)
+        );
+
+        const filteredSuggestions = suggested.filter(
+          (emp: employeeDatailsCard) => !assignedIds.has(emp.user_id)
+        );
+
+        setSuggestedEmployees(filteredSuggestions);
       } catch (error) {
-        console.error("Error fetching suggested employees:", error);
+        console.error("Error loading data:", error);
         toast.error("Oops! Something went wrong");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     if (open) {
-      setIsLoading(true);
-      setApprovedEmployeeIds([]);
-      fetchSuggestedEmployees();
+      fetchData();
     }
   }, [open]);
 
-  const isEnoughEmployees = useMemo(() => {
-    return approvedEmployeeIds.length === employeesAmount;
-  }, [approvedEmployeeIds, employeesAmount]);
-
   const handleSave = async () => {
     try {
-      await assignEmployees(
-        taskId,
-        approvedEmployeeIds,
-        taskDate,
-        taskBalancePoints
-      );
-      setApprovedEmployeeIds([]);
+      approvedEmployees.length > 0 &&
+        (await assignEmployees(
+          taskId,
+          approvedEmployees.map((employee) => employee.user_id),
+          taskDate,
+          taskBalancePoints
+        ));
+      removedEmployees.length > 0 &&
+        (await unassignEmployees(
+          taskId,
+          removedEmployees.map((employee) => employee.user_id),
+          taskDate,
+          taskBalancePoints
+        ));
+      setApprovedEmployees([]);
+      setRemovedEmployees([]);
       setIsModalOpen(false);
       toast.success("Employees successfuly assigned!");
     } catch (err: any) {
@@ -84,75 +125,170 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   };
 
   const handleCancel = () => {
-    setApprovedEmployeeIds([]);
+    setApprovedEmployees([]);
     setIsModalOpen(false);
   };
 
-  const handleApproveEmployee = (employeeId: string) => {
-    setApprovedEmployeeIds([...approvedEmployeeIds, employeeId]);
+  const handleApproveEmployee = (employee: employeeDatailsCard) => {
+    setApprovedEmployees([...approvedEmployees, employee]);
+    setSuggestedEmployees(
+      suggestedEmployees.filter((emp) => emp.user_id !== employee.user_id)
+    );
+
+    if (removedEmployees.some((emp) => emp.user_id === employee.user_id)) {
+      setRemovedEmployees(
+        removedEmployees.filter((emp) => emp.user_id !== employee.user_id)
+      );
+    }
   };
 
-  const handleRemoveEmployee = (deletedEmployeeId: string) => {
-    const removeEmployee = approvedEmployeeIds?.filter(
-      (employeeId) => employeeId !== deletedEmployeeId
+  const handleRemoveEmployee = (deletedEmployee: employeeDatailsCard) => {
+    const removeEmployee = approvedEmployees?.filter(
+      (employee) => employee.user_id !== deletedEmployee.user_id
     );
-    setApprovedEmployeeIds(removeEmployee);
+    setApprovedEmployees(removeEmployee);
+
+    const newSuggestedEmployees = [...suggestedEmployees, deletedEmployee].sort(
+      (a, b) => {
+        return b.score - a.score;
+      }
+    );
+    setSuggestedEmployees(newSuggestedEmployees);
+
+    if (
+      assignedEmployees.some(
+        (employee) => employee.user_id === deletedEmployee.user_id
+      )
+    ) {
+      setRemovedEmployees([...removedEmployees, deletedEmployee]);
+      setAssignedEmployees(
+        assignedEmployees.filter(
+          (employee) => employee.user_id !== deletedEmployee.user_id
+        )
+      );
+    }
   };
 
   return (
     <Dialog
       open={open}
-      maxWidth='lg'
+      maxWidth="lg"
       fullWidth
       PaperProps={{
         style: {
           backgroundColor: "white",
           borderRadius: "12px",
           padding: "16px",
-          width: "860px",
+          width: "900px",
           height: "710px",
         },
-      }}>
+      }}
+    >
       <DialogTitle>
         <Typography
-          variant='h5'
-          align='center'
+          variant="h5"
+          align="center"
           sx={{
             fontWeight: 600,
             fontSize: 24,
             mb: 1,
-          }}>
-          Our Suggestions ({approvedEmployeeIds.length} / {employeesAmount})
+          }}
+        >
+          Task Employees
         </Typography>
       </DialogTitle>
 
       <Divider sx={{ mb: 3 }} style={{ backgroundColor: "rgb(251 251 251)" }} />
 
-      <DialogContent>
+      <DialogContent
+        sx={{
+          paddingTop: 0,
+        }}
+      >
         {isLoading ? (
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              minHeight: "200px",
               flexDirection: "column",
-            }}>
-            <h4>Our smart algorithm is loading suggestions for you...</h4>
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <h4>Loading assigned employees and suggestions...</h4>
             <BeatLoader />
           </Box>
         ) : (
-          <Grid container spacing={2}>
-            {suggestedEmployees.map((employee: employeeDatailsCard, index) => (
-              <Grid item xs={12} md={6} key={index}>
-                <EmployeeDetailsCard
-                  employee={employee}
-                  handleApproveEmployee={handleApproveEmployee}
-                  handleRemoveEmployee={handleRemoveEmployee}
-                  isDisable={isEnoughEmployees}
-                />
+          <Box display="flex" gap={2}>
+            {/* Suggestions Section */}
+            <Box flex={1} overflow="auto">
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  width: "400px",
+                  backgroundColor: "#ffffff",
+                  position: "fixed",
+                  zIndex: 50,
+                }}
+              >
+                Suggestions
+              </Typography>
+              <Grid container spacing={2} sx={{ mt: 4 }}>
+                {suggestedEmployees.map((employee, index) => (
+                  <Grid item xs={12} key={index}>
+                    <EmployeeDetailsCard
+                      employee={employee}
+                      mode = "suggestion"
+                      handleApproveEmployee={handleApproveEmployee}
+                      handleRemoveEmployee={handleRemoveEmployee}
+                      isDisable={approvedEmployees.includes(employee)}
+                      disableAdd={
+                        [...assignedEmployees, ...approvedEmployees].length >=
+                        employeesAmount
+                      }
+                    />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </Box>
+
+            {/* Vertical Divider */}
+            <Divider orientation="vertical" flexItem />
+
+            {/* Already Assigned Section */}
+            <Box flex={1} overflow="auto">
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  width: "400px",
+                  backgroundColor: "#ffffff",
+                  position: "fixed",
+                  zIndex: 50,
+                }}
+              >
+                Assigned Employees (
+                {[...approvedEmployees, ...assignedEmployees].length} /{" "}
+                {employeesAmount})
+              </Typography>
+              <Grid container spacing={2} sx={{ mt: 4 }}>
+                {[...assignedEmployees, ...approvedEmployees].map(
+                  (employee, index) => (
+                    <Grid item xs={12} key={index}>
+                      <EmployeeDetailsCard
+                        mode="suggestion"
+                        employee={employee}
+                        isDisable={true}
+                        isSuggestion={false}
+                        isAssigned={true}
+                        handleRemoveEmployee={handleRemoveEmployee}
+                      />
+                    </Grid>
+                  )
+                )}
+              </Grid>
+            </Box>
+          </Box>
         )}
       </DialogContent>
 
@@ -161,11 +297,14 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
           justifyContent: "center",
           mt: 2,
           pb: 3,
-        }}>
+        }}
+      >
         <Button
-          variant='contained'
+          variant="contained"
           onClick={handleSave}
-          disabled={!isEnoughEmployees}
+          disabled={
+            approvedEmployees.length === 0 && removedEmployees.length === 0
+          }
           sx={{
             width: 150,
             height: 40.8,
@@ -178,12 +317,13 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
               bgcolor: "rgba(69, 123, 157, 0.5)",
               color: "rgba(255, 255, 255, 0.7)",
             },
-          }}>
+          }}
+        >
           Save
         </Button>
 
         <Button
-          variant='outlined'
+          variant="outlined"
           onClick={handleCancel}
           style={{
             width: "150px",
@@ -194,7 +334,8 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
             marginRight: "20px",
             marginLeft: "20px",
             textTransform: "none",
-          }}>
+          }}
+        >
           Cancel
         </Button>
       </DialogActions>
