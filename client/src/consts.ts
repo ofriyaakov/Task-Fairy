@@ -19,3 +19,12 @@ export const userLevels = {
 };
 
 export const officeTitle = "The Office";
+
+export enum SwapRequestStatuses {
+  APPROVED_NAME = 'approved',
+  APPROVED_COLOR = 'rgb(233 255 239)',
+  PENDING_NAME = 'pending',
+  PENDING_COLOR = 'rgb(255 255 255)',
+  REJECTED_NAME = 'rejected',
+  REJECTED_COLOR = 'rgb(255 223 223)',
+}

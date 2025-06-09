@@ -6,6 +6,7 @@ export interface SwapCardDetails {
   taskStartTime: string;
   taskEndTime: string;
 }
+
 export enum SwapRequestStatus {
     Approved = "1",
     Pending = "2",
@@ -25,3 +26,7 @@ export interface SwapRequestPayload {
     requestedTaskId: string;
     date: Date;
 }
+
+export type FullSwapRequest = Pick<SwapRequest, "leftDetails" | "rightDetails" > & {
+    status: string;
+};
