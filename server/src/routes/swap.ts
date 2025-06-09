@@ -1,7 +1,13 @@
 import express, { Request, Response } from "express";
 
 import authenticateToken from "../middleware/jwt";
-import { getPendingSwapRequests, getSwapRequestAmount, getSwapRequestsByEmployee } from "../controllers/swap";
+import {
+  addSwapRequest,
+  getPendingSwapRequests,
+  getSwapRequestAmount,
+  updateSwapRequestStatus,
+  getSwapRequestsByEmployee
+} from "../controllers/swap";
 
 const router = express.Router();
 
@@ -48,12 +54,12 @@ router.use(authenticateToken);
  */
 
 router.get("/pending", async (req: Request, res: Response) => {
-    const { companyId } = req.query;
-    try {
-        res.status(200).send(await getPendingSwapRequests(+companyId));
-    } catch (err) {
-        res.status(400).send(err);
-    }
+  const { companyId } = req.query;
+  try {
+    res.status(200).send(await getPendingSwapRequests(+companyId));
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 
@@ -80,15 +86,151 @@ router.get("/pending", async (req: Request, res: Response) => {
  *              description: Unauthorized - invalid or missing token
  */
 
-router.get("/amount/company/:companyId", async (req: Request, res: Response) => {
-    const companyId = req.params.companyId
-    const month = req.params.month
+router.get(
+  "/amount/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    const month = req.params.month;
     try {
-        res.status(200).send(await getSwapRequestAmount(+companyId));
+      res.status(200).send(await getSwapRequestAmount(+companyId));
     } catch (err) {
-        res.status(400).send(err);
+      res.status(400).send(err);
     }
+  }
+);
+
+/**
+ * @swagger
+ * /swap-request/{swapId}/status:
+ *   put:
+ *     summary: Update swap request status (generic endpoint)
+ *     tags: [swap-requests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: swapId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The swap request ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *               - companyId
+ *             properties:
+ *               status:
+ *                 type: integer
+ *                 description: Status ID (2=pending, 3=approved, 4=denied)
+ *                 example: 3
+ *               managerId:
+ *                 type: integer
+ *                 description: ID of the manager updating the status
+ *                 example: 123
+ *               companyId:
+ *                 type: integer
+ *                 description: Company ID to fetch updated pending requests
+ *                 example: 456
+ *     responses:
+ *       200:
+ *         description: Swap request status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Swap request status updated successfully"
+ *                 swapId:
+ *                   type: string
+ *                   example: "123"
+ *                 newStatus:
+ *                   type: integer
+ *                   example: 3
+ *                 updatedRequests:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/swap-requests'
+ *       400:
+ *         description: Bad request - Failed to update swap request status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to update swap request status"
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       403:
+ *         description: Forbidden - user is not a manager
+ *       404:
+ *         description: Swap request not found
+ */
+router.post("/:swapId/status", async (req: Request, res: Response) => {
+  const { swapId } = req.params;
+  const { status } = req.body;
+
+  try {
+    await updateSwapRequestStatus(swapId, +status);
+
+    res.status(200).json({
+      message: "Swap request status updated successfully",
+      swapId: swapId,
+      newStatus: status,
+    });
+  } catch (err) {
+    console.error("Error updating swap request status:", err);
+    res.status(400).json({ error: "Failed to update swap request status" });
+  }
 });
+
+
+/**
+ * @swagger
+ * /:
+ *   post:
+ *       summary: Create a new swap request
+ *       tags: [swap-requests]
+ *       security:
+ *           - bearerAuth: []
+ *       responses:
+ *           201:
+ *               description: An object of swap request
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/swap-requests'
+ *           400:
+ *              description: Bad request
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+
+router.post("/", async (req: Request, res: Response) => {
+    const { swapRequest } = req.body;
+    try {
+        res.status(201).send(await addSwapRequest(swapRequest));
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  }
+);
 
 /**
  * @swagger

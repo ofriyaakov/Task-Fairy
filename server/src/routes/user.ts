@@ -1,6 +1,16 @@
 import express, { NextFunction, Request, Response } from "express";
-import { getAllUsers, getAvgBalancePointsByCompany, getUserBalancePointsById, getUserById,
-        updateUserById, addNewEmployees, updateUserFirstLogin, getAssignedEmployeesAmount } from "../controllers/user";
+import {
+  getAllCompanyEmployeesData,
+  getAllUsers,
+  getAvgBalancePointsByCompany,
+  getUserBalancePointsById,
+  getUserById,
+  removeUserById,
+  updateUserById,
+  addNewEmployees,
+  updateUserFirstLogin,
+  getAssignedEmployeesAmount,
+} from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
 
@@ -177,7 +187,9 @@ router.get(
  *           404:
  *              description: Not Found
  */
-router.get("/points/:user_id", async (req: Request, res: Response, next: NextFunction) => {
+router.get(
+  "/points/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.user_id;
 
     try {
@@ -216,51 +228,56 @@ router.get("/points/:user_id", async (req: Request, res: Response, next: NextFun
  *           404:
  *              description: Not Found
  */
-router.get("/points/company/:company_id", async (req: Request, res: Response, next: NextFunction) => {
-  const companyId = req.params.company_id;
+router.get(
+  "/points/company/:company_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const companyId = req.params.company_id;
 
-  try {
-    const avgBalancePoints = await getAvgBalancePointsByCompany(Number(companyId));
-    if (!avgBalancePoints) res.status(404).json({ message: "Couldn't calculate company avg" });
-    else res.status(200).send(avgBalancePoints);
-  } catch (err) {
-    next(err);
+    try {
+      const avgBalancePoints = await getAvgBalancePointsByCompany(
+        Number(companyId)
+      );
+      if (!avgBalancePoints)
+        res.status(404).json({ message: "Couldn't calculate company avg" });
+      else res.status(200).send(avgBalancePoints);
+    } catch (err) {
+      next(err);
+    }
   }
-}
 );
 
-/**
- * @swagger
- * /user/{user_id}:
- *   put:
- *       summary: Update a user by id
- *       tags: [Users]
- *       security:
- *           - bearerAuth: []
- *       parameters:
- *          - name: user_id
- *            in: path
- *            required: true
- *            schema:
- *              type: string
- *       requestBody:
- *           required: true
- *           content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/User'
- *       responses:
- *           200:
- *               description: Updated user
- *               content:
- *                   application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/User'
- *           400:
- *              description: Bad request
- *           404:
- *              description: Not Found
- */
+// /**
+//  * @swagger
+//  * /user/{user_id}:
+//  *   put:
+//  *       summary: Update a user by id
+//  *       tags: [Users]
+//  *       security:
+//  *           - bearerAuth: []
+//  *       parameters:
+//  *          - name: user_id
+//  *            in: path
+//  *            required: true
+//  *            schema:
+//  *              type: string
+//  *       requestBody:
+//  *           required: true
+//  *           content:
+//  *               application/json:
+//  *                   schema:
+//  *                       $ref: '#/components/schemas/User'
+//  *       responses:
+//  *           200:
+//  *               description: Updated user
+//  *               content:
+//  *                   application/json:
+//  *                      schema:
+//  *                          $ref: '#/components/schemas/User'
+//  *           400:
+//  *              description: Bad request
+//  *           404:
+//  *              description: Not Found
+//  */
 
 // router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
 //   const { id } = req.params;
@@ -275,6 +292,111 @@ router.get("/points/company/:company_id", async (req: Request, res: Response, ne
 //     next(err);
 //   }
 // });
+
+/**
+ * @swagger
+ * /user/employees/{company_id}:
+ *   get:
+ *     summary: Retrieve all employees of a company
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: company_id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A list of employees
+ * /user/addNewEmployees:
+ *   post:
+ *     summary: Register multiple new employees to a company
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               company_id:
+ *                 type: number
+ *               employees:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/NewEmployee'
+ *     responses:
+ *       200:
+ *         description: Employees added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Not Found
+ */
+
+router.get(
+  "/employees/:company_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const companyId = req.params.company_id;
+
+    try {
+      const employeeData = await getAllCompanyEmployeesData(Number(companyId));
+      if (!employeeData)
+        res.status(404).json({ message: "Couldn't fetch data" });
+      else res.status(200).send(employeeData);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /user/{user_id}:
+ *   delete:
+ *     summary: Delete a user by id
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: user_id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Not Found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.delete(
+  "/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.user_id;
+
+    try {
+      await removeUserById(id);
+      res.status(200).send({ message: "User deleted" });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 /**
  * @swagger
@@ -410,14 +532,16 @@ router.put("/:user_id/first-login", async (req, res) => {
  *              description: Not Found
  */
 
-router.get("/assignedAmount/company/:companyId", async (req: Request, res: Response) => {
-    const companyId = req.params.companyId
-      try {
-        const assignedAmount = await getAssignedEmployeesAmount(+companyId);
-        res.status(200).send(assignedAmount);
-      } catch (err) {
-        console.error(err);
-      }
+router.get(
+  "/assignedAmount/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const assignedAmount = await getAssignedEmployeesAmount(+companyId);
+      res.status(200).send(assignedAmount);
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 

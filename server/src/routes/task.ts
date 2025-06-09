@@ -9,9 +9,15 @@ import {
   getTasksByEmployeeId,
   assignEmployees,
   getSuggestedEmployees,
+  getTaskById,
   getUnassignedTasksAmount,
-  getAvgTasksPerWeek
+  getAvgTasksPerWeek,
+  getAssignStats,
+  getAssignedEmployees,
+  unassignEmployees,
+  getTaskPercentageByGroupForCurrentMonth,
 } from "../controllers/task";
+import { ParsedQs } from "qs";
 
 const router = express.Router();
 
@@ -164,10 +170,100 @@ router.post("/assignEmployees", async (req: Request, res: Response) => {
   const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
 
   try {
-    const newAssiments = await assignEmployees(taskId, taskDate, taskBalancePoints, employeeIds);
+    const newAssiments = await assignEmployees(
+      taskId,
+      taskDate,
+      taskBalancePoints,
+      employeeIds
+    );
     res.status(200).send(newAssiments);
   } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+/**
+ * @swagger
+ * /task/unassignEmployees:
+ *   post:
+ *       summary: Unassign employees to a task
+ *       tags: [Task, Users]
+ *       requestBody:
+ *           required: true
+ *           content:
+ *               application/json:
+ *                   schema:
+ *                       $ref: '#/components/schemas/r_tasks_users'
+ *       responses:
+ *           200:
+ *               description: Assigned employees successfully
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/r_tasks_users'
+ *           400:
+ *              description: Bad request - invalid data
+ *           401:
+ *              description: Unauthorized - invalid or missing token
+ */
+router.post("/unassignEmployees", async (req: Request, res: Response) => {
+  const { taskId, employeeIds, taskDate, taskBalancePoints } = req.body;
+
+  try {
+    const unassigments = await unassignEmployees(
+      taskId,
+      taskDate,
+      taskBalancePoints,
+      employeeIds
+    );
+    res.status(200).send(unassigments);
+  } catch (err) {
     console.error(err);
+  }
+});
+
+/**
+ * @swagger
+ * /{id}:
+ *   get:
+ *     summary: Retrieve a specific task by ID
+ *     tags: [Task]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the task to retrieve
+ *     responses:
+ *       200:
+ *         description: Task found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: Task not found
+ */
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const taskId = req.query.taskId as string;
+    const task = await getTaskById(taskId);
+
+    if (!task) {
+      return res.status(404).send({ message: "Task not found" });
+    }
+
+    res.status(200).send(task);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: "Failed to retrieve task", error: err });
   }
 });
 
@@ -244,6 +340,55 @@ router.get("/balancePointsByGroup", async (req: Request, res: Response) => {
     console.error(err);
   }
 });
+
+/**
+ * @swagger
+ * /getTaskPercentageByGroup:
+ *   get:
+ *     summary: Get the percentage of tasks per group for a given company
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: query
+ *         name: companyId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the company to retrieve task percentages for
+ *     responses:
+ *       200:
+ *         description: List of groups and their task percentage
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   group:
+ *                     type: string
+ *                     example: "managers"
+ *                   percentage:
+ *                     type: number
+ *                     format: float
+ *                     example: 34.5
+ *       400:
+ *         description: Invalid or missing companyId
+ *       500:
+ *         description: Server error
+ */
+
+router.get("/getTaskPercentageByGroup", async (req: Request, res: Response) => {
+  const { companyId } = req.query;
+  try {
+    const PercentageByGroup = await getTaskPercentageByGroupForCurrentMonth(
+      Number(companyId)
+    );
+    res.status(200).send(PercentageByGroup);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 /**
  * @swagger
  * /employee/{employeeId}:
@@ -327,14 +472,22 @@ router.get("/employee/:employeeId", async (req: Request, res: Response) => {
  */
 
 router.get("/month/", async (req: Request, res: Response) => {
-  const { companyId, month } = req.query;
+  const { userId, companyId, month } = req.query;
 
   try {
-    res.status(200).send(await getAllTasksByMonth(Number(month), Number(companyId)));
+    res
+      .status(200)
+      .send(
+        await getAllTasksByMonth(
+          String(userId),
+          Number(month),
+          Number(companyId)
+        )
+      );
   } catch (err) {
     res.status(400).send(err);
   }
-})
+});
 
 /**
  * @swagger
@@ -375,7 +528,48 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
   } catch (err) {
     res.status(400).send(err);
   }
-})
+});
+
+/**
+ * @swagger
+ * /task/assignedEmployees/{taskId}:
+ *   get:
+ *       summary: Retrieve a list of assigned employees for a specific task
+ *       tags: [Task]
+ *       security:
+ *           - bearerAuth: []
+ *       parameters:
+ *           - in: path
+ *             name: taskId
+ *             required: true
+ *             description: ID of the task
+ *             schema:
+ *                 type: integer
+ *       responses:
+ *           200:
+ *               description: A list of assigned employees
+ *               content:
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                  name:
+ *                                      type: string
+ */
+
+router.get("/assignedEmployees", async (req: Request, res: Response) => {
+  const taskId = req.query.taskId as string;
+  try {
+    const assignedEmployees = await getAssignedEmployees(taskId);
+    res.status(200).send(assignedEmployees);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
 
 /**
  * @swagger
@@ -409,15 +603,18 @@ router.get("/suggestedEmployees", async (req: Request, res: Response) => {
  *              description: Not Found
  */
 
-router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Response) => {
-  const companyId = req.params.companyId
-  try {
-    const amount = await getUnassignedTasksAmount(+companyId);
-    res.status(200).send(amount);
-  } catch (err) {
-    res.status(400).send(err);
+router.get(
+  "/unassignedTasks/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const amount = await getUnassignedTasksAmount(+companyId);
+      res.status(200).send(amount);
+    } catch (err) {
+      res.status(400).send(err);
+    }
   }
-})
+);
 
 /**
  * @swagger
@@ -451,14 +648,70 @@ router.get("/unassignedTasks/company/:companyId", async (req: Request, res: Resp
  *              description: Not Found
  */
 
-router.get("/avgPerWeek/company/:companyId", async (req: Request, res: Response) => {
-  const companyId = req.params.companyId
-  try {
-    const avg = await getAvgTasksPerWeek(+companyId);
-    res.status(200).send(avg);
-  } catch (err) {
-    res.status(400).send(err);
+router.get(
+  "/avgPerWeek/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const avg = await getAvgTasksPerWeek(+companyId);
+      res.status(200).send(avg);
+    } catch (err) {
+      res.status(400).send(err);
+    }
   }
-})
+);
+
+/**
+ * @swagger
+ * /assignStats/{companyId}:
+ *   get:
+ *     summary: Retrieve assignment stats for a specific company
+ *     tags: [Task]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: companyId
+ *         required: true
+ *         description: ID of the company
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Assignment stats retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 fully_assigned_tasks:
+ *                   type: integer
+ *                 under_assigned_tasks:
+ *                   type: integer
+ *                 zero_assigned_tasks:
+ *                   type: integer
+ *             example:
+ *               fully_assigned_tasks: 10
+ *               under_assigned_tasks: 5
+ *               zero_assigned_tasks: 2
+ *       400:
+ *         description: Bad request - failed to retrieve assignment stats
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: Not Found - company not found
+ */
+
+router.get("/assignStats/:companyId", async (req: Request, res: Response) => {
+  const companyId = req.params.companyId;
+  try {
+    const stats = await getAssignStats(+companyId);
+    res.status(200).send(stats);
+  } catch (err) {
+    res
+      .status(400)
+      .send({ message: "Failed to retrieve assignment stats", error: err });
+  }
+});
 
 export default router;

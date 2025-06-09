@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -29,6 +29,10 @@ import { BeatLoader } from "react-spinners";
 import { State, City } from "country-state-city";
 import { officeTitle } from "../consts";
 
+interface NewTaskFormProps {
+  initialData?: TaskDetails | null;
+}
+
 const districts = State.getStatesOfCountry("IL");
 const israelCities = districts.flatMap((district) => {
   return City.getCitiesOfState("IL", district.isoCode);
@@ -36,23 +40,31 @@ const israelCities = districts.flatMap((district) => {
 
 const locations = [officeTitle, ...israelCities.map((city) => city.name)];
 
-const NewTaskForm: React.FC = () => {
+const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
   const { connectedUser } = useGlobalContext();
   const [loadingAI, setLoadingAI] = useState(false);
   const [clickedAI, setClickedAI] = useState(false);
 
-  const [formData, setFormData] = useState<TaskDetails>({
-    name: "",
-    description: "",
-    startTime: new Date(),
-    endTime: new Date(),
-    gender: "Both",
-    location: locations[0],
-    balancePoints: 0,
-    employeesAmount: 0,
-    saveToTasks: false,
-    other: "",
-  });
+  const [formData, setFormData] = useState<TaskDetails>(
+    initialData || {
+      name: "",
+      description: "",
+      startTime: new Date(),
+      endTime: new Date(),
+      gender: "Both",
+      location: locations[0],
+      balancePoints: 0,
+      employeesAmount: 0,
+      saveToTasks: false,
+      other: "",
+    }
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleDateChange = (selectedDate: Date) => {
     setFormData((prev) => {

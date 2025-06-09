@@ -21,7 +21,6 @@ export interface Task {
 export interface RawTask {
   name: string;
   description: string;
-  // date: string;
   start_time: Date;
   end_time: Date;
   gender: Gender;
@@ -31,12 +30,23 @@ export interface RawTask {
   save_to_tasks: boolean;
   other: string;
   id: string;
+  task_id: string;
   company_id: string;
+}
+export interface ShortenedTaskDetails {
+  name: string;
+  startTime: Date;
+  endTime: Date;
+  gender: Gender;
+  location: string;
+  balancePoints: number;
+  taskId: string;
 }
 
 export interface RawEmployeedTask extends RawTask {
   date: string;
   task_id: string;
+  is_me_assigned: number;
   assigned_employees_amount: number
 }
 
