@@ -218,8 +218,8 @@ const DashboardPage: React.FC = () => {
             minHeight: "100px",
             fontWeight: "bold",
             backgroundColor: "#FFFFFF",
-            boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 20px 0px", // added elevation
-            borderRadius: "12px", // optional: adds soft corners
+            boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 20px 0px",
+            borderRadius: "12px",
           }}
         >
           <h2 style={{ marginTop: "-15px", marginBottom: "-10px" }}>
