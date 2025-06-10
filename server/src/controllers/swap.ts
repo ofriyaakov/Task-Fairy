@@ -172,7 +172,6 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
             JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
             ) as first_swap_info
         JOIN public.r_tasks_users ON r_tasks_users.id = first_swap_info.second_r_task_user
-        JOIN public.swap_requests second_swap ON second_swap.second_r_task_user = first_swap_info.second_r_task_user
         JOIN public.users ON users.user_id = r_tasks_users.user_id
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         JOIN public.swap_status ON first_swap_info.status_id = swap_status.status_id
