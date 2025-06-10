@@ -112,11 +112,11 @@ const EmployeeSwapsPage: React.FC = () => {
           }
           {myTasks.length !== 0 &&
             <div style={{ marginLeft: "1vw", height: "100%", width: "500px" }}>
-              <TasksList title={'My Tasks'} tasks={myTasks} height='50vh' handleCardClick={handleMyTaskCardClick} />
+              <TasksList title={'My Tasks'} tasks={myTasks} height='58vh' handleCardClick={handleMyTaskCardClick} />
             </div>}
           {taskListByDate.length !== 0 &&
             <div style={{ marginLeft: "1vw", height: "100%", width: "500px" }}>
-              <TasksList title={'Others Tasks'} tasks={taskListByDate} height='50vh' handleCardClick={handleOtherTaskCardClick} />
+              <TasksList title={'Others Tasks'} tasks={taskListByDate} height='58vh' handleCardClick={handleOtherTaskCardClick} />
             </div>}
         </div>
         <div>

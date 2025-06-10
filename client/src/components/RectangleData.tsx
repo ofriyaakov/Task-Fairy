@@ -27,7 +27,7 @@ const RectangleData: React.FC<RectangleDataProps> = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "10vh",
+        maxHeight: "7vh",
         minWidth: width || "15vw",
       }}
     >
