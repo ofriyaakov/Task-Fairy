@@ -46,7 +46,7 @@ const ManagerSwapsPage: React.FC = () => {
 
   return (
     <div className='App' style={{ height: "95%" }}>
-      <Typography sx={{ fontWeight: 650, fontSize: "1.5rem", display: "flex" }}>
+      <Typography sx={{ fontWeight: 650, fontSize: "1.5rem", display: "flex", marginBottom: "1rem" }}>
         Pending Swaps
       </Typography>
       <Box

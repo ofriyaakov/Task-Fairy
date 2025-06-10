@@ -132,7 +132,7 @@ const DashboardPage: React.FC = () => {
     >
       {/* Page Title */}
       <h1
-        style={{ fontSize: "32px", fontWeight: "bold", marginBottom: "30px" }}
+        style={{ fontSize: "32px", fontWeight: "bold", margin: "0 0 20px 0" }}
       >
         Monthly Dashboard
       </h1>
@@ -144,7 +144,6 @@ const DashboardPage: React.FC = () => {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: "20px",
-          marginBottom: "40px",
           flexGrow: 0,
         }}
       >
@@ -219,12 +218,14 @@ const DashboardPage: React.FC = () => {
             minHeight: "100px",
             fontWeight: "bold",
             backgroundColor: "#FFFFFF",
+            boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 20px 0px",
+            borderRadius: "12px",
           }}
         >
           <h2 style={{ marginTop: "-15px", marginBottom: "-10px" }}>
             Task Assignment Status
           </h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
                 data={tasksChartData}
