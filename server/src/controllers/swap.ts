@@ -34,7 +34,6 @@ export const getPendingSwapRequests = async (companyId: number) => {
             JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
             WHERE status_id = 2 and tasks.company_id = $1) as first_swap_info
         JOIN public.r_tasks_users ON r_tasks_users.id = first_swap_info.second_r_task_user
-        JOIN public.swap_requests second_swap ON second_swap.second_r_task_user = first_swap_info.second_r_task_user
         JOIN public.users ON users.user_id = r_tasks_users.user_id
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         `,
