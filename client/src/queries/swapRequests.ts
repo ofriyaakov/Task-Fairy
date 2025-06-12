@@ -1,4 +1,5 @@
 import axiosInstance from "../axiosInstance";
+import { SwapRequestPayload, SwapRequestStatus } from "../types/Swap";
 const SWAP_REQUESTS_ROUTE = "/swap-requests";
 
 export const getAllPendingSwapRequests = async (companyId: number) => {

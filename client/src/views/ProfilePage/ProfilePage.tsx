@@ -142,7 +142,7 @@ const ProfilePage: React.FC = () => {
                 value={userBalancePoints}
                 color={userBalancePoints >= avgBalancePoints ? APP_COLOR.MINT_GREEN : APP_COLOR.LIGHT_RED} />
               <RectangleData
-                title="Company Avg"
+                title="Company Average"
                 subtitle=""
                 value={avgBalancePoints}
                 color={APP_COLOR.ALICE_BLUE_DARKER} />
