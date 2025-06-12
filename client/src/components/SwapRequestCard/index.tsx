@@ -55,7 +55,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
   swapRequestId,
   onApprove,
   onReject,
-  backgroundColor = 'rgb(255 255 255)'
+  backgroundColor = "rgb(255 255 255)",
 }) => {
   const isSameTask = leftDetails.taskName === rightDetails.taskName;
 
@@ -67,29 +67,28 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         borderRadius: 4,
         width: "92%",
         border: "1px solid rgb(229 229 229)",
-        backgroundColor: backgroundColor
+        backgroundColor: backgroundColor,
       }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 1,
-        }}>
-        {isSameTask ? (
+      {isSameTask && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
           <Typography
-            variant='h6'
             sx={{
-              fontWeight: "bold",
-              flex: 1,
               textAlign: "center",
+              fontWeight: "bold",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              mb: 2,
             }}>
             {leftDetails.taskName}
           </Typography>
-        ) : (
-          <Box sx={{ flex: 1 }} />
-        )}
-      </Box>
+        </Box>
+      )}
 
       {/* Main swap details */}
       <Box

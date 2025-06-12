@@ -8,11 +8,23 @@ import {
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { toast } from "react-toastify";
+import Search from "../../components/Search";
 
 const ManagerSwapsPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
   const [pendingSwapRequests, setPendingSwapRequest] = useState<SwapRequest[]>(
     []
+  );
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const filteredPendingSwapRequests = pendingSwapRequests.filter(
+    (pendingSwapRequest) =>
+      pendingSwapRequest.leftDetails.taskName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      pendingSwapRequest.rightDetails.taskName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   const updateSwapStatus = async (
@@ -45,22 +57,38 @@ const ManagerSwapsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className='App' style={{ height: "95%" }}>
-      <Typography sx={{ fontWeight: 650, fontSize: "1.5rem", display: "flex", marginBottom: "1rem" }}>
+    <div
+      className='App'
+      style={{ height: "89vh", display: "flex", flexDirection: "column" }}>
+      <Typography
+        sx={{
+          fontWeight: 650,
+          fontSize: "1.5rem",
+          display: "flex",
+        }}>
         Pending Swaps
       </Typography>
+      <Box
+        className='App'
+        style={{ display: "flex", justifyContent: "center" }}>
+        <Search
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          width='40%'
+        />
+      </Box>
       <Box
         sx={{
           px: 2,
           pb: 2,
           pt: 2,
           bgcolor: "rgb(250 250 250)",
-          height: "80vh",
+          height: "80%",
           borderRadius: "24px",
           overflowY: "auto",
         }}>
         <Grid container spacing={2}>
-          {pendingSwapRequests.map((swapRequest, index) => (
+          {filteredPendingSwapRequests.map((swapRequest, index) => (
             <Grid item xs={12} md={6} key={index}>
               <SwapRequestCard
                 leftDetails={swapRequest.leftDetails}

@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { Box, TextField, Paper, Stack } from "@mui/material";
+import { Box, Paper, Stack } from "@mui/material";
 import { ShortenedTaskDetails } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
+import Search from "../Search";
 
 interface TaskListProps {
   title: string;
   tasks: ShortenedTaskDetails[];
-  handleCardClick?: (taskId: string, taskDate?: Date, balancePoints?: number) => void 
+  handleCardClick?: (
+    taskId: string,
+    taskDate?: Date,
+    balancePoints?: number
+  ) => void;
   height?: string;
 }
 
@@ -26,7 +29,11 @@ const TasksList: React.FC<TaskListProps> = ({
     task.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleClick = (taskId: string, taskDate?: Date, balancePoints?: number) => {
+  const handleClick = (
+    taskId: string,
+    taskDate?: Date,
+    balancePoints?: number
+  ) => {
     setSelectedTaskId(taskId);
     handleCardClick && handleCardClick(taskId, taskDate, balancePoints);
   };
@@ -39,7 +46,7 @@ const TasksList: React.FC<TaskListProps> = ({
         width: "100%",
         maxWidth: "388px",
         overflow: "hidden",
-        height: "86vh"
+        height: "86vh",
       }}>
       <Box>
         <Headline color='rgb(206, 244, 255)' title={title} />
@@ -54,25 +61,7 @@ const TasksList: React.FC<TaskListProps> = ({
           display: "flex",
           flexDirection: "column",
         }}>
-        <TextField
-          variant='outlined'
-          placeholder='Search...'
-          fullWidth
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            sx: {
-              borderRadius: 2,
-              mb: 2,
-              mt: 2,
-            },
-          }}
-        />
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         {filteredTasks.length === 0 ? (
           <p>No tasks to display.</p>
         ) : (
