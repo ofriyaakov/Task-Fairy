@@ -8,23 +8,26 @@ import { APP_COLOR } from "../../theme";
 import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
-  const { setConnectedUser } = useGlobalContext();
+  const { updateConnectedUser } = useGlobalContext();
   const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
     try {
       const response = await login({ email, password });
-
-      setConnectedUser({
-        id: response.id,
-        name: response.name,
-        email: response.email,
-        companyId: response.companyId,
-        userLevel: response.userLevel,
-        groupId: response.groupId,
-        groupName: response.groupName,
-        firstLogin: response.firstLogin,
-      });
+      updateConnectedUser(
+        {
+          id: response.id,
+          name: response.name,
+          email: response.email,
+          companyId: response.companyId,
+          userLevel: response.userLevel,
+          groupId: response.groupId,
+          groupName: response.groupName,
+          firstLogin: response.firstLogin,
+        },
+        response.accessToken,
+        response.refreshToken
+      );
 
       navigate(response.userLevel == 2 ? "/dashboard" : "/profile");
     } catch (err: any) {
