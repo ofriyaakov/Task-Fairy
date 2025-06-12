@@ -80,10 +80,10 @@ export const assignEmployees = async (
 ) => {
   try {
     const query = `
-        INSERT INTO public.r_tasks_users(task_id, user_id)
-	    VALUES ($1, $2)
-        RETURNING *
-      `;
+      INSERT INTO public.r_tasks_users(task_id, user_id)
+      VALUES ($1, $2)
+      RETURNING *
+    `;
 
     const returnRows = [];
 
@@ -98,6 +98,15 @@ export const assignEmployees = async (
     for (const id of employeeIds) {
       const { rows } = await db.query(query, [taskId, id]);
       returnRows.push(rows);
+
+      const dateStr = new Date(taskDate).toDateString();
+
+      // Insert notification
+      await db.query(
+        `INSERT INTO notifications (user_id, type, message)
+         VALUES ($1, 'NEW_TASK', $2)`,
+        [id, `You’ve been assigned a new task on ${dateStr}.`]
+      );
     }
 
     return returnRows;
@@ -106,6 +115,7 @@ export const assignEmployees = async (
     throw e;
   }
 };
+
 
 export const unassignEmployees = async (
   taskId: string,
@@ -131,6 +141,17 @@ export const unassignEmployees = async (
       `,
       [taskId, employeeIds]
     );
+
+    const dateStr = new Date(taskDate).toDateString();
+
+    // Notify unassigned employees
+    for (const id of employeeIds) {
+      await db.query(
+        `INSERT INTO notifications (user_id, type, message)
+         VALUES ($1, 'UNASSIGNED_TASK', $2)`,
+        [id, `You’ve been removed from a task on ${dateStr}.`]
+      );
+    }
 
     return rows;
   } catch (e) {
