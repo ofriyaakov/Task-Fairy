@@ -2,7 +2,7 @@ import db from "../config/db";
 
 export const getUserNotifications = async (userId: string) => {
   const result = await db.query(
-    `SELECT id, type, message, is_read, created_at
+    `SELECT id, type, message, is_read, TO_CHAR(created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Jerusalem', 'YYYY-MM-DD HH24:MI') AS created_at
      FROM notifications
      WHERE user_id = $1
        AND (
