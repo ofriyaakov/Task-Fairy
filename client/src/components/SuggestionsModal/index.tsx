@@ -24,21 +24,21 @@ import { toast } from "react-toastify";
 interface SuggestionsDialogProps {
   open: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // employeesSuggestions: employeeDatailsCard[];  WILL BE PASSED FROM OUR ALGORITHM
   taskId: string;
   employeesAmount: number;
   taskDate: Date;
   taskBalancePoints: number;
+  setRefreshTasks: (refresh: boolean) => void;
 }
 
 const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   open,
   setIsModalOpen,
-  // employeesSuggestions,
   taskId,
   employeesAmount,
   taskDate,
   taskBalancePoints,
+  setRefreshTasks,
 }) => {
   const [approvedEmployees, setApprovedEmployees] = useState<
     employeeDatailsCard[]
@@ -118,6 +118,7 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
       setRemovedEmployees([]);
       setIsModalOpen(false);
       toast.success("Employees successfuly assigned!");
+      setRefreshTasks(true);
     } catch (err: any) {
       console.error(err.message);
       toast.error("Oops! Something went wrong");

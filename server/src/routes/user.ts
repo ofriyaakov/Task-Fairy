@@ -9,7 +9,7 @@ import {
   updateUserById,
   addNewEmployees,
   updateUserFirstLogin,
-  getAssignedEmployeesAmount
+  getAssignedEmployeesAmount,
 } from "../controllers/user";
 
 import authenticateToken from "../middleware/jwt";
@@ -432,7 +432,6 @@ router.delete(
  *         description: Bad request or insertion failed
  */
 
-
 router.post("/addNewEmployees", async (req: Request, res: Response) => {
   const { employees, company_id } = req.body;
 
@@ -533,14 +532,16 @@ router.put("/:user_id/first-login", async (req, res) => {
  *              description: Not Found
  */
 
-router.get("/assignedAmount/company/:companyId", async (req: Request, res: Response) => {
-    const companyId = req.params.companyId
-      try {
-        const assignedAmount = await getAssignedEmployeesAmount(+companyId);
-        res.status(200).send(assignedAmount);
-      } catch (err) {
-        console.error(err);
-      }
+router.get(
+  "/assignedAmount/company/:companyId",
+  async (req: Request, res: Response) => {
+    const companyId = req.params.companyId;
+    try {
+      const assignedAmount = await getAssignedEmployeesAmount(+companyId);
+      res.status(200).send(assignedAmount);
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 

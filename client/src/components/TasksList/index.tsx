@@ -39,6 +39,7 @@ const TasksList: React.FC<TaskListProps> = ({
         width: "100%",
         maxWidth: "388px",
         overflow: "hidden",
+        height: "86vh"
       }}>
       <Box>
         <Headline color='rgb(206, 244, 255)' title={title} />
@@ -49,7 +50,7 @@ const TasksList: React.FC<TaskListProps> = ({
           px: 2,
           pb: 2,
           bgcolor: "rgb(250 250 250)",
-          height: height,
+          height: "100%",
           display: "flex",
           flexDirection: "column",
         }}>

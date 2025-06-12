@@ -12,10 +12,12 @@ import {
   getTaskById,
   getUnassignedTasksAmount,
   getAvgTasksPerWeek,
+  getAssignStats,
   getAssignedEmployees,
   unassignEmployees,
   getTaskPercentageByGroupForCurrentMonth,
 } from "../controllers/task";
+import { ParsedQs } from "qs";
 
 const router = express.Router();
 
@@ -473,7 +475,15 @@ router.get("/month/", async (req: Request, res: Response) => {
   const { userId, companyId, month } = req.query;
 
   try {
-    res.status(200).send(await getAllTasksByMonth(String(userId), Number(month), Number(companyId)));
+    res
+      .status(200)
+      .send(
+        await getAllTasksByMonth(
+          String(userId),
+          Number(month),
+          Number(companyId)
+        )
+      );
   } catch (err) {
     res.status(400).send(err);
   }
@@ -650,5 +660,58 @@ router.get(
     }
   }
 );
+
+/**
+ * @swagger
+ * /assignStats/{companyId}:
+ *   get:
+ *     summary: Retrieve assignment stats for a specific company
+ *     tags: [Task]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: companyId
+ *         required: true
+ *         description: ID of the company
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Assignment stats retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 fully_assigned_tasks:
+ *                   type: integer
+ *                 under_assigned_tasks:
+ *                   type: integer
+ *                 zero_assigned_tasks:
+ *                   type: integer
+ *             example:
+ *               fully_assigned_tasks: 10
+ *               under_assigned_tasks: 5
+ *               zero_assigned_tasks: 2
+ *       400:
+ *         description: Bad request - failed to retrieve assignment stats
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: Not Found - company not found
+ */
+
+router.get("/assignStats/:companyId", async (req: Request, res: Response) => {
+  const companyId = req.params.companyId;
+  try {
+    const stats = await getAssignStats(+companyId);
+    res.status(200).send(stats);
+  } catch (err) {
+    res
+      .status(400)
+      .send({ message: "Failed to retrieve assignment stats", error: err });
+  }
+});
 
 export default router;

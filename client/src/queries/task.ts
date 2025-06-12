@@ -40,12 +40,15 @@ export const unassignEmployees = async (
   taskBalancePoints: number
 ) => {
   try {
-    const response = await axiosInstance.post(`${TASK_ROUTE}/unassignEmployees`, {
-      taskId,
-      employeeIds,
-      taskDate,
-      taskBalancePoints,
-    });
+    const response = await axiosInstance.post(
+      `${TASK_ROUTE}/unassignEmployees`,
+      {
+        taskId,
+        employeeIds,
+        taskDate,
+        taskBalancePoints,
+      }
+    );
     return response.data;
   } catch (error: any) {
     throw new Error(
@@ -74,9 +77,9 @@ export const getEmployeeTasks = async (employeeId: string) => {
       return {
         ...task,
         startTime: new Date(task.startTime),
-        endTime: new Date(task.endTime)
+        endTime: new Date(task.endTime),
       };
-    })
+    });
     return formattedTasks;
   } catch (error: any) {
     throw new Error(
@@ -97,9 +100,17 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
-export const getAllTasksByMonth = async (month: number, companyId: number, userId: string) => {
+export const getAllTasksByMonth = async (
+  month: number,
+  companyId: number,
+  userId: string
+) => {
   try {
-    const tasks = (await axiosInstance.get(`${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}&userId=${userId}`)).data;
+    const tasks = (
+      await axiosInstance.get(
+        `${TASK_ROUTE}/month/?month=${month}&companyId=${companyId}&userId=${userId}`
+      )
+    ).data;
     return tasks;
   } catch (error: any) {
     console.error("getAllTasksByMonth error", error);
@@ -199,6 +210,19 @@ export const getAvgTasksPerWeek = async (
     throw new Error(
       error.response?.data?.message ||
         "Recieving average tasks amount per week failed"
+    );
+  }
+};
+
+export const getAssignStats = async (companyId: number): Promise<any> => {
+  try {
+    const response = await axiosInstance.get(
+      `${TASK_ROUTE}/assignStats/${companyId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Recieving assign stats failed"
     );
   }
 };
