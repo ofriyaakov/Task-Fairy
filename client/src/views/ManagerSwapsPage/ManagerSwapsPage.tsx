@@ -18,13 +18,20 @@ const ManagerSwapsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredPendingSwapRequests = pendingSwapRequests.filter(
-    (pendingSwapRequest) =>
-      pendingSwapRequest.leftDetails.taskName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      pendingSwapRequest.rightDetails.taskName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+    (pendingSwapRequest) => {
+      const valuesToSearch = [
+        pendingSwapRequest.leftDetails.taskName,
+        pendingSwapRequest.rightDetails.taskName,
+        pendingSwapRequest.leftDetails.employeeFirstName,
+        pendingSwapRequest.rightDetails.employeeFirstName,
+        pendingSwapRequest.leftDetails.employeeLastName,
+        pendingSwapRequest.rightDetails.employeeLastName,
+      ];
+
+      return valuesToSearch.some((value) =>
+        value.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
   );
 
   const updateSwapStatus = async (
@@ -60,23 +67,27 @@ const ManagerSwapsPage: React.FC = () => {
     <div
       className='App'
       style={{ height: "89vh", display: "flex", flexDirection: "column" }}>
-      <Typography
-        sx={{
-          fontWeight: 650,
-          fontSize: "1.5rem",
-          display: "flex",
-        }}>
-        Pending Swaps
-      </Typography>
       <Box
-        className='App'
-        style={{ display: "flex", justifyContent: "center" }}>
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
+        <Typography
+          sx={{
+            fontWeight: 650,
+            fontSize: "1.5rem",
+            display: "flex",
+          }}>
+          Pending Swaps
+        </Typography>
         <Search
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           width='40%'
         />
       </Box>
+
       <Box
         sx={{
           px: 2,

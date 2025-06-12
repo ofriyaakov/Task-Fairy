@@ -486,6 +486,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
                       onChange={(newValue) =>
                         handleChange("endTime", newValue?.toDate())
                       }
+                      minTime={dayjs(formData.startTime)} 
                       sx={{ bgcolor: "white" }}
                     />
                   </Box>
