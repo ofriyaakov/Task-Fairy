@@ -48,6 +48,19 @@ const EmployeesPage: React.FC = () => {
   );
   const [deletePopupOpen, setDeletePopupOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    setRowsPerPage(calculateRowsPerPage());
+  }, []);
+
+  const calculateRowsPerPage = () => {
+    const screenHeight = window.innerHeight;
+
+    if (screenHeight > 1000) return 14;
+    if (screenHeight > 800) return 10;
+    if (screenHeight > 600) return 9;
+    return 8;
+  };
+
   const fetchCompanyAvgBalancePoints = async () => {
     try {
       const companyId = connectedUser?.companyId;

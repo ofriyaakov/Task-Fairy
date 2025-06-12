@@ -1,0 +1,7 @@
+.graphCard {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 20px 0px;
+    padding: 3px 20px 3px 20px;
+    margin-top: 15px;
+}
