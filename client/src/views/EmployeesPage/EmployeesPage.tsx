@@ -50,7 +50,7 @@ const EmployeesPage: React.FC = () => {
 
   useEffect(() => {
     setRowsPerPage(calculateRowsPerPage());
-  }, [window.innerHeight]);
+  }, []);
 
   const calculateRowsPerPage = () => {
     const screenHeight = window.innerHeight;
