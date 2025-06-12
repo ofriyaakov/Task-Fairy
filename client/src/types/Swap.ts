@@ -5,6 +5,7 @@ export interface SwapCardDetails {
   taskName: string;
   taskStartTime: string;
   taskEndTime: string;
+  taskId: string;
 }
 
 export enum SwapRequestStatus {

@@ -6,7 +6,7 @@ import TasksList from './../../components/TasksList'
 import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
 import { useGlobalContext } from '../../contexts/GlobalContext';
-import TaskEmployeesDialog from "../../components/SwapEmployeeModal";
+import AssigneesDialog from "../../components/SwapEmployeeModal";
 import { CalendarPages } from '../../components/Calendar/CalendarSetup';
 import { Box, Grid } from '@mui/material';
 import SwapRequestCard from '../../components/SwapRequestCard';
@@ -146,8 +146,9 @@ const EmployeeSwapsPage: React.FC = () => {
           </Box>
         </div>
         {isModalOpen &&
-          <TaskEmployeesDialog
+          <AssigneesDialog
             open={isModalOpen}
+            openSwapRequests={swapRequestsByEmployee}
             setIsModalOpen={setIsModalOpen}
             taskId={currentTaskId}
             taskIdToSwap={selectedTaskToSwap}

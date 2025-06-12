@@ -149,12 +149,14 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
             first_swap_info.first_task_name,
             first_swap_info.first_task_start_time,
             first_swap_info.first_task_end_time,
+            first_swap_info.first_task_id,
             users.user_id second_user_id, 
             users.first_name second_user_first_name, 
             users.last_name second_user_last_name,
             tasks.name second_task_name,
             tasks.start_time second_task_start_time,
             tasks.end_time second_task_end_time,
+            tasks.task_id second_task_id,
             swap_status.status_name status
         FROM (SELECT DISTINCT(swap_requests.id) swap_request_id,
             swap_requests.first_r_task_user,
@@ -164,6 +166,7 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
             tasks.name first_task_name,
             tasks.start_time first_task_start_time,
             tasks.end_time first_task_end_time,
+            tasks.task_id first_task_id,
             swap_requests.second_r_task_user,
             swap_requests.status_id
             FROM public.r_tasks_users
@@ -172,7 +175,6 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
             JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
             ) as first_swap_info
         JOIN public.r_tasks_users ON r_tasks_users.id = first_swap_info.second_r_task_user
-        JOIN public.swap_requests second_swap ON second_swap.second_r_task_user = first_swap_info.second_r_task_user
         JOIN public.users ON users.user_id = r_tasks_users.user_id
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         JOIN public.swap_status ON first_swap_info.status_id = swap_status.status_id
@@ -191,6 +193,7 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
                     taskName: rawSwapRequest.first_task_name,
                     taskStartTime: rawSwapRequest.first_task_start_time,
                     taskEndTime: rawSwapRequest.first_task_end_time,
+                    taskId: rawSwapRequest.first_task_id,
                 },
                 rightDetails: {
                     employeeId: rawSwapRequest.second_user_id,
@@ -199,6 +202,7 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
                     taskName: rawSwapRequest.second_task_name,
                     taskStartTime: rawSwapRequest.second_task_start_time,
                     taskEndTime: rawSwapRequest.second_task_end_time,
+                    taskId: rawSwapRequest.second_task_id,
                 },
                 status: rawSwapRequest.status
             };

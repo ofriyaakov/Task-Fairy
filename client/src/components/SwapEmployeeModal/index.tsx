@@ -16,7 +16,7 @@ import { APP_COLOR } from "./../../theme";
 import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../contexts/GlobalContext";
-import { SwapRequestPayload } from "../../types/Swap";
+import { FullSwapRequest, SwapRequestPayload } from "../../types/Swap";
 import { createNewSwapRequest } from "../../queries/swapRequests";
 import EmployeeDetailsCard from "../EmployeeDetailsCard";
 
@@ -26,6 +26,7 @@ interface AssigneesDialogProps {
   taskId: string;
   taskIdToSwap: string;
   isSwapDisabled: boolean;
+  openSwapRequests: FullSwapRequest[];
 }
 
 const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
@@ -33,7 +34,8 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   setIsModalOpen,
   taskId,
   taskIdToSwap,
-  isSwapDisabled
+  isSwapDisabled,
+  openSwapRequests
 }) => {
   const [assignedEmployees, setAssignedEmployees] = useState<employeeDatailsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,9 +45,18 @@ const AssigneesDialog: React.FC<AssigneesDialogProps> = ({
   const fetchAssignedEmployees = async () => {
     try {
         const response = await getAssignedEmployees(taskId);
-        //TODO - After merging "my swaps" part, add filter to exclude employees the connected user has swap request with
         const filteredAssignees = response.filter((employee: employeeDatailsCard) => employee.user_id !== connectedUser?.id);
-        setAssignedEmployees(filteredAssignees);
+        const availableSwapOptions = filteredAssignees.filter((employee: employeeDatailsCard) => {
+          return !openSwapRequests.some((swapRequest: FullSwapRequest) => {
+            return (
+              (swapRequest.leftDetails.employeeId === connectedUser?.id &&
+                swapRequest.rightDetails.employeeId === employee.user_id &&
+                swapRequest.leftDetails.taskId === taskIdToSwap &&
+                swapRequest.rightDetails.taskId === taskId)
+            );
+          });
+        })
+        setAssignedEmployees(availableSwapOptions);
         setIsLoading(false);
     } catch (error) {
         console.error("Error fetching assigned employees:", error);
