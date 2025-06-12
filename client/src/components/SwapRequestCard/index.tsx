@@ -10,9 +10,10 @@ import dayjs from "dayjs";
 interface SwapRequestCardProps {
   leftDetails: SwapCardDetails;
   rightDetails: SwapCardDetails;
-  swapRequestId: string;
+  swapRequestId?: string;
   onApprove?: (swapRequestId: string) => void;
   onReject?: (swapRequestId: string) => void;
+  backgroundColor?: string;
 }
 
 interface SwapDetailsProps {
@@ -54,6 +55,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
   swapRequestId,
   onApprove,
   onReject,
+  backgroundColor = 'rgb(255 255 255)'
 }) => {
   const isSameTask = leftDetails.taskName === rightDetails.taskName;
 
@@ -65,6 +67,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         borderRadius: 4,
         width: "92%",
         border: "1px solid rgb(229 229 229)",
+        backgroundColor: backgroundColor
       }}>
       <Box
         sx={{
@@ -133,7 +136,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
           </Grid>
         </Grid>
 
-        {onApprove && onReject && (
+        {onApprove && onReject && swapRequestId && (
           <Stack
             direction='column'
             spacing={2}

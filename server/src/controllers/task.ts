@@ -98,7 +98,7 @@ export const assignEmployees = async (
     for (const id of employeeIds) {
       const { rows } = await db.query(query, [taskId, id]);
       returnRows.push(rows);
-    };
+    }
 
     return returnRows;
   } catch (e) {
@@ -247,7 +247,11 @@ export const getAllTasksBalancePoints = async (companyId: string) => {
   }
 };
 
-export const getAllTasksByMonth = async (userId: string, month: number, companyId: number) => {
+export const getAllTasksByMonth = async (
+  userId: string,
+  month: number,
+  companyId: number
+) => {
   try {
     const result = await db.query(
       `
@@ -260,8 +264,9 @@ export const getAllTasksByMonth = async (userId: string, month: number, companyI
 	      ON userTask.task_id = tasks.task_id
       WHERE EXTRACT(MONTH FROM CAST(start_time as DATE)) = $2
       AND company_id = $3
-      GROUP BY tasks.task_id`, 
-      [userId, month, companyId]);
+      GROUP BY tasks.task_id`,
+      [userId, month, companyId]
+    );
 
     const tasks: RawEmployeedTask[] = result.rows;
 
@@ -703,6 +708,44 @@ export const getAvgTasksPerWeek = async (companyId: number) => {
   }
 };
 
+export const getAssignStats = async (companyId: number) => {
+  try {
+    const result = await db.query(
+      `
+      WITH current_tasks AS (
+        SELECT *
+        FROM public.tasks
+        WHERE company_id = $1
+          AND DATE_TRUNC('month', start_time) = DATE_TRUNC('month', CURRENT_DATE)
+      ),
+      task_assignments AS (
+        SELECT task_id, COUNT(user_id) AS assigned_count
+        FROM public.r_tasks_users
+        GROUP BY task_id
+      ),
+      joined AS (
+        SELECT 
+          ct.task_id,
+          ct.employees_amount,
+          COALESCE(ta.assigned_count, 0) AS assigned_count
+        FROM current_tasks ct
+        LEFT JOIN task_assignments ta ON ct.task_id = ta.task_id
+      )
+      SELECT
+        COUNT(*) FILTER (WHERE assigned_count = 0) AS zero_assigned_tasks,
+        COUNT(*) FILTER (WHERE assigned_count > 0 AND assigned_count < employees_amount) AS under_assigned_tasks,
+        COUNT(*) FILTER (WHERE assigned_count = employees_amount) AS fully_assigned_tasks
+      FROM joined
+      `,
+      [companyId]
+    );
+
+    return result.rows[0];
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
 export const getAssignedEmployees = async (taskId: string) => {
   try {
     const result = await db.query(

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import SuggestionsDialog from './../../components/SuggestionsModal'
 import { MyCalendar } from '../../components/Calendar/Calendar';
 import { CalendarTask } from '../../types/Task';
@@ -19,6 +19,7 @@ const CalendarPage: React.FC = () => {
   const [currentTaskId, setCurrentTaskId] = useState<string>('')
   const [currentTaskDate, setCurrentTaskDate] = useState<Date>(new Date())
   const [currentBalancePoints, setCurrentBalancePoints] = useState<number>(0)
+  const [refreshTasks, setRefreshTasks] = useState<boolean>(false);
   
   const { connectedUser } = useGlobalContext();
 
@@ -59,6 +60,13 @@ const CalendarPage: React.FC = () => {
     fetchTasks();
   }, [currentMonthDate]);
 
+  useEffect(() => {
+    if (refreshTasks === true) {
+      fetchTasks();
+      setRefreshTasks(false);
+    }
+  }, [refreshTasks]);
+
   return (
     <div className='App' style={{ height: "86vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {loadingTasks ? <BeatLoader color="#36d7b7" loading={loadingTasks} size={20} /> :
@@ -70,7 +78,15 @@ const CalendarPage: React.FC = () => {
         page={CalendarPages.MANAGER} />
       }
       {taskListByDate.length !== 0 && <div style={{marginLeft:"1vw", width: "35%"}}><TasksList title={'Tasks'} tasks={taskListByDate} handleCardClick={handleTaskCardClick}/></div>}
-      {isModalOpen && <SuggestionsDialog open={isModalOpen} setIsModalOpen={setIsModalOpen} taskId={currentTaskId} employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} taskDate={currentTaskDate} taskBalancePoints={currentBalancePoints} />}
+      {isModalOpen && 
+        <SuggestionsDialog 
+          open={isModalOpen} 
+          setIsModalOpen={setIsModalOpen} 
+          taskId={currentTaskId} 
+          employeesAmount={taskSummary.find((task)=> task.taskId === currentTaskId)?.employeesAmount || 0} 
+          taskDate={currentTaskDate} 
+          taskBalancePoints={currentBalancePoints}
+          setRefreshTasks={setRefreshTasks} />}
     </div>
   );
 };

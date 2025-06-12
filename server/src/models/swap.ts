@@ -22,3 +22,9 @@ export interface SwapRequestPayload {
     requestedTaskId: string;
     date: Date;
 }
+
+export interface RawFullSwapRequest extends RawSwapRequest {
+    status: string;
+    first_task_id: string;
+    second_task_id: string;
+}
