@@ -10,21 +10,25 @@ import { toast } from "react-toastify";
 
 export const Registration: React.FC = () => {
   const navigate = useNavigate();
-  const { setConnectedUser } = useGlobalContext();
+  const { updateConnectedUser } = useGlobalContext();
 
   const handleRegister = async (data: RegistrationData) => {
     try {
       const response = await register(data);
-      setConnectedUser({
-        id: response.id,
-        name: response.name,
-        email: response.email,
-        companyId: response.companyId,
-        userLevel: response.userLevel,
-        groupId: response.groupId,
-        groupName: response.groupName,
-        firstLogin: response.firstLogin,
-      });
+      updateConnectedUser(
+        {
+          id: response.id,
+          name: response.name,
+          email: response.email,
+          companyId: response.companyId,
+          userLevel: response.userLevel,
+          groupId: response.groupId,
+          groupName: response.groupName,
+          firstLogin: response.firstLogin,
+        },
+        response.accessToken,
+        response.refreshToken
+      );
       navigate("/dashboard");
     } catch (err: any) {
       toast.error("Registration failed");
