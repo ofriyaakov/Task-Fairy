@@ -215,18 +215,24 @@ const DashboardPage: React.FC = () => {
         <div
           className="pie-chart-card"
           style={{
-            minHeight: "100px",
             fontWeight: "bold",
             backgroundColor: "#FFFFFF",
             boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 20px 0px",
             borderRadius: "12px",
+            paddingTop: "10px",
           }}
         >
-          <h2 style={{ marginTop: "-15px", marginBottom: "-10px" }}>
+          <h3 style={{ margin: "0" }}>
             Task Assignment Status
-          </h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
+          </h3>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PieChart width={230} height={230}>
               <Pie
                 data={tasksChartData}
                 cx="50%"
@@ -236,15 +242,13 @@ const DashboardPage: React.FC = () => {
               >
                 {tasksChartData.map((entry, index) => {
                   let fillColor = "#000";
-
                   if (entry.name === "Done") {
                     fillColor = INDICATION_COLOR.BEST;
                   } else if (entry.name === "In progress") {
                     fillColor = "#FFC198";
                   } else if (entry.name === "Unassigned") {
-                    fillColor = APP_COLOR.ALICE_BLUE_DARKER;
+                    fillColor = "#83baeb";
                   }
-
                   return <Cell key={index} fill={fillColor} />;
                 })}
               </Pie>
@@ -253,9 +257,43 @@ const DashboardPage: React.FC = () => {
                   `${((value / totalTasks) * 100).toFixed(0)}%`
                 }
               />
-              <Legend />
             </PieChart>
-          </ResponsiveContainer>
+
+            <div style={{ paddingLeft: "4rem" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {tasksChartData.map((entry, index) => {
+                  let color = "#000";
+                  if (entry.name === "Done") color = INDICATION_COLOR.BEST;
+                  else if (entry.name === "In progress") color = "#FFC198";
+                  else if (entry.name === "Unassigned")
+                    color = "#83baeb";
+
+                  return (
+                    <li
+                      key={index}
+                      style={{
+                        marginBottom: "0.5rem",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 12,
+                          height: 12,
+                          borderRadius: "50%",
+                          backgroundColor: color,
+                          marginRight: 8,
+                        }}
+                      ></span>
+                      {entry.name}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
