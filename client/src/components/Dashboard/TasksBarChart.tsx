@@ -1,5 +1,6 @@
 // TasksBarChart.tsx
 import { useEffect, useState } from "react";
+import "./TasksBarChart.css";
 import { toast } from "react-toastify";
 import {
   BarChart,
@@ -20,7 +21,7 @@ const TasksBarChart: React.FC<TasksBarChartProps> = ({
   TasksBarChartValues,
 }) => {
   return (
-    <div className='bg-white rounded-xl shadow-md p-4'>
+    <div className='graphCard'>
       <div className='flex justify-between items-center mb-4'>
         <h2 className='text-lg font-semibold'>Tasks amount</h2>
         <span className='text-sm text-gray-500'>Jan 2025</span>
