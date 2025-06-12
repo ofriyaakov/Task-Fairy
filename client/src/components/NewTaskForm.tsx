@@ -134,6 +134,25 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
     setLoadingAI(false);
   };
 
+  const isFormValid = () => {
+    const {
+      name,
+      description,
+      startTime,
+      endTime,
+      balancePoints,
+      employeesAmount,
+    } = formData;
+    return (
+      name.trim() !== "" &&
+      description.trim() !== "" &&
+      startTime !== null &&
+      endTime !== null &&
+      balancePoints > 0 &&
+      employeesAmount > 0
+    );
+  };
+
   return (
     <Paper
       elevation={0}
@@ -510,6 +529,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
 
                 <IconButton
                   type="submit"
+                  disabled={!isFormValid()}
                   sx={{
                     bgcolor: "#93E2C5",
                     color: "white",

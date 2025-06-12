@@ -16,11 +16,11 @@ export const CellEvent: React.FC<CellEventProps> = ({ data, date, page }) => {
             const isFullyAssigned = data?.assigned === data?.total;
             const taskOccupancy = (data ? `${data.assigned}/${data.total}` : "0/0");
             eventBgColor = isFullyAssigned ? APP_COLOR.MINT_GREEN : APP_COLOR.LIGHT_RED;
-            eventText = `task - ${taskOccupancy} assigned`;
+            eventText = `Task - ${taskOccupancy} assigned`;
             break;
         case CalendarPages.SWAP:
             eventBgColor = data?.isAssignedToCurrentUser ? APP_COLOR.LIGHT_RED : APP_COLOR.ALICE_BLUE_DARKER;
-            eventText = data?.isAssignedToCurrentUser ? `My Task` : `Others Task`;
+            eventText = data?.isAssignedToCurrentUser ? `My Task` : `A Peer's Task`;
             break;
         case CalendarPages.PROFILE:
             eventBgColor = date < new Date() ? APP_COLOR.MINT_GREEN : APP_COLOR.ALICE_BLUE_DARKER;
