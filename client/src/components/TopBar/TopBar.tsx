@@ -45,9 +45,15 @@ export const TopBar: React.FC = () => {
   }, [connectedUser?.id]);
 
   const handleNotificationClick = (notif: Notification) => {
-    if (notif.type === notificationTypes.SWAP_REQUEST || notif.type === notificationTypes.SWAP_DECISION) {
+    if (
+      notif.type === notificationTypes.SWAP_REQUEST ||
+      notif.type === notificationTypes.SWAP_DECISION
+    ) {
       navigate("/swaps");
-    } else if (notif.type === notificationTypes.NEW_TASK || notif.type === notificationTypes.UNASSIGNED_TASK) {
+    } else if (
+      notif.type === notificationTypes.NEW_TASK ||
+      notif.type === notificationTypes.UNASSIGNED_TASK
+    ) {
       navigate("/tasks");
     } else {
       console.warn("Unhandled notification type:", notif.type);
@@ -135,7 +141,14 @@ export const TopBar: React.FC = () => {
                                 primary={notif.message}
                                 secondary={new Date(
                                   notif.created_at
-                                ).toLocaleString()}
+                                ).toLocaleString("he-IL", {
+                                  timeZone: "Asia/Jerusalem",
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
                               />
                             </ListItemButton>
                           ))
