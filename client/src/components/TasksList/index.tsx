@@ -20,7 +20,7 @@ const TasksList: React.FC<TaskListProps> = ({
   title,
   tasks,
   handleCardClick,
-  height = "77vh",
+  height = "86vh",
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string>("");
@@ -46,7 +46,7 @@ const TasksList: React.FC<TaskListProps> = ({
         width: "100%",
         maxWidth: "388px",
         overflow: "hidden",
-        height: "86vh",
+        height: height,
       }}>
       <Box>
         <Headline color='rgb(206, 244, 255)' title={title} />
