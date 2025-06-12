@@ -188,7 +188,6 @@ export const updateSwapRequestStatus = async (
   }
 };
 
-
 export const getSwapRequestsByEmployee = async (employeeId: string) => {
     try {
       const result = await db.query(`
