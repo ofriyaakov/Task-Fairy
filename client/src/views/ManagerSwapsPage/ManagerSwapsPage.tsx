@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { toast } from "react-toastify";
 import Search from "../../components/Search";
-import { APP_COLOR } from "../../theme";
 
 const ManagerSwapsPage: React.FC = () => {
   const { connectedUser } = useGlobalContext();
@@ -94,7 +93,7 @@ const ManagerSwapsPage: React.FC = () => {
           px: 2,
           pb: 2,
           pt: 2,
-          bgcolor: APP_COLOR.OFF_WHITE,
+          bgcolor: "rgb(250 250 250)",
           height: "80%",
           borderRadius: "24px",
           overflowY: "auto",

@@ -4,7 +4,6 @@ import { ShortenedTaskDetails } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
 import Search from "../Search";
-import { APP_COLOR } from "../../theme";
 
 interface TaskListProps {
   title: string;
@@ -48,30 +47,31 @@ const TasksList: React.FC<TaskListProps> = ({
         maxWidth: "388px",
         overflow: "hidden",
         height: height,
-        display: "flex",
-        flexDirection: "column",
       }}>
-      <Headline color='rgb(206, 244, 255)' title={title} />
+      <Box>
+        <Headline color='rgb(206, 244, 255)' title={title} />
+      </Box>
+
       <Box
         sx={{
           px: 2,
           pb: 2,
-          bgcolor: APP_COLOR.OFF_WHITE,
+          bgcolor: "rgb(250 250 250)",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
-          flexGrow: 1,
-          overflow: "hidden",
         }}>
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         {filteredTasks.length === 0 ? (
           <p>No tasks to display.</p>
         ) : (
+          <>
             <Stack
               spacing={2}
               sx={{
                 overflowY: "auto",
                 overflowX: "hidden",
-                height: "100%",
+                maxHeight: height,
               }}>
               {filteredTasks.map((task, index) => (
                 <TaskDetailsCard
@@ -82,6 +82,7 @@ const TasksList: React.FC<TaskListProps> = ({
                 />
               ))}
             </Stack>
+          </>
         )}
       </Box>
     </Paper>
