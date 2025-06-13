@@ -20,7 +20,7 @@ import { updateUserFirstLogin } from "../../queries/user";
 import { CalendarPages } from "../../components/Calendar/CalendarSetup";
 
 const ProfilePage: React.FC = () => {
-  const { connectedUser } = useGlobalContext();
+  const { connectedUser, setConnectedUser } = useGlobalContext();
 
   const [employeeTasks, setemployeeTasks] = useState<ShortenedTaskDetails[]>([]);
   const [calendarTasks, setCalendarTasks] = useState<CalendarTask[]>([]);
@@ -112,6 +112,7 @@ const ProfilePage: React.FC = () => {
         password,
         city,
       );
+      setConnectedUser((prev) => prev ? { ...prev, firstLogin: false } : prev);
       setFirstLoginPopupOpen(false);
       toast.success("First login setup completed successfully!");
     } catch (err: any) {
