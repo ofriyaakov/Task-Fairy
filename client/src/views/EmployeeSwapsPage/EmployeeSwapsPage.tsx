@@ -13,6 +13,7 @@ import SwapRequestCard from '../../components/SwapRequestCard';
 import { FullSwapRequest } from './../../types/Swap';
 import { getSwapRequestsByEmployee } from '../../queries/swapRequests';
 import { SwapRequestStatuses } from './../../consts';
+import { APP_COLOR } from '../../theme';
 
 const EmployeeSwapsPage: React.FC = () => {
 
@@ -126,7 +127,7 @@ const EmployeeSwapsPage: React.FC = () => {
               pb: 2,
               pt: 2,
               mt: 2,
-              bgcolor: "rgb(250 250 250)",
+              bgcolor: APP_COLOR.OFF_WHITE,
               height: "25vh",
               borderRadius: "24px",
               overflowY: 'scroll'

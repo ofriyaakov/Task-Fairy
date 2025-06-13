@@ -4,6 +4,7 @@ import { ShortenedTaskDetails } from "../../types/Task";
 import TaskDetailsCard from "../TaskDetailsCard";
 import Headline from "../Headline";
 import Search from "../Search";
+import { APP_COLOR } from "../../theme";
 
 interface TaskListProps {
   title: string;
@@ -47,42 +48,40 @@ const TasksList: React.FC<TaskListProps> = ({
         maxWidth: "388px",
         overflow: "hidden",
         height: height,
+        display: "flex",
+        flexDirection: "column",
       }}>
-      <Box>
-        <Headline color='rgb(206, 244, 255)' title={title} />
-      </Box>
-
+      <Headline color='rgb(206, 244, 255)' title={title} />
       <Box
         sx={{
           px: 2,
           pb: 2,
-          bgcolor: "rgb(250 250 250)",
-          height: "100%",
+          bgcolor: APP_COLOR.OFF_WHITE,
           display: "flex",
           flexDirection: "column",
+          flexGrow: 1,
+          overflow: "hidden",
         }}>
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         {filteredTasks.length === 0 ? (
           <p>No tasks to display.</p>
         ) : (
-          <>
-            <Stack
-              spacing={2}
-              sx={{
-                overflowY: "auto",
-                overflowX: "hidden",
-                maxHeight: height,
-              }}>
-              {filteredTasks.map((task, index) => (
-                <TaskDetailsCard
-                  key={index}
-                  task={task}
-                  handleCardClick={handleClick}
-                  isSelected={task.taskId === selectedTaskId}
-                />
-              ))}
-            </Stack>
-          </>
+          <Stack
+            spacing={2}
+            sx={{
+              overflowY: "auto",
+              overflowX: "hidden",
+              height: "100%",
+            }}>
+            {filteredTasks.map((task, index) => (
+              <TaskDetailsCard
+                key={index}
+                task={task}
+                handleCardClick={handleClick}
+                isSelected={task.taskId === selectedTaskId}
+              />
+            ))}
+          </Stack>
         )}
       </Box>
     </Paper>
