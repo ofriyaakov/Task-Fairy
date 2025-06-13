@@ -172,7 +172,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
         sx={{
           p: 2,
           mx: "auto",
-          bgcolor: "#FAFAFA",
+          bgcolor: APP_COLOR.OFF_WHITE,
           borderBottomLeftRadius: 16,
           borderBottomRightRadius: 16,
           flexGrow: 1,
