@@ -100,6 +100,17 @@ export const analyzeTask = async (payload: TaskForAi) => {
   }
 };
 
+export const getAiTips = async (companyId: number) => {
+  try {
+    const response = await axiosInstance.post(`${GAMINI_ROUTE}/prompt`, {
+      companyId,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "fetch AI tips failed");
+  }
+};
+
 export const getAllTasksByMonth = async (
   month: number,
   companyId: number,

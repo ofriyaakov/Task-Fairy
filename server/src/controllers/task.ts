@@ -764,3 +764,57 @@ export const getAssignedEmployees = async (taskId: string) => {
     console.error(err);
   }
 };
+
+export const getBalancePointsByGroupForEachMonth = async (
+  companyId: number
+) => {
+  try {
+    const monthsNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const result = await db.query(
+      `
+      SELECT
+        EXTRACT(MONTH FROM start_time) AS month,
+        groups.group_name,
+        SUM(tasks.balance_points) AS total_balance_points
+      FROM public.tasks
+      JOIN public.r_tasks_users ON tasks.task_id = r_tasks_users.task_id
+      JOIN public.users ON r_tasks_users.user_id = users.user_id
+      JOIN public.groups ON users.group_id = groups.group_id AND groups.company_id = $1
+      WHERE tasks.company_id = $1
+      GROUP BY month, groups.group_name
+      ORDER BY month, groups.group_name;
+      `,
+      [companyId]
+    );
+
+    const dataByMonths = result.rows.reduce((acc, row) => {
+      const month = monthsNames[row.month - 1];
+      if (!acc[month]) {
+        acc[month] = [];
+      }
+      acc[month].push({
+        groupName: row.group_name,
+        totalBalancePoints: parseInt(row.total_balance_points, 10),
+      });
+      return acc;
+    }, {});
+
+    return dataByMonths;
+  } catch (err) {
+    console.error(err);
+  }
+};
