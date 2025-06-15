@@ -76,12 +76,15 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
 
         setAssignedEmployees(assignedWithScores);
 
+        const removedIds = new Set(removedEmployees.map((emp) => emp.user_id));
+
         const assignedIds = new Set(
           assigned.map((emp: employeeDatailsCard) => emp.user_id)
         );
 
         const filteredSuggestions = suggested.filter(
-          (emp: employeeDatailsCard) => !assignedIds.has(emp.user_id)
+          (emp: employeeDatailsCard) =>
+            !assignedIds.has(emp.user_id) || removedIds.has(emp.user_id)
         );
 
         setSuggestedEmployees(filteredSuggestions);
@@ -131,16 +134,30 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
   };
 
   const handleApproveEmployee = (employee: employeeDatailsCard) => {
-    setApprovedEmployees([...approvedEmployees, employee]);
-    setSuggestedEmployees(
-      suggestedEmployees.filter((emp) => emp.user_id !== employee.user_id)
+    const wasOriginallyAssigned = assignedEmployees.some(
+      (emp) => emp.user_id === employee.user_id
     );
 
-    if (removedEmployees.some((emp) => emp.user_id === employee.user_id)) {
-      setRemovedEmployees(
-        removedEmployees.filter((emp) => emp.user_id !== employee.user_id)
+    const wasRemoved = removedEmployees.some(
+      (emp) => emp.user_id === employee.user_id
+    );
+
+    if (wasRemoved) {
+      setRemovedEmployees((prev) =>
+        prev.filter((emp) => emp.user_id !== employee.user_id)
       );
+    } else if (!wasOriginallyAssigned) {
+      setApprovedEmployees((prev) => {
+        if (!prev.find((e) => e.user_id === employee.user_id)) {
+          return [...prev, employee];
+        }
+        return prev;
+      });
     }
+
+    setSuggestedEmployees((prev) =>
+      prev.filter((emp) => emp.user_id !== employee.user_id)
+    );
   };
 
   const handleRemoveEmployee = (deletedEmployee: employeeDatailsCard) => {
@@ -162,13 +179,14 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
       )
     ) {
       setRemovedEmployees([...removedEmployees, deletedEmployee]);
-      setAssignedEmployees(
-        assignedEmployees.filter(
-          (employee) => employee.user_id !== deletedEmployee.user_id
-        )
-      );
     }
   };
+
+  const rightSideList = useMemo(() => {
+    return assignedEmployees
+      .filter((emp) => !removedEmployees.some((r) => r.user_id === emp.user_id))
+      .concat(approvedEmployees);
+  }, [assignedEmployees, approvedEmployees, removedEmployees]);
 
   return (
     <Dialog
@@ -239,14 +257,11 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                   <Grid item xs={12} key={index}>
                     <EmployeeDetailsCard
                       employee={employee}
-                      mode = "suggestion"
+                      mode="suggestion"
                       handleApproveEmployee={handleApproveEmployee}
                       handleRemoveEmployee={handleRemoveEmployee}
                       isDisable={approvedEmployees.includes(employee)}
-                      disableAdd={
-                        [...assignedEmployees, ...approvedEmployees].length >=
-                        employeesAmount
-                      }
+                      disableAdd={rightSideList.length >= employeesAmount}
                     />
                   </Grid>
                 ))}
@@ -268,25 +283,21 @@ const SuggestionsDialog: React.FC<SuggestionsDialogProps> = ({
                   zIndex: 50,
                 }}
               >
-                Assigned Employees (
-                {[...approvedEmployees, ...assignedEmployees].length} /{" "}
-                {employeesAmount})
+                Assigned Employees ({rightSideList.length} / {employeesAmount})
               </Typography>
               <Grid container spacing={2} sx={{ mt: 4 }}>
-                {[...assignedEmployees, ...approvedEmployees].map(
-                  (employee, index) => (
-                    <Grid item xs={12} key={index}>
-                      <EmployeeDetailsCard
-                        mode="suggestion"
-                        employee={employee}
-                        isDisable={true}
-                        isSuggestion={false}
-                        isAssigned={true}
-                        handleRemoveEmployee={handleRemoveEmployee}
-                      />
-                    </Grid>
-                  )
-                )}
+                {rightSideList.map((employee, index) => (
+                  <Grid item xs={12} key={index}>
+                    <EmployeeDetailsCard
+                      mode="suggestion"
+                      employee={employee}
+                      isDisable={true}
+                      isSuggestion={false}
+                      isAssigned={true}
+                      handleRemoveEmployee={handleRemoveEmployee}
+                    />
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           </Box>
