@@ -19,6 +19,8 @@ interface AuthResponse {
   firstLogin: boolean;
   accessToken: string;
   refreshToken: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 const AUTH_ROUTE = "/auth";

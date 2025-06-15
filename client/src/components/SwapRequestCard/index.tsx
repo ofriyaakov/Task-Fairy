@@ -18,9 +18,10 @@ interface SwapRequestCardProps {
 
 interface SwapDetailsProps {
   employeeWithTask: SwapCardDetails;
+  leftOrRight: "left" | "right";
 }
 
-const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask }) => {
+const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask, leftOrRight }) => {
   const dateFormat = "de-CH";
   const taskDate = new Date(employeeWithTask.taskStartTime).toLocaleDateString(
     dateFormat
@@ -29,7 +30,7 @@ const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask }) => {
   const taskEndTime = new Date(employeeWithTask.taskEndTime);
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", justifyContent: leftOrRight }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <PersonIcon sx={{ color: "#000", mr: 2, mb: 6 }} />
         <Box sx={{ justifyItems: "start" }}>
@@ -55,7 +56,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
   swapRequestId,
   onApprove,
   onReject,
-  backgroundColor = "rgb(255 255 255)",
+  backgroundColor = "#fff",
 }) => {
   const isSameTask = leftDetails.taskName === rightDetails.taskName;
 
@@ -67,83 +68,80 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         borderRadius: 4,
         width: "92%",
         border: "1px solid rgb(229 229 229)",
-        backgroundColor: backgroundColor,
-      }}>
+        backgroundColor,
+      }}
+    >
       {isSameTask && (
-        <Box
+        <Typography
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}>
-          <Typography
-            sx={{
-              textAlign: "center",
-              fontWeight: "bold",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              mb: 2,
+            textAlign: "center",
+            fontWeight: "bold",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            mb: 2,
             }}>
-            {leftDetails.taskName}
-          </Typography>
-        </Box>
+          {leftDetails.taskName}
+        </Typography>
       )}
 
       {/* Main swap details */}
       <Box
         sx={{
           display: "flex",
-        }}>
-        <Grid container alignItems='center'>
-          <Grid item xs={5}>
-            {!isSameTask && (
-              <Typography
-                sx={{
-                  textAlign: "start",
-                  fontWeight: "bold",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  mb: 2,
-                }}>
-                {leftDetails.taskName}
-              </Typography>
-            )}
-            <SwapDetails employeeWithTask={leftDetails} />
-          </Grid>
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ flex: "0 0 45%" }}>
+          {!isSameTask && (
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                mb: 1,
+                textAlign: "left",
+              }}
+            >
+              {leftDetails.taskName}
+            </Typography>
+          )}
+          <SwapDetails employeeWithTask={leftDetails} leftOrRight={"left"} />
+        </Box>
 
-          <Grid item xs={2} sx={{ textAlign: "center" }}>
-            <CompareArrowsIcon sx={{ fontSize: 45 }} />
-          </Grid>
+        <Box sx={{ flex: "0 0 10%", textAlign: "center" }}>
+          <CompareArrowsIcon sx={{ fontSize: 42 }} />
+        </Box>
 
-          <Grid item xs={5}>
-            {!isSameTask && (
-              <Typography
-                sx={{
-                  textAlign: "start",
-                  fontWeight: "bold",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  mb: 2,
-                }}>
-                {rightDetails.taskName}
-              </Typography>
-            )}
-            <SwapDetails employeeWithTask={rightDetails} />
-          </Grid>
-        </Grid>
+        <Box sx={{ flex: "0 0 45%" }}>
+          {!isSameTask && (
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                mb: 1,
+                textAlign: "right",
+              }}
+            >
+              {rightDetails.taskName}
+            </Typography>
+          )}
+          <SwapDetails employeeWithTask={rightDetails} leftOrRight={"right"} />
+        </Box>
 
         {onApprove && onReject && swapRequestId && (
           <Stack
             direction='column'
             spacing={2}
             sx={{
-              justifyContent: "center",
-              pl: 2,
+              ml: 2,
               borderLeft: "1px solid #e5e5e5",
-            }}>
+              pl: 2,
+            }}
+          >
             <IconButton onClick={() => onApprove(swapRequestId)}>
               <DoneIcon color='success' />
             </IconButton>

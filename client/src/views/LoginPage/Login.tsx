@@ -24,6 +24,8 @@ const Login: React.FC = () => {
           groupId: response.groupId,
           groupName: response.groupName,
           firstLogin: response.firstLogin,
+          firstName: response.firstName,
+          lastName: response.lastName,
         },
         response.accessToken,
         response.refreshToken

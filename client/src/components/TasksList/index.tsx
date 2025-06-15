@@ -10,9 +10,7 @@ interface TaskListProps {
   title: string;
   tasks: ShortenedTaskDetails[];
   handleCardClick?: (
-    taskId: string,
-    taskDate?: Date,
-    balancePoints?: number
+    task: ShortenedTaskDetails,
   ) => void;
   height?: string;
 }
@@ -24,19 +22,17 @@ const TasksList: React.FC<TaskListProps> = ({
   height = "86vh",
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedTaskId, setSelectedTaskId] = useState<string>("");
+  const [selectedTask, setSelectedTask] = useState<ShortenedTaskDetails>({} as ShortenedTaskDetails);
 
   const filteredTasks = tasks.filter((task) =>
     task.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleClick = (
-    taskId: string,
-    taskDate?: Date,
-    balancePoints?: number
+    task: ShortenedTaskDetails,
   ) => {
-    setSelectedTaskId(taskId);
-    handleCardClick && handleCardClick(taskId, taskDate, balancePoints);
+    setSelectedTask(task);
+    handleCardClick && handleCardClick(task);
   };
 
   return (
@@ -78,7 +74,7 @@ const TasksList: React.FC<TaskListProps> = ({
                 key={index}
                 task={task}
                 handleCardClick={handleClick}
-                isSelected={task.taskId === selectedTaskId}
+                isSelected={task.taskId === selectedTask.taskId}
               />
             ))}
           </Stack>
