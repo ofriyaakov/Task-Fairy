@@ -19,27 +19,45 @@ const sendPrompt = async (companyId: number) => {
     }
   );
 
+  const seed = Date.now();
+
   const prompt =
     background +
     " " +
-    "Here is the data of the teams points: " +
+    "Here’s the teams' balance-points data: " +
     JSON.stringify(data) +
     " " +
-    "Can you give us some conclusions and tips about the next month? We need it short and clear. 4 points max, each point should be a 10 words max." +
+    "Write exactly 3 short, practical tips based on this data." +
+    " Each tip must be under 30 words." +
+    " Focus on team imbalance, rising workloads, new team activity, overload, or underuse." +
+    " Avoid repeating phrasing from earlier tips. Avoid vague praise." +
+    " Sound like a team manager giving clear advice." +
     " " +
-    "Please give us the the points without numbers, like this: " +
-    "'Point 1/Point 2/Point 3/Point 4'";
+    "⚠️ Strict output format: one line only, with the 3 tips separated by slashes." +
+    " No bullets. No numbers. No newlines. No explanation." +
+    " " +
+    "Example format: 'Managers took on too much in June — lighten their load. / Team X was underused — assign more tasks. / Workload was uneven — rebalance across teams.'" +
+    " " +
+    "Seed: " +
+    seed;
 
-  const result = await model.generateContent(prompt).catch((err) => {
-    console.error(err);
-    return err;
+  const res = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.9,
+      topP: 1,
+      topK: 40,
+      candidateCount: 1,
+      maxOutputTokens: 120,
+    },
   });
 
-  const text = result.response.text();
+  const text = res.response.text().trim();
+
   return text
     .split("/")
-    .map((point) => point.trim())
-    .filter((point) => point.length > 0);
+    .map((t) => t.trim().replace(/^[-–•\d.]+\s*/, ""))
+    .filter((t) => t.length);
 };
 
 const analyzeBalnacePoints = async (data) => {

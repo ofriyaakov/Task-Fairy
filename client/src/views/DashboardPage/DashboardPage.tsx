@@ -21,8 +21,6 @@ import {
 import { INDICATION_COLOR, APP_COLOR } from "../../theme";
 import TasksBarChart from "../../components/Dashboard/TasksBarChart";
 import { toast } from "react-toastify";
-import { Box, Button } from "@mui/material";
-import { AutoAwesome } from "@mui/icons-material";
 import AiTipsButton from "../../components/Dashboard/AiTips";
 
 export interface TasksBarChartValue {
@@ -133,6 +131,7 @@ const DashboardPage: React.FC = () => {
         backgroundColor: "#f9fbfd",
       }}
     >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
       {/* Page Title */}
       <h1
         style={{ fontSize: "32px", fontWeight: "bold", margin: "0 0 20px 0" }}
@@ -141,6 +140,7 @@ const DashboardPage: React.FC = () => {
       </h1>
 
       <AiTipsButton />
+      </div>
       {/* Top Stat Cards */}
       <div
         className="stats-grid"

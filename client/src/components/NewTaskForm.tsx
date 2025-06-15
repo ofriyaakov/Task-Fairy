@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
-import { Star, Group, AutoAwesome } from "@mui/icons-material";
+import { Star, Group } from "@mui/icons-material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -31,6 +31,7 @@ import { officeTitle } from "../consts";
 import { Check } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { APP_COLOR } from "../theme";
+import { Wand2 } from "lucide-react";
 
 interface NewTaskFormProps {
   initialData?: TaskDetails | null;
@@ -402,14 +403,14 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
                           minWidth: 55,
                           height: 55,
                           borderWidth: 2,
-                          bg: "white",
+                          bg: "#fff",
                         }}
                         onClick={() => handleTaskAnalyze()}
                         disabled={
                           !formData.name || !formData.description || clickedAI
                         }
                       >
-                        <AutoAwesome fontSize="medium" />
+                        <Wand2 size={24} />
                       </Button>
                     </Tooltip>
                   </Box>
