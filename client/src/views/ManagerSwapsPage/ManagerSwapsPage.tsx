@@ -85,7 +85,7 @@ const ManagerSwapsPage: React.FC = () => {
         <Search
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
-          width='40%'
+          width='25%'
         />
       </Box>
 

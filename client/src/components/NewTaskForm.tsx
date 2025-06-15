@@ -107,6 +107,19 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
 
     try {
       await createTask(payload);
+      setFormData(initialData || {
+        name: "",
+        description: "",
+        startTime: new Date(),
+        endTime: new Date(),
+        gender: "Both",
+        location: locations[0],
+        balancePoints: 0,
+        employeesAmount: 0,
+        saveToTasks: false,
+        other: "",
+      });
+      
       toast.success("Task created successfully!");
     } catch (err: any) {
       toast.error("Failed to create task.");
@@ -431,6 +444,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
                     onChange={(newValue) =>
                       newValue && handleDateChange(newValue.toDate())
                     }
+                    minDate={dayjs()}
                     slots={{
                       actionBar: () => null,
                       toolbar: () => null,
@@ -448,6 +462,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ initialData }) => {
                       alignItems: "center",
                       paddingTop: 2,
                       paddingLeft: 2,
+                      border: "1px solid #e0e0e0",
                     }}
                   />
                 </Box>
