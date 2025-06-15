@@ -11,6 +11,11 @@ const AiTipsButton: React.FC = () => {
   const { connectedUser } = useGlobalContext();
 
   const toggleTooltip = async () => {
+    if (showTooltip) {
+      setShowTooltip(false);
+      return;
+    }
+
     const results = (await getAiTips(
       connectedUser?.companyId || 0
     )) as string[];
@@ -21,7 +26,7 @@ const AiTipsButton: React.FC = () => {
       setTips(["No AI suggestions available at the moment."]);
     }
 
-    setShowTooltip((prev) => !prev);
+    setShowTooltip(true);
   };
 
   return (

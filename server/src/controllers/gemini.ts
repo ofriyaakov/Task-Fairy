@@ -27,7 +27,8 @@ const sendPrompt = async (companyId: number) => {
     " " +
     "Can you give us some conclusions and tips about the next month? We need it short and clear. 4 points max, each point should be a 10 words max." +
     " " +
-    "Please give us the the points without numbers, flouid text with a slash to separate the points.";
+    "Please give us the the points without numbers, like this: " +
+    "'Point 1/Point 2/Point 3/Point 4'";
 
   const result = await model.generateContent(prompt).catch((err) => {
     console.error(err);
@@ -36,7 +37,7 @@ const sendPrompt = async (companyId: number) => {
 
   const text = result.response.text();
   return text
-    .split(" /")
+    .split("/")
     .map((point) => point.trim())
     .filter((point) => point.length > 0);
 };
