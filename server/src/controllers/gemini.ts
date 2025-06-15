@@ -1,52 +1,63 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getAllTasksBalancePoints } from "./task.js";
+import {
+  getAllTasksBalancePoints,
+  getBalancePointsByGroupForEachMonth,
+} from "./task";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const sendPrompt = async () => {
+const sendPrompt = async (companyId: number) => {
   const background =
     "We are a system that helps organiztions to manage their tasks and missions between their teams." +
     "We will give you the past history of the teams points they earnd so you can give us some conclusions and tips about the next month.";
 
-  // will be removed in the future
-  const data = {
-    January: [
-      { name: "Team A", points: 50 },
-      { name: "Team B", points: 30 },
-      { name: "Team C", points: 20 },
-    ],
-    February: [
-      { name: "Team A", points: 60 },
-      { name: "Team B", points: 40 },
-      { name: "Team C", points: 30 },
-    ],
-    March: [
-      { name: "Team A", points: 70 },
-      { name: "Team B", points: 50 },
-      { name: "Team C", points: 40 },
-    ],
-    April: [
-      { name: "Team A", points: 80 },
-      { name: "Team B", points: 60 },
-      { name: "Team C", points: 50 },
-    ],
-  };
+  const data = await getBalancePointsByGroupForEachMonth(companyId).catch(
+    (err) => {
+      console.error(err);
+      return err;
+    }
+  );
+
+  const seed = Date.now();
 
   const prompt =
     background +
     " " +
-    "Here is the data of the teams points: " +
+    "Here’s the teams' balance-points data: " +
     JSON.stringify(data) +
     " " +
-    "Can you give us some conclusions and tips about the next month? We need it short and clear. 4 points max.";
+    "Write exactly 3 short, practical tips based on this data." +
+    " Each tip must be under 30 words." +
+    " Focus on team imbalance, rising workloads, new team activity, overload, or underuse." +
+    " Avoid repeating phrasing from earlier tips. Avoid vague praise." +
+    " Sound like a team manager giving clear advice." +
+    " " +
+    "⚠️ Strict output format: one line only, with the 3 tips separated by slashes." +
+    " No bullets. No numbers. No newlines. No explanation." +
+    " " +
+    "Example format: 'Managers took on too much in June — lighten their load. / Team X was underused — assign more tasks. / Workload was uneven — rebalance across teams.'" +
+    " " +
+    "Seed: " +
+    seed;
 
-  const result = await model.generateContent(prompt).catch((err) => {
-    console.error(err);
-    return err;
+  const res = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.9,
+      topP: 1,
+      topK: 40,
+      candidateCount: 1,
+      maxOutputTokens: 120,
+    },
   });
 
-  return result.response.text();
+  const text = res.response.text().trim();
+
+  return text
+    .split("/")
+    .map((t) => t.trim().replace(/^[-–•\d.]+\s*/, ""))
+    .filter((t) => t.length);
 };
 
 const analyzeBalnacePoints = async (data) => {

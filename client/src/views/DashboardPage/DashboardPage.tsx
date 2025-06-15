@@ -21,6 +21,7 @@ import {
 import { INDICATION_COLOR, APP_COLOR } from "../../theme";
 import TasksBarChart from "../../components/Dashboard/TasksBarChart";
 import { toast } from "react-toastify";
+import AiTipsButton from "../../components/Dashboard/AiTips";
 
 export interface TasksBarChartValue {
   group: string;
@@ -130,6 +131,7 @@ const DashboardPage: React.FC = () => {
         backgroundColor: "#f9fbfd",
       }}
     >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
       {/* Page Title */}
       <h1
         style={{ fontSize: "32px", fontWeight: "bold", margin: "0 0 20px 0" }}
@@ -137,6 +139,8 @@ const DashboardPage: React.FC = () => {
         Monthly Dashboard
       </h1>
 
+      <AiTipsButton />
+      </div>
       {/* Top Stat Cards */}
       <div
         className="stats-grid"
@@ -222,9 +226,7 @@ const DashboardPage: React.FC = () => {
             paddingTop: "10px",
           }}
         >
-          <h3 style={{ margin: "0" }}>
-            Task Assignment Status
-          </h3>
+          <h3 style={{ margin: "0" }}>Task Assignment Status</h3>
           <div
             style={{
               display: "flex",
@@ -265,8 +267,7 @@ const DashboardPage: React.FC = () => {
                   let color = "#000";
                   if (entry.name === "Done") color = INDICATION_COLOR.BEST;
                   else if (entry.name === "In progress") color = "#FFC198";
-                  else if (entry.name === "Unassigned")
-                    color = "#83baeb";
+                  else if (entry.name === "Unassigned") color = "#83baeb";
 
                   return (
                     <li
