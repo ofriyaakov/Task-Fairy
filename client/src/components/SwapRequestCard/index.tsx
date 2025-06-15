@@ -83,6 +83,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         width: "90%",
         border: "1px solid rgb(229 229 229)",
         backgroundColor,
+        height: "130px"
       }}
     >
       {status && (
@@ -114,7 +115,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            mb: 2,
+            mb: 1,
           }}
         >
           {leftDetails.taskName}
