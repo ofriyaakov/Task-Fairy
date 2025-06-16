@@ -9,6 +9,8 @@ import { REFRESH_ROUTE, refreshToken } from "./tokenRefresher";
 import axiosInstance from "../axiosInstance";
 import { accessTokenKey, refreshTokenKey } from "../consts";
 
+const LOGIN_ROUTE = "/auth/login";
+
 export const getErrorInterceptor = () => {
   let tokenRefresher: Promise<void> | undefined = undefined;
   return async (error: AxiosError) => {
@@ -19,7 +21,8 @@ export const getErrorInterceptor = () => {
     if (
       error?.response?.status === HttpStatusCode.Unauthorized &&
       !originalRequest._retry &&
-      originalRequest.url !== REFRESH_ROUTE
+      originalRequest.url !== REFRESH_ROUTE &&
+      originalRequest.url !== LOGIN_ROUTE
     ) {
       originalRequest._retry = true;
 

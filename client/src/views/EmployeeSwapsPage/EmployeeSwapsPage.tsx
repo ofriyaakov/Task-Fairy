@@ -140,6 +140,7 @@ const EmployeeSwapsPage: React.FC = () => {
                     rightDetails={swapRequest.rightDetails}
                     backgroundColor={swapRequest.status === SwapRequestStatuses.APPROVED_NAME ? SwapRequestStatuses.APPROVED_COLOR :
                       (swapRequest.status === SwapRequestStatuses.REJECTED_NAME ? SwapRequestStatuses.REJECTED_COLOR : SwapRequestStatuses.PENDING_COLOR)}
+                      status={swapRequest.status}
                   />
                 </Grid>
               )) : <div>You haven't request a swap</div>}

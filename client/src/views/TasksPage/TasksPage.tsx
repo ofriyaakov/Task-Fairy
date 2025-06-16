@@ -25,7 +25,8 @@ const TasksPage: React.FC = () => {
 
   const handleCardClick = async (taskId: string) => {
     try {
-      const task = await getTaskById(taskId);
+      let task = await getTaskById(taskId);
+      task.saveToTasks = false;
       setSelectedTask(task);
     } catch (err: any) {
       console.error("Failed to fetch task details:", err.message);

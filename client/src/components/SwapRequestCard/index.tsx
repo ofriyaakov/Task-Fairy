@@ -1,5 +1,13 @@
 import React from "react";
-import { Grid, Box, Typography, Paper, Stack, IconButton } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  IconButton,
+  Chip,
+} from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import CloseIcon from "@mui/icons-material/Close";
@@ -14,6 +22,7 @@ interface SwapRequestCardProps {
   onApprove?: (swapRequestId: string) => void;
   onReject?: (swapRequestId: string) => void;
   backgroundColor?: string;
+  status?: string;
 }
 
 interface SwapDetailsProps {
@@ -57,6 +66,7 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
   onApprove,
   onReject,
   backgroundColor = "#fff",
+  status,
 }) => {
   const isSameTask = leftDetails.taskName === rightDetails.taskName;
 
@@ -64,13 +74,36 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
     <Paper
       elevation={0}
       sx={{
+        position: "relative", 
         p: 3,
         borderRadius: 4,
-        width: "92%",
+        width: "90%",
         border: "1px solid rgb(229 229 229)",
         backgroundColor,
+        height: "130px"
       }}
     >
+      {status && (
+        <Chip
+          label={status.charAt(0).toUpperCase() + status.slice(1)}
+          color={
+            status === "approved"
+              ? "success"
+              : status === "declined"
+              ? "error"
+              : "default"
+          }
+          variant="outlined"
+          sx={{
+            position: "absolute",
+            top: -10, 
+            right: -15, 
+            fontWeight: 600,
+            backgroundColor: "white",
+          }}
+        />
+      )}
+
       {isSameTask && (
         <Typography
           sx={{
@@ -79,20 +112,21 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            mb: 2,
-            }}>
+            mb: 1,
+          }}
+        >
           {leftDetails.taskName}
         </Typography>
       )}
 
-      {/* Main swap details */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
+          pr: 7,
         }}
       >
-        <Box sx={{ flex: "0 0 45%" }}>
+        <Box sx={{ flex: "1 1 0" }}>
           {!isSameTask && (
             <Typography
               sx={{
@@ -110,11 +144,11 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
           <SwapDetails employeeWithTask={leftDetails} leftOrRight={"left"} />
         </Box>
 
-        <Box sx={{ flex: "0 0 10%", textAlign: "center" }}>
+        <Box sx={{ flex: "0 0 48px", textAlign: "center" }}>
           <CompareArrowsIcon sx={{ fontSize: 42 }} />
         </Box>
 
-        <Box sx={{ flex: "0 0 45%" }}>
+        <Box sx={{ flex: "1 0 0" }}>
           {!isSameTask && (
             <Typography
               sx={{
@@ -133,23 +167,25 @@ const SwapRequestCard: React.FC<SwapRequestCardProps> = ({
         </Box>
 
         {onApprove && onReject && swapRequestId && (
-          <Stack
-            direction='column'
-            spacing={2}
+          <Box
             sx={{
-              ml: 2,
-              borderLeft: "1px solid #e5e5e5",
-              pl: 2,
+              position: "absolute",
+              top: "50%",
+              right: 16, 
+              transform: "translateY(-50%)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1, 
             }}
           >
             <IconButton onClick={() => onApprove(swapRequestId)}>
-              <DoneIcon color='success' />
+              <DoneIcon color="success" />
             </IconButton>
 
             <IconButton onClick={() => onReject(swapRequestId)}>
-              <CloseIcon color='error' />
+              <CloseIcon color="error" />
             </IconButton>
-          </Stack>
+          </Box>
         )}
       </Box>
     </Paper>

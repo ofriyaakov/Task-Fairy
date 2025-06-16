@@ -12,7 +12,8 @@ const router = express.Router();
 
 router.post("/prompt/", async (req, res) => {
   try {
-    const aiAnswer = await geminiController.sendPrompt();
+    const { companyId } = req.body;
+    const aiAnswer = await geminiController.sendPrompt(companyId);
 
     if (!aiAnswer) res.status(404).json({ message: "Error from Gemini" });
     else res.status(200).send(aiAnswer);
@@ -32,7 +33,7 @@ router.post("/taskAnalyze/", async (req, res) => {
     const aiAnswer = await geminiController.analyzeBalnacePoints({
       name,
       description,
-      companyId
+      companyId,
     });
 
     if (!aiAnswer) res.status(404).json({ message: "Error from Gemini" });

@@ -35,7 +35,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = fa
         <Grid item xs={12}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <WorkIcon sx={{ mr: 1, fontSize: 20 }} />
-            <Typography variant='body1' sx={{ fontWeight: 500 }}>
+            <Typography variant='body1' sx={{ fontWeight: 700, fontSize: "14px" }}>
               {task.name}
             </Typography>
           </Box>
