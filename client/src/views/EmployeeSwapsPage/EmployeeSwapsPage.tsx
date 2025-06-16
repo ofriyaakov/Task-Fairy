@@ -23,19 +23,19 @@ const EmployeeSwapsPage: React.FC = () => {
   const [currentMonthDate, setCurrentMonthDate] = useState<Date>(new Date())
   const [taskListByDate, setTaskListByDate] = useState<CalendarTask[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentTaskId, setCurrentTaskId] = useState<string>('');
-  const [selectedTaskToSwap, setSelectedTaskToSwap] = useState<string>("");
+  const [currentTask, setCurrentTask] = useState<ShortenedTaskDetails>({} as ShortenedTaskDetails);
+  const [selectedTaskToSwap, setSelectedTaskToSwap] = useState<ShortenedTaskDetails>({} as ShortenedTaskDetails);
   const [swapRequestsByEmployee, setSwapRequestsByEmployee] = useState<FullSwapRequest[]>([])
 
   const { connectedUser } = useGlobalContext();
 
-  const handleOtherTaskCardClick = (taskId: string) => {
-    setCurrentTaskId(taskId)
+  const handleOtherTaskCardClick = (task: ShortenedTaskDetails) => {
+    setCurrentTask(task)
     setIsModalOpen(true)
   };
 
-  const handleMyTaskCardClick = (taskId: string) => {
-    setSelectedTaskToSwap(taskId)
+  const handleMyTaskCardClick = (task: ShortenedTaskDetails) => {
+    setSelectedTaskToSwap(task)
   };
 
   const handleCellClick = (date: string) => {
@@ -152,9 +152,11 @@ const EmployeeSwapsPage: React.FC = () => {
             open={isModalOpen}
             openSwapRequests={swapRequestsByEmployee}
             setIsModalOpen={setIsModalOpen}
-            taskId={currentTaskId}
-            taskIdToSwap={selectedTaskToSwap}
-            isSwapDisabled={!selectedTaskToSwap} />
+            task={currentTask}
+            taskToSwap={selectedTaskToSwap}
+            isSwapDisabled={!selectedTaskToSwap}
+            setSwapRequestsByEmployee={setSwapRequestsByEmployee}
+          />
         }
       </div>
   );

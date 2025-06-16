@@ -30,10 +30,7 @@ interface SwapDetailsProps {
   leftOrRight: "left" | "right";
 }
 
-const SwapDetails: React.FC<SwapDetailsProps> = ({
-  employeeWithTask,
-  leftOrRight,
-}) => {
+const SwapDetails: React.FC<SwapDetailsProps> = ({ employeeWithTask, leftOrRight }) => {
   const dateFormat = "de-CH";
   const taskDate = new Date(employeeWithTask.taskStartTime).toLocaleDateString(
     dateFormat

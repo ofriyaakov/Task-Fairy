@@ -11,7 +11,7 @@ import { ShortenedTaskDetails } from "../../types/Task";
 interface TaskDetailsCardProps {
   task: ShortenedTaskDetails;
   isSelected?: boolean;
-  handleCardClick?: (taskId: string, taskDate: Date, balancePoints: number) => void 
+  handleCardClick?: (task: ShortenedTaskDetails) => void 
 }
 
 const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = false, handleCardClick }) => {
@@ -20,7 +20,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = fa
       elevation={0}
       onClick={() =>
         handleCardClick &&
-        handleCardClick(task.taskId || "", task.startTime, task.balancePoints)
+        handleCardClick(task)
       }
       sx={{
         p: 2,

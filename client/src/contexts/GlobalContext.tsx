@@ -16,6 +16,8 @@ interface User {
   groupId: number;
   groupName: string;
   firstLogin: boolean;
+  firstName?: string;
+  lastName?: string;
 }
 
 interface GlobalContextType {
