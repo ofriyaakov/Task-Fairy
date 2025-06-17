@@ -1,7 +1,7 @@
 import React, {useEffect, useState } from 'react';
 import SuggestionsDialog from './../../components/SuggestionsModal'
 import { MyCalendar } from '../../components/Calendar/Calendar';
-import { CalendarTask } from '../../types/Task';
+import { CalendarTask, ShortenedTaskDetails } from '../../types/Task';
 import { getAllTasksByMonth } from '../../queries/task';
 import TasksList from './../../components/TasksList'
 import { toast } from 'react-toastify';
@@ -28,11 +28,11 @@ const CalendarPage: React.FC = () => {
     setTaskListByDate(tasksByDate)
   };
 
-  const handleTaskCardClick = (taskId: string, taskDate?: Date, balancePoints?: number) => {
-    setCurrentTaskId(taskId)
+  const handleTaskCardClick = (task: ShortenedTaskDetails) => {
+    setCurrentTaskId(task.taskId)
     setIsModalOpen(true)
-    setCurrentTaskDate(taskDate!!)
-    setCurrentBalancePoints(balancePoints!!)
+    setCurrentTaskDate(currentTaskDate)
+    setCurrentBalancePoints(task.balancePoints || 0)
   };
 
   const navigateMonth = (date: Date) => {
