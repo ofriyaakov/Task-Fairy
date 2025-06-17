@@ -4,6 +4,7 @@ import geminiRoutes from "./src/routes/gemini";
 import taskRoutes from "./src/routes/task";
 import swapRequestsRoutes from "./src/routes/swap";
 import userRoutes from "./src/routes/user";
+import notificationRoutes from "./src/routes/notification";
 
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -46,6 +47,7 @@ app.use("/gemini", geminiRoutes);
 app.use("/task", taskRoutes);
 app.use("/swap-requests", swapRequestsRoutes);
 app.use("/user", userRoutes);
+app.use("/notifications", notificationRoutes);
 
 app.use(errorHandler);
 app.use(express.static("front"));

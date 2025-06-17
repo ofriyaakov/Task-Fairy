@@ -91,32 +91,60 @@ export const getSwapRequestAmount = async (companyId: number) => {
 };
 
 export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
-    try {
-        const { requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date } = swapRequest;
+  try {
+    const {
+      requestingTaskId,
+      requestingUserId,
+      requestedTaskId,
+      requestedUserId,
+      date,
+    } = swapRequest;
 
-        const result = await db.query(
-            `INSERT INTO swap_requests
-            (first_r_task_user,second_r_task_user, status_id, creation_date)
-            SELECT (SELECT rtu.id 
-		            FROM r_tasks_users as rtu
-		            WHERE task_id = $1 AND user_id = $2),
-		            (SELECT rtu.id 
-		            FROM r_tasks_users as rtu
-		            WHERE task_id = $3 AND user_id = $4),
-		            2, $5
-            RETURNING *`,
-        [requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date]
-        )
+    const result = await db.query(
+      `INSERT INTO swap_requests
+        (first_r_task_user, second_r_task_user, status_id, creation_date)
+        SELECT 
+          (SELECT rtu.id FROM r_tasks_users rtu WHERE task_id = $1 AND user_id = $2),
+          (SELECT rtu.id FROM r_tasks_users rtu WHERE task_id = $3 AND user_id = $4),
+          2, $5
+        RETURNING *`,
+      [requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date]
+    );
 
-        if (result.rows.length === 0) {
-            throw new Error("An error occurred while adding the swap request");
-        }
-
-        return result.rows[0];
-    } catch (err) {
-        console.error(err);
-        throw err;
+    if (result.rows.length === 0) {
+      throw new Error("An error occurred while adding the swap request");
     }
+
+    // Find all managers (level = 2) in the same company as requesting user
+    const managerRes = await db.query(
+      `
+      SELECT u.user_id
+      FROM users u
+      JOIN groups g ON u.group_id = g.group_id
+      WHERE g.company_id = (
+        SELECT g2.company_id
+        FROM users u2
+        JOIN groups g2 ON u2.group_id = g2.group_id
+        WHERE u2.user_id = $1
+      )
+      AND u.user_level = 2
+      `,
+      [requestingUserId]
+    );
+
+    for (const row of managerRes.rows) {
+      await db.query(
+        `INSERT INTO notifications (user_id, type, message)
+         VALUES ($1, 'SWAP_REQUEST', $2)`,
+        [row.user_id, `A new swap request was submitted.`]
+      );
+    }
+
+    return result.rows[0];
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 };
 
 export const updateSwapRequestStatus = async (
@@ -126,10 +154,32 @@ export const updateSwapRequestStatus = async (
   try {
     const result = await db.query(
       `
-        UPDATE public.swap_requests 
-        SET status_id = $1
-        WHERE id = $2;`,
+      UPDATE public.swap_requests 
+      SET status_id = $1
+      WHERE id = $2
+      RETURNING first_r_task_user;`,
       [status, swapId]
+    );
+
+    const firstRTaskUserId = result.rows[0]?.first_r_task_user;
+
+    if (!firstRTaskUserId) return;
+
+    const { rows: userRes } = await db.query(
+      `SELECT user_id FROM r_tasks_users WHERE id = $1`,
+      [firstRTaskUserId]
+    );
+
+    const requestingUserId = userRes[0]?.user_id;
+    if (!requestingUserId) return;
+
+    const statusText = status === 1 ? "approved" : "declined";
+
+    // Notify requesting user
+    await db.query(
+      `INSERT INTO notifications (user_id, type, message)
+       VALUES ($1, 'SWAP_DECISION', $2)`,
+      [requestingUserId, `Your swap request was ${statusText}.`]
     );
 
     return result.rows[0];
