@@ -54,9 +54,10 @@ const ProfilePage: React.FC = () => {
       const employeeId = connectedUser?.id;
       if (!employeeId) throw new Error("User ID not found in context");
 
-      const fetchedemployeeTasks: ShortenedTaskDetails[] =
-        await getEmployeeTasks(employeeId);
-      setemployeeTasks(fetchedemployeeTasks);
+      const fetchedemployeeTasks: ShortenedTaskDetails[] = await getEmployeeTasks(employeeId);
+      setemployeeTasks(fetchedemployeeTasks.sort((a, b) => {
+        return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+      }));
       mapTasksAndfilterByMonth(fetchedemployeeTasks, currentMonthDate);
     } catch (err: any) {
       console.error(err.message);

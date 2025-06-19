@@ -3,6 +3,7 @@ import NewTaskForm from "../../components/NewTaskForm";
 import { useEffect, useState } from "react";
 import { getAllSavedTasks, getTaskById } from "../../queries/task";
 import {
+  ShortenedTaskDetails,
   TaskDetails,
   TaskSummaryCard as TaskDetailsCardType,
 } from "../../types/Task";
@@ -23,9 +24,9 @@ const TasksPage: React.FC = () => {
     }
   };
 
-  const handleCardClick = async (taskId: string) => {
+  const handleCardClick = async (selectedTask: ShortenedTaskDetails) => {
     try {
-      let task = await getTaskById(taskId);
+      let task = await getTaskById(selectedTask.taskId);
       task.saveToTasks = false;
       setSelectedTask(task);
     } catch (err: any) {
@@ -54,6 +55,7 @@ const TasksPage: React.FC = () => {
             tasks={savedTasks}
             title={savedTaskTitle}
             handleCardClick={handleCardClick}
+            showDate={false}
           />
         </Box>
       </Box>

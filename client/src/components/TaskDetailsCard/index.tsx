@@ -11,10 +11,11 @@ import { ShortenedTaskDetails } from "../../types/Task";
 interface TaskDetailsCardProps {
   task: ShortenedTaskDetails;
   isSelected?: boolean;
+  showDate?: boolean;
   handleCardClick?: (task: ShortenedTaskDetails) => void 
 }
 
-const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = false, handleCardClick }) => {
+const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, showDate = true, isSelected = false, handleCardClick }) => {
   return (
     <Paper
       elevation={0}
@@ -50,6 +51,7 @@ const TaskDetailsCard: React.FC<TaskDetailsCardProps> = ({ task, isSelected = fa
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <AccessTimeIcon sx={{ mr: 1, fontSize: 20 }} />
             <Typography variant='body2'>
+              {showDate && `${dayjs(task.startTime).format("DD/MM/YYYY")} `}
               {dayjs(task.startTime).format("HH:mm")} -
               {dayjs(task.endTime).format("HH:mm")}
             </Typography>
