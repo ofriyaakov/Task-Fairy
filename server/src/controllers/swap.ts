@@ -290,9 +290,10 @@ const approveSwap = async (swapId: string) => {
 
     //3. Delete all other swap requests that involve the same task-user
     await db.query(
-      `DELETE FROM swap_requests 
-   WHERE first_r_task_user = $1 
-   AND status_id = 2`,
+      `UPDATE swap_requests 
+        SET status_id = 3 
+        WHERE first_r_task_user = $1 
+        AND status_id = 2`,
       [firstRTaskUserId]
     );
 
