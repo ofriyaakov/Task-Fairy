@@ -3,6 +3,7 @@ import {
   RawSwapRequest,
   SwapRequestPayload,
   RawFullSwapRequest,
+  SwapRequestStatus,
 } from "./../models/swap";
 
 export const getPendingSwapRequests = async (companyId: number) => {
@@ -170,7 +171,7 @@ export const updateSwapRequestStatus = async (
       [status, swapId]
     );
 
-    if (status == 1) {
+    if (status == SwapRequestStatus.Approved) {
       await approveSwap(swapId);
     }
     const firstRTaskUserId = result.rows[0]?.first_r_task_user;

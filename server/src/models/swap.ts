@@ -14,17 +14,22 @@ export interface RawSwapRequest {
   swap_request_id: string;
 }
 
-
 export interface SwapRequestPayload {
-    requestingUserId: string;
-    requestingTaskId: string;
-    requestedUserId: string;
-    requestedTaskId: string;
-    date: Date;
+  requestingUserId: string;
+  requestingTaskId: string;
+  requestedUserId: string;
+  requestedTaskId: string;
+  date: Date;
 }
 
 export interface RawFullSwapRequest extends RawSwapRequest {
-    status: string;
-    first_task_id: string;
-    second_task_id: string;
+  status: string;
+  first_task_id: string;
+  second_task_id: string;
+}
+
+export enum SwapRequestStatus {
+  Approved = 1,
+  Pending = 2,
+  Denied = 3,
 }
