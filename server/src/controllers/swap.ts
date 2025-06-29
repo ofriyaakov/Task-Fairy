@@ -1,5 +1,10 @@
 import db from "../config/db";
-import { RawSwapRequest, SwapRequestPayload, RawFullSwapRequest } from './../models/swap'
+import {
+  RawSwapRequest,
+  SwapRequestPayload,
+  RawFullSwapRequest,
+  SwapRequestStatus,
+} from "./../models/swap";
 
 export const getPendingSwapRequests = async (companyId: number) => {
   try {
@@ -82,12 +87,11 @@ export const getSwapRequestAmount = async (companyId: number) => {
       [companyId]
     );
 
-      const amount: number = result.rows[0];
-      return amount;
-  
-    } catch (err) {
-      console.error(err);
-    }
+    const amount: number = result.rows[0];
+    return amount;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
@@ -108,7 +112,13 @@ export const addSwapRequest = async (swapRequest: SwapRequestPayload) => {
           (SELECT rtu.id FROM r_tasks_users rtu WHERE task_id = $3 AND user_id = $4),
           2, $5
         RETURNING *`,
-      [requestingTaskId, requestingUserId, requestedTaskId, requestedUserId, date]
+      [
+        requestingTaskId,
+        requestingUserId,
+        requestedTaskId,
+        requestedUserId,
+        date,
+      ]
     );
 
     if (result.rows.length === 0) {
@@ -161,6 +171,9 @@ export const updateSwapRequestStatus = async (
       [status, swapId]
     );
 
+    if (status == SwapRequestStatus.Approved) {
+      await approveSwap(swapId);
+    }
     const firstRTaskUserId = result.rows[0]?.first_r_task_user;
 
     if (!firstRTaskUserId) return;
@@ -187,10 +200,118 @@ export const updateSwapRequestStatus = async (
     console.error(err);
   }
 };
+const approveSwap = async (swapId: string) => {
+  const { rows } = await db.query(
+    `
+      SELECT
+        sr.first_r_task_user,
+        sr.second_r_task_user,
+
+        rt1.user_id AS first_user_id,
+        rt2.user_id AS second_user_id,
+
+        rt1.task_id AS first_task_id,
+        rt2.task_id AS second_task_id,
+
+        t1.balance_points AS first_task_points,
+        t2.balance_points AS second_task_points,
+
+        u1.balance_points AS first_user_points,
+        u2.balance_points AS second_user_points
+
+      FROM swap_requests sr
+      JOIN r_tasks_users rt1 ON sr.first_r_task_user = rt1.id
+      JOIN r_tasks_users rt2 ON sr.second_r_task_user = rt2.id
+
+      JOIN tasks t1 ON rt1.task_id = t1.task_id
+      JOIN tasks t2 ON rt2.task_id = t2.task_id
+
+      JOIN users u1 ON rt1.user_id = u1.user_id
+      JOIN users u2 ON rt2.user_id = u2.user_id
+
+      WHERE sr.id = $1
+      `,
+    [swapId]
+  );
+
+  if (!rows.length) throw new Error("Swap request not found");
+
+  const {
+    first_r_task_user: firstRTaskUserId,
+    second_r_task_user: secondRTaskUserId,
+    first_user_id: firstUserId,
+    second_user_id: secondUserId,
+    first_task_id: firstTaskId,
+    second_task_id: secondTaskId,
+    first_task_points: firstTaskPoints,
+    second_task_points: secondTaskPoints,
+    first_user_points: firstUserPoints,
+    second_user_points: secondUserPoints,
+  } = rows[0];
+
+  const updatedFirstUserPoints =
+    firstUserPoints - firstTaskPoints + secondTaskPoints;
+  const updatedSecondUserPoints =
+    secondUserPoints - secondTaskPoints + firstTaskPoints;
+
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+
+    // 1. Swap the users on the r_tasks_users table
+    await client.query(
+      `
+      UPDATE r_tasks_users
+      SET user_id = CASE
+        WHEN id = $1 THEN $3
+        WHEN id = $2 THEN $4
+      END
+      WHERE id IN ($1, $2)
+      `,
+      [firstRTaskUserId, secondRTaskUserId, secondUserId, firstUserId]
+    );
+
+    // 2. Update users' balance points
+    await client.query(
+      `
+      UPDATE users
+      SET balance_points = CASE
+        WHEN user_id = $1 THEN CAST($3 AS INTEGER)
+        WHEN user_id = $2 THEN CAST($4 AS INTEGER)
+      END
+      WHERE user_id IN ($1, $2)
+      `,
+      [
+        firstUserId,
+        secondUserId,
+        updatedFirstUserPoints,
+        updatedSecondUserPoints,
+      ]
+    );
+
+    //3. Delete all other swap requests that involve the same task-user
+    await db.query(
+      `UPDATE swap_requests 
+        SET status_id = 3 
+        WHERE first_r_task_user = $1 
+        AND status_id = 2`,
+      [firstRTaskUserId]
+    );
+
+    await client.query("COMMIT");
+    return { success: true };
+  } catch (e) {
+    await client.query("ROLLBACK");
+    throw e;
+  } finally {
+    client.release();
+  }
+};
 
 export const getSwapRequestsByEmployee = async (employeeId: string) => {
-    try {
-      const result = await db.query(`
+  try {
+    const result = await db.query(
+      `
         SELECT
             first_swap_info.first_user_id,
             first_swap_info.first_user_first_name,
@@ -228,37 +349,39 @@ export const getSwapRequestsByEmployee = async (employeeId: string) => {
         JOIN public.tasks ON tasks.task_id = r_tasks_users.task_id
         JOIN public.swap_status ON first_swap_info.status_id = swap_status.status_id
         WHERE first_swap_info.first_user_id = $1 or users.user_id = $1
-       `, [employeeId]
-      );
+       `,
+      [employeeId]
+    );
 
-      const employeeSwapRequests: RawFullSwapRequest[] = result.rows;
+    const employeeSwapRequests: RawFullSwapRequest[] = result.rows;
 
-        const formatedEmployeeSwapRequests = employeeSwapRequests.map((rawSwapRequest) => {
-            return {
-                leftDetails: {
-                    employeeId: rawSwapRequest.first_user_id,
-                    employeeFirstName: rawSwapRequest.first_user_first_name,
-                    employeeLastName: rawSwapRequest.first_user_last_name,
-                    taskName: rawSwapRequest.first_task_name,
-                    taskStartTime: rawSwapRequest.first_task_start_time,
-                    taskEndTime: rawSwapRequest.first_task_end_time,
-                    taskId: rawSwapRequest.first_task_id,
-                },
-                rightDetails: {
-                    employeeId: rawSwapRequest.second_user_id,
-                    employeeFirstName: rawSwapRequest.second_user_first_name,
-                    employeeLastName: rawSwapRequest.second_user_last_name,
-                    taskName: rawSwapRequest.second_task_name,
-                    taskStartTime: rawSwapRequest.second_task_start_time,
-                    taskEndTime: rawSwapRequest.second_task_end_time,
-                    taskId: rawSwapRequest.second_task_id,
-                },
-                status: rawSwapRequest.status
-            };
-        });
-        return formatedEmployeeSwapRequests;
-
-    } catch (err) {
-      console.error(err);
-    }
+    const formatedEmployeeSwapRequests = employeeSwapRequests.map(
+      (rawSwapRequest) => {
+        return {
+          leftDetails: {
+            employeeId: rawSwapRequest.first_user_id,
+            employeeFirstName: rawSwapRequest.first_user_first_name,
+            employeeLastName: rawSwapRequest.first_user_last_name,
+            taskName: rawSwapRequest.first_task_name,
+            taskStartTime: rawSwapRequest.first_task_start_time,
+            taskEndTime: rawSwapRequest.first_task_end_time,
+            taskId: rawSwapRequest.first_task_id,
+          },
+          rightDetails: {
+            employeeId: rawSwapRequest.second_user_id,
+            employeeFirstName: rawSwapRequest.second_user_first_name,
+            employeeLastName: rawSwapRequest.second_user_last_name,
+            taskName: rawSwapRequest.second_task_name,
+            taskStartTime: rawSwapRequest.second_task_start_time,
+            taskEndTime: rawSwapRequest.second_task_end_time,
+            taskId: rawSwapRequest.second_task_id,
+          },
+          status: rawSwapRequest.status,
+        };
+      }
+    );
+    return formatedEmployeeSwapRequests;
+  } catch (err) {
+    console.error(err);
+  }
 };

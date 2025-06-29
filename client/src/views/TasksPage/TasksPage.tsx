@@ -24,9 +24,9 @@ const TasksPage: React.FC = () => {
     }
   };
 
-  const handleCardClick = async (selectedTask: ShortenedTaskDetails) => {
+  const handleCardClick = async (savedTask: ShortenedTaskDetails) => {
     try {
-      let task = await getTaskById(selectedTask.taskId);
+      let task = await getTaskById(savedTask.taskId);
       task.saveToTasks = false;
       setSelectedTask(task);
     } catch (err: any) {
