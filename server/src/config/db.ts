@@ -14,7 +14,7 @@ const pool = new Pool({
     host: host,
     port: Number(port),
     database: database,
-    ssl: true
+    ssl: false
 });
 
 export default pool;

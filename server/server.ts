@@ -12,7 +12,11 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import cors from "cors";
 import { errorHandler } from "./src/middleware/errorHandler";
+import https from 'https';
+import fs from 'fs';
 const path = require("path");
+
+const env = 'development'
 
 const swaggerOptions = {
   definition: {
@@ -35,7 +39,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 5000;
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: ['https://taskfairy.cs.colman.ac.il'],  credentials: true}));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
@@ -62,5 +66,15 @@ const initApp = () => {
     resolve(app);
   });
 };
+
+initApp().then((app) => {
+  const keys = {
+    key: fs.readFileSync('./client-key.pem'),
+    cert: fs.readFileSync('./client-cert.pem')
+  }
+  https.createServer(keys, app).listen(4000)
+  console.log(`Example app listening at https://taskfairy.cs.colman.ac.il:${port}`);
+
+})
 
 export default initApp;

@@ -2,7 +2,7 @@ import axios from "axios";
 import { getErrorInterceptor } from "./queries/responseHandler";
 import { accessTokenKey } from "./consts";
 
-const backendUrl = "http://localhost:3001";
+const backendUrl = "https://taskfairy.cs.colman.ac.il:4000";
 
 const axiosInstance = axios.create({
   baseURL: backendUrl,
