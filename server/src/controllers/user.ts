@@ -5,6 +5,9 @@ import e from "express";
 import { getGroupByNameAndCompany, addNewGroup } from "./group";
 import { employeeUserLevel } from "../../consts";
 import nodemailer from "nodemailer";
+import bcrypt from "bcrypt";
+
+const SALT_ROUNDS = 10;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -353,6 +356,7 @@ export const removeUserById = async (id: string) => {
     throw new Error("User not found");
   }
 };
+
 export const addNewEmployees = async (
   employees: User[],
   company_id: number
@@ -386,6 +390,8 @@ export const addNewEmployees = async (
         const firstPassword =
           employee.email.split("@")[0] + Math.floor(Math.random() * 100);
 
+        const hashedPassword = await bcrypt.hash(firstPassword, SALT_ROUNDS);
+
         const { rows } = await db.query(query, [
           employee.user_id,
           employee.first_name,
@@ -395,7 +401,7 @@ export const addNewEmployees = async (
           employee.group_id,
           employee.phone_number,
           employeeUserLevel,
-          firstPassword,
+          hashedPassword,
           0,
         ]);
 
@@ -410,20 +416,26 @@ export const addNewEmployees = async (
 
         success.push(insertedUser);
       } catch (err) {
-        console.error(`❌ Failed for ${employee.email}:`, err.message);
+        console.error(`Failed for ${employee.email}:`, err.message);
         failed.push({ employee, reason: err.message });
       }
     }
 
     return { success, failed };
   } catch (err) {
-    console.error("🔥 Fatal error during employee import:", err.message);
+    console.error("Fatal error during employee import:", err.message);
     throw err;
   }
 };
 
-export const updateUserFirstLogin = async (userId: string, password: string, city: string) => {
+export const updateUserFirstLogin = async (
+  userId: string,
+  password: string,
+  city: string
+) => {
   try {
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
     const result = await db.query(
       `UPDATE users
         SET
@@ -432,12 +444,13 @@ export const updateUserFirstLogin = async (userId: string, password: string, cit
           city = $3
         WHERE user_id = $1
         RETURNING *`,
-      [userId, password, city]
+      [userId, hashedPassword, city]
     );
 
     if (result.rows.length === 0) {
       throw new Error("User not found");
     }
+
     const updatedUser: User = result.rows[0];
     console.log("User first login updated:", updatedUser);
     return updatedUser;
