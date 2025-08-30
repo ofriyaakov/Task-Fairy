@@ -9,6 +9,7 @@ import { APP_COLOR } from "../../theme";
 interface TaskListProps {
   title: string;
   tasks: ShortenedTaskDetails[];
+  showDate?: boolean;
   handleCardClick?: (
     task: ShortenedTaskDetails,
   ) => void;
@@ -18,6 +19,7 @@ interface TaskListProps {
 const TasksList: React.FC<TaskListProps> = ({
   title,
   tasks,
+  showDate = true,
   handleCardClick,
   height = "86vh",
 }) => {
@@ -73,6 +75,7 @@ const TasksList: React.FC<TaskListProps> = ({
               <TaskDetailsCard
                 key={index}
                 task={task}
+                showDate={showDate}
                 handleCardClick={handleClick}
                 isSelected={task.taskId === selectedTask.taskId}
               />

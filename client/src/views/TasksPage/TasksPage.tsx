@@ -55,6 +55,7 @@ const TasksPage: React.FC = () => {
             tasks={savedTasks}
             title={savedTaskTitle}
             handleCardClick={handleCardClick}
+            showDate={false}
           />
         </Box>
       </Box>
